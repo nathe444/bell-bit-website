@@ -9,9 +9,11 @@ type ProjectDossierProps = {
   project: Project;
   index: number;
   className?: string;
+  /** Enables battle-pass frame styling when used inside scroll claim animation. */
+  claimed?: boolean;
 };
 
-export function ProjectDossier({ project, index, className }: ProjectDossierProps) {
+export function ProjectDossier({ project, index, className, claimed }: ProjectDossierProps) {
   const registryId = projectRegistryId(index);
   const isPortrait = project.imageOrientation === "portrait";
 
@@ -20,9 +22,11 @@ export function ProjectDossier({ project, index, className }: ProjectDossierProp
       className={`grid h-full items-center gap-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-10 lg:gap-14 ${className ?? ""}`}
     >
       <div
-        className={`relative overflow-hidden border border-line bg-surface ${
-          isPortrait ? "mx-auto w-full max-w-[220px] md:mx-0 md:max-w-none" : "w-full"
-        }`}
+        className={`relative overflow-hidden border bg-surface ${
+          claimed
+            ? "border-signal/40 shadow-[0_0_40px_-8px_rgba(61,123,253,0.55)]"
+            : "border-line"
+        } ${isPortrait ? "mx-auto w-full max-w-[220px] md:mx-0 md:max-w-none" : "w-full"}`}
       >
         <div
           className={`relative w-full ${isPortrait ? "aspect-[9/16]" : "aspect-[16/10]"}`}

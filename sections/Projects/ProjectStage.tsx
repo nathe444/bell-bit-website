@@ -14,21 +14,33 @@ type ProjectStageProps = {
   projects: readonly Project[];
 };
 
-export function ProjectStage({ projects }: ProjectStageProps) {
-  const reducedMotion = useReducedMotion();
+const CLAIM_ENTER = {
+  opacity: 0,
+  scale: 0.52,
+  rotateY: -22,
+  z: -520,
+  transformOrigin: "50% 50%",
+} as const;
 
-  if (reducedMotion) {
-    return <ProjectStageStatic projects={projects} />;
-  }
+const CLAIM_SETTLED = {
+  opacity: 1,
+  scale: 1,
+  rotateY: 0,
+  z: 0,
+} as const;
 
-  return <ProjectStageMotion projects={projects} />;
-}
+const CLAIM_EXIT = {
+  opacity: 0,
+  scale: 0.76,
+  rotateY: 20,
+  z: -380,
+} as const;
 
 /** Pick the dossier with the highest rendered opacity — stays in sync with crossfades. */
-function getVisibleIndex(dossiers: Array<HTMLDivElement | null>) {
+function getVisibleIndex(cards: Array<HTMLDivElement | null>) {
   let bestIndex = 0;
   let bestOpacity = -1;
-  dossiers.forEach((el, i) => {
+  cards.forEach((el, i) => {
     if (!el) return;
     const opacity = Number(gsap.getProperty(el, "opacity") ?? 0);
     const isClearer = opacity > bestOpacity + 0.05;
@@ -42,10 +54,22 @@ function getVisibleIndex(dossiers: Array<HTMLDivElement | null>) {
   return bestIndex;
 }
 
-/** Scroll-pinned case dossiers — opacity and y only, synced with Lenis scrub. */
+export function ProjectStage({ projects }: ProjectStageProps) {
+  const reducedMotion = useReducedMotion();
+
+  if (reducedMotion) {
+    return <ProjectStageStatic projects={projects} />;
+  }
+
+  return <ProjectStageMotion projects={projects} />;
+}
+
+/** Scroll-pinned case dossiers — battle-pass claim pop, scrubbed by scroll. */
 function ProjectStageMotion({ projects }: ProjectStageProps) {
   const pinRef = useRef<HTMLDivElement | null>(null);
-  const dossierRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const shineRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const glowRefs = useRef<Array<HTMLDivElement | null>>([]);
   const progressFillRef = useRef<HTMLDivElement | null>(null);
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -57,38 +81,85 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
       if (!pinEl) return;
 
       const count = projects.length;
-      const dossiers = dossierRefs.current;
-      const { enterDuration, holdDuration, exitDuration, vhPerProject, scrubSmoothing } =
-        projectBehavior;
+      const cards = cardRefs.current;
+      const shines = shineRefs.current;
+      const glows = glowRefs.current;
+      const {
+        enterDuration,
+        holdDuration,
+        exitDuration,
+        vhPerProject,
+        scrubSmoothing,
+        claimEase,
+        claimExitEase,
+      } = projectBehavior;
 
-      dossiers.forEach((el) => {
-        if (!el) return;
-        gsap.set(el, { opacity: 0, y: 24, force3D: true });
+      cards.forEach((card, i) => {
+        if (!card) return;
+        gsap.set(card, { ...CLAIM_ENTER, force3D: true });
+        const shine = shines[i];
+        const glow = glows[i];
+        if (shine) gsap.set(shine, { xPercent: -130, opacity: 0 });
+        if (glow) gsap.set(glow, { scale: 0.55, opacity: 0 });
       });
 
       const tl = gsap.timeline();
 
       projects.forEach((_, i) => {
-        const el = dossiers[i];
-        if (!el) return;
+        const card = cards[i];
+        if (!card) return;
+        const shine = shines[i];
+        const glow = glows[i];
         const label = `project-${i}`;
         tl.addLabel(label);
 
+        // Claim pop — scale overshoot, 3D tilt forward, brightness snap
         tl.fromTo(
-          el,
-          { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, duration: enterDuration, ease: "power2.out" },
+          card,
+          { ...CLAIM_ENTER },
+          {
+            ...CLAIM_SETTLED,
+            duration: enterDuration,
+            ease: claimEase,
+          },
           label
         );
 
-        tl.to(el, { duration: holdDuration }, `${label}+=${enterDuration}`);
+        if (shine) {
+          tl.fromTo(
+            shine,
+            { xPercent: -130, opacity: 0 },
+            { xPercent: 230, opacity: 0.9, duration: enterDuration * 0.85, ease: "power2.out" },
+            label
+          );
+          tl.to(shine, { opacity: 0, duration: enterDuration * 0.15 }, `${label}+=${enterDuration * 0.7}`);
+        }
+
+        if (glow) {
+          tl.fromTo(
+            glow,
+            { scale: 0.55, opacity: 0 },
+            { scale: 1.2, opacity: 0.55, duration: enterDuration * 0.55, ease: "power2.out" },
+            label
+          );
+          tl.to(
+            glow,
+            { scale: 1, opacity: 0.22, duration: enterDuration * 0.45, ease: "power1.out" },
+            `${label}+=${enterDuration * 0.55}`
+          );
+        }
+
+        tl.to(card, { duration: holdDuration }, `${label}+=${enterDuration}`);
 
         if (i < count - 1) {
           tl.to(
-            el,
-            { opacity: 0, y: -16, duration: exitDuration, ease: "power2.in" },
+            card,
+            { ...CLAIM_EXIT, duration: exitDuration, ease: claimExitEase },
             `${label}+=${enterDuration + holdDuration}`
           );
+          if (glow) {
+            tl.to(glow, { opacity: 0, scale: 0.7, duration: exitDuration * 0.8 }, `<`);
+          }
         }
       });
 
@@ -101,7 +172,7 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
         scrub: scrubSmoothing,
         animation: tl,
         onUpdate: (self) => {
-          const index = getVisibleIndex(dossiers);
+          const index = getVisibleIndex(cards);
           if (index !== activeIndexRef.current) {
             activeIndexRef.current = index;
             setActiveIndex(index);
@@ -135,17 +206,43 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
             progressFillRef={progressFillRef}
           />
 
-          <div className="relative min-h-0 flex-1 md:min-h-[520px]">
+          <div
+            className="relative min-h-0 flex-1 md:min-h-[520px]"
+            style={{ perspective: "1400px" }}
+          >
             {projects.map((project, index) => (
               <div
                 key={project.id}
-                ref={(el) => {
-                  dossierRefs.current[index] = el;
-                }}
-                className="absolute inset-0 flex items-center will-change-[transform,opacity]"
+                className="pointer-events-none absolute inset-0 flex items-center justify-center md:pointer-events-auto"
                 aria-hidden={index !== activeIndex}
               >
-                <ProjectDossier project={project} index={index} className="w-full" />
+                {/* Reward claim glow */}
+                <div
+                  ref={(el) => {
+                    glowRefs.current[index] = el;
+                  }}
+                  className="pointer-events-none absolute left-1/2 top-1/2 h-[min(420px,70%)] w-[min(640px,92%)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-signal/40 blur-3xl will-change-[transform,opacity]"
+                  aria-hidden="true"
+                />
+
+                <div
+                  ref={(el) => {
+                    cardRefs.current[index] = el;
+                  }}
+                  className="relative z-10 w-full will-change-[transform,opacity]"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  {/* Shine sweep — battle pass claim flash */}
+                  <div
+                    ref={(el) => {
+                      shineRefs.current[index] = el;
+                    }}
+                    className="pointer-events-none absolute -inset-y-6 z-30 w-2/5 skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/40 to-transparent will-change-transform"
+                    aria-hidden="true"
+                  />
+
+                  <ProjectDossier project={project} index={index} className="w-full" claimed />
+                </div>
               </div>
             ))}
           </div>

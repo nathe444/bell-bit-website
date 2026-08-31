@@ -5,9 +5,12 @@ export const projectBehavior = {
   /** Matches heroBehavior.scrubSmoothing for consistent feel sitewide. */
   scrubSmoothing: 0.55,
   /** GSAP timeline segment durations (relative units, not seconds). */
-  enterDuration: 0.35,
-  holdDuration: 0.5,
-  exitDuration: 0.25,
+  enterDuration: 0.42,
+  holdDuration: 0.48,
+  exitDuration: 0.22,
+  /** Battle-pass style overshoot on reward claim. */
+  claimEase: "back.out(2.4)",
+  claimExitEase: "power3.in",
 } as const;
 
 export function projectRegistryId(index: number) {
