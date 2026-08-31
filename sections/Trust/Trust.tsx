@@ -1,56 +1,43 @@
-import Image from "next/image";
-import { clients, partners } from "@/lib/content";
+import { clients, partners, trustSection } from "@/lib/content";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
-
-type Entity = { name: string; logo: string | null };
-
-/** Real logos where the source document had them; an honest wordmark otherwise — never a fabricated mark. */
-function EntityRow({ entities }: { entities: readonly Entity[] }) {
-  return (
-    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      {entities.map((entity) => (
-        <li
-          key={entity.name}
-          className="flex h-24 items-center justify-center rounded-lg border border-line px-6 py-4 transition-colors hover:border-line-strong"
-        >
-          {entity.logo ? (
-            <div className="relative h-12 w-full">
-              <Image
-                src={entity.logo}
-                alt={entity.name}
-                fill
-                className="object-contain grayscale opacity-80 transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-                sizes="200px"
-              />
-            </div>
-          ) : (
-            <span className="text-center text-sm font-medium text-paper-dim">
-              {entity.name}
-            </span>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
+import { RegistryBlock } from "./RegistryBlock";
+import { RegistryPanel } from "./RegistryPanel";
 
 export function Trust() {
   return (
-    <section id="trust" className="relative z-10 border-y border-line py-24">
+    <section
+      id="trust"
+      className="relative z-10 border-y border-line bg-void pt-20 pb-24 md:pt-24 md:pb-28"
+    >
       <div className="container-edge">
-        <Reveal>
-          <p className="mb-12 text-center text-xs font-medium uppercase tracking-[0.3em] text-paper-faint">
-            Clients &amp; Partners
-          </p>
-        </Reveal>
+        <div className="grid gap-12 md:grid-cols-[minmax(0,0.38fr)_minmax(0,0.62fr)] md:gap-16 lg:gap-20">
+          <div className="md:sticky md:top-28 md:self-start">
+            <Reveal>
+              <SectionHeading
+                eyebrow={trustSection.eyebrow}
+                title={trustSection.title}
+                description={trustSection.description}
+              />
+            </Reveal>
+          </div>
 
-        <Reveal delay={0.05}>
-          <EntityRow entities={clients} />
-        </Reveal>
-
-        <Reveal delay={0.1} className="mt-10 border-t border-line pt-10">
-          <EntityRow entities={partners} />
-        </Reveal>
+          <RegistryPanel>
+            <RegistryBlock
+              title="Clients"
+              variant="client"
+              entries={clients}
+              idPrefix="C"
+            />
+            <RegistryBlock
+              title="Partners"
+              variant="partner"
+              entries={partners}
+              idPrefix="P"
+              subordinate
+            />
+          </RegistryPanel>
+        </div>
       </div>
     </section>
   );

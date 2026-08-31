@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { services } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { ensureGsapRegistered, ScrollTrigger } from "@/animations/gsap";
+import { ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export function Services() {
@@ -17,9 +17,9 @@ export function Services() {
       lineRef.current?.style.setProperty("--line-progress", "1");
       return;
     }
-    ensureGsapRegistered();
 
-    const trigger = ScrollTrigger.create({
+    return runScrollTriggerSetup(() => {
+      const trigger = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: "top 60%",
       end: "bottom 70%",
@@ -30,6 +30,7 @@ export function Services() {
     });
 
     return () => trigger.kill();
+    });
   }, [reducedMotion]);
 
   return (

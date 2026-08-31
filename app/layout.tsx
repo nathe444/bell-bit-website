@@ -46,7 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} h-full`}
+      className={`${manrope.variable} ${inter.variable} min-h-full`}
     >
       <body className="min-h-full bg-void text-paper antialiased">
         <SmoothScrollProvider>

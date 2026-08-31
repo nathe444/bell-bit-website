@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "process-hero-frames": "node scripts/process-hero-frames.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

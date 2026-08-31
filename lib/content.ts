@@ -168,28 +168,90 @@ export const architectureStages = [
   { id: "system", label: "System", description: "A reliable, scalable, well-designed system in production." },
 ] as const;
 
+export const trustSection = {
+  eyebrow: "Proof layer",
+  title: "Organizations in production.",
+  description:
+    "Domestic and international clients whose problems became deployed systems — and partners who extend our delivery capacity.",
+} as const;
+
 /**
  * Logos come from the real logo marks embedded in BellBit Company Profile.pdf
  * (extracted and matched by their own visible name/wordmark). Where a name's
  * logo couldn't be confidently identified in the source document, `logo` is
- * `null` and the UI falls back to a plain wordmark rather than guessing.
+ * `null` and the UI falls back to a typographic monogram rather than guessing.
  */
 export const clients = [
-  { name: "Addis Ababa University", logo: "/assets/bellbit/logos/addis-ababa-university.png" },
-  { name: "Guansa PLC", logo: null },
-  { name: "Lucky Path Construction PLC", logo: "/assets/bellbit/logos/lucky-path-construction.png" },
-  { name: "Abyssinia Medium Clinic", logo: "/assets/bellbit/logos/abyssinia-medium-clinic.png" },
-  { name: "DAK Trading PLC", logo: "/assets/bellbit/logos/dak-trading.png" },
-  { name: "Hoomez LTD", logo: "/assets/bellbit/logos/hoomez.png" },
-  { name: "Nain MCH Specialty Center", logo: "/assets/bellbit/logos/nain-mch.jpeg" },
+  {
+    name: "Addis Ababa University",
+    logo: "/assets/bellbit/logos/addis-ababa-university.png",
+    sector: "Education",
+    projectId: "csms",
+  },
+  {
+    name: "Guansa PLC",
+    logo: null,
+    sector: "Enterprise",
+    projectId: "guansa",
+  },
+  {
+    name: "Lucky Path Construction PLC",
+    logo: "/assets/bellbit/logos/lucky-path-construction.png",
+    sector: "Construction",
+    projectId: null,
+  },
+  {
+    name: "Abyssinia Medium Clinic",
+    logo: "/assets/bellbit/logos/abyssinia-medium-clinic.png",
+    sector: "Healthcare",
+    projectId: null,
+  },
+  {
+    name: "DAK Trading PLC",
+    logo: "/assets/bellbit/logos/dak-trading.png",
+    sector: "Commerce",
+    projectId: null,
+  },
+  {
+    name: "Hoomez LTD",
+    logo: "/assets/bellbit/logos/hoomez.png",
+    sector: "Commerce / Construction",
+    projectId: "hoomez",
+  },
+  {
+    name: "Nain MCH Specialty Center",
+    logo: "/assets/bellbit/logos/nain-mch.jpeg",
+    sector: "Healthcare",
+    projectId: null,
+  },
 ] as const;
 
 export const partners = [
-  { name: "Africom Technologies", logo: "/assets/bellbit/logos/africom-technologies.png" },
-  { name: "BE Technologies", logo: null },
-  { name: "Muyalogy", logo: "/assets/bellbit/logos/muyalogy.png" },
-  { name: "SkyKin Technologies", logo: null },
-  { name: "Yesar Business Group", logo: "/assets/bellbit/logos/yesar-business-group.jpeg" },
+  {
+    name: "Africom Technologies",
+    logo: "/assets/bellbit/logos/africom-technologies.png",
+    focus: "Technology",
+  },
+  {
+    name: "BE Technologies",
+    logo: null,
+    focus: "Technology",
+  },
+  {
+    name: "Muyalogy",
+    logo: "/assets/bellbit/logos/muyalogy.png",
+    focus: "Technology",
+  },
+  {
+    name: "SkyKin Technologies",
+    logo: null,
+    focus: "Technology",
+  },
+  {
+    name: "Yesar Business Group",
+    logo: "/assets/bellbit/logos/yesar-business-group.jpeg",
+    focus: "Business",
+  },
 ] as const;
 
 export const industries = [
@@ -261,3 +323,14 @@ export const nav = [
   { label: "Approach", href: "#architecture" },
   { label: "Contact", href: "#contact" },
 ] as const;
+
+/** Fades in on the hero's right side after the primary headline scrolls away. */
+export const heroSecondary = {
+  eyebrow: "What we deliver",
+  title: "From problem to production.",
+  items: [
+    "Real-world problem solving — not hypothetical briefs",
+    "Reliable, scalable systems built for actual use",
+    "End-to-end delivery from planning through support",
+  ],
+} as const;

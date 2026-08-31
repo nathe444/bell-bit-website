@@ -80,11 +80,15 @@ export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: He
       rafId = requestAnimationFrame(draw);
 
       const progress = Math.min(1, Math.max(0, progressRef.current ?? 0));
-      const frameIndex = Math.round(progress * (sequence.frameCount - 1));
+      const frameIndex = Math.min(
+        sequence.frameCount - 1,
+        Math.floor(progress * sequence.frameCount)
+      );
       preloadAround(frameIndex);
 
       const image = getFrame(frameIndex);
-      if (!image || (frameIndex === lastDrawnIndex && width && height)) return;
+      if (!image) return;
+      if (frameIndex === lastDrawnIndex) return;
       lastDrawnIndex = frameIndex;
 
       const canvasW = width * dpr;

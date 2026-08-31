@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { architectureStages } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { ensureGsapRegistered, ScrollTrigger } from "@/animations/gsap";
+import { ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export function Architecture() {
@@ -27,30 +27,30 @@ export function Architecture() {
       });
       return;
     }
-    ensureGsapRegistered();
+    return runScrollTriggerSetup(() => {
+      const length = path.getTotalLength();
+      path.style.strokeDasharray = `${length}`;
+      path.style.strokeDashoffset = `${length}`;
 
-    const length = path.getTotalLength();
-    path.style.strokeDasharray = `${length}`;
-    path.style.strokeDashoffset = `${length}`;
+      const trigger = ScrollTrigger.create({
+        trigger: wrapperRef.current,
+        start: "top 55%",
+        end: "bottom 65%",
+        scrub: true,
+        onUpdate: (self) => {
+          path.style.strokeDashoffset = `${length * (1 - self.progress)}`;
+          nodeRefs.current.forEach((node, index) => {
+            if (!node) return;
+            const threshold = index / (stageCount - 1);
+            const active = self.progress >= threshold - 0.02;
+            node.setAttribute("fill", active ? "var(--color-signal)" : "var(--color-surface-raised)");
+            node.setAttribute("r", active ? "7" : "5.5");
+          });
+        },
+      });
 
-    const trigger = ScrollTrigger.create({
-      trigger: wrapperRef.current,
-      start: "top 55%",
-      end: "bottom 65%",
-      scrub: true,
-      onUpdate: (self) => {
-        path.style.strokeDashoffset = `${length * (1 - self.progress)}`;
-        nodeRefs.current.forEach((node, index) => {
-          if (!node) return;
-          const threshold = index / (stageCount - 1);
-          const active = self.progress >= threshold - 0.02;
-          node.setAttribute("fill", active ? "var(--color-signal)" : "var(--color-surface-raised)");
-          node.setAttribute("r", active ? "7" : "5.5");
-        });
-      },
+      return () => trigger.kill();
     });
-
-    return () => trigger.kill();
   }, [reducedMotion]);
 
   const stageCount = architectureStages.length;

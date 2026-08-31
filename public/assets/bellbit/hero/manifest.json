@@ -1,11 +1,11 @@
 {
-  "frameCount": 240,
+  "frameCount": 360,
   "frameWidth": 1920,
   "frameHeight": 1080,
-  "mobileFrameCount": 81,
+  "mobileFrameCount": 121,
   "mobileFrameWidth": 640,
   "mobileFrameHeight": 360,
   "padWidth": 3,
-  "mobilePadWidth": 2,
-  "generatedAt": "2026-08-29T17:48:49.387Z"
+  "mobilePadWidth": 3,
+  "generatedAt": "2026-08-31T08:18:08.019Z"
 }

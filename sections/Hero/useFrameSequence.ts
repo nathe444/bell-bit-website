@@ -116,7 +116,7 @@ export function useFrameSequence({
     const exact = cacheRef.current.get(index);
     if (exact?.loaded) return exact.image;
 
-    for (let d = 1; d < 24; d++) {
+    for (let d = 1; d < 48; d++) {
       const after = cacheRef.current.get(index + d);
       if (after?.loaded) return after.image;
       const before = cacheRef.current.get(index - d);
@@ -142,7 +142,7 @@ export function useFrameSequence({
     // position after every batch, not around wherever this scan currently is.
     let cancelled = false;
     let cursor = 0;
-    const BATCH_SIZE = 8;
+    const BATCH_SIZE = 16;
 
     const scheduleIdle = (callback: () => void) => {
       if (typeof window.requestIdleCallback === "function") {

@@ -7,7 +7,7 @@ import { HeroOverlay } from "./HeroOverlay";
 import { heroSequence, heroBehavior } from "./hero.config";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { ensureGsapRegistered, ScrollTrigger } from "@/animations/gsap";
+import { ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
 
 export function Hero() {
   const reducedMotion = useReducedMotion();
@@ -19,52 +19,51 @@ export function Hero() {
 
   useEffect(() => {
     if (reducedMotion) return;
-    ensureGsapRegistered();
 
-    // Drives the frame index and the hero text/CTA fade — unchanged, based
-    // purely on the hero's own pin distance so the scrub pacing never shifts.
-    const scrubTrigger = ScrollTrigger.create({
-      trigger: wrapperRef.current,
-      start: "top top",
-      end: "bottom-=15% bottom",
-      scrub: true,
-      onUpdate: (self) => {
-        progressRef.current = self.progress;
-        // Once the sequence has resolved, gradually darken the frozen final
-        // frame so it reads as a backdrop rather than competing with the
-        // Trust/Services content sitting on top of it.
-        const scrim = Math.max(0, (self.progress - 0.65) / 0.35);
-        stickyRef.current?.style.setProperty("--held-scrim", scrim.toFixed(4));
-      },
+    return runScrollTriggerSetup(() => {
+      const scrubTrigger = ScrollTrigger.create({
+        trigger: wrapperRef.current,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: heroBehavior.scrubSmoothing,
+        onUpdate: (self) => {
+          progressRef.current = self.progress;
+          // Once the sequence has resolved, gradually darken the frozen final
+          // frame so it reads as a backdrop rather than competing with the
+          // Trust/Services content sitting on top of it.
+          const scrim = Math.max(0, (self.progress - 0.65) / 0.35);
+          stickyRef.current?.style.setProperty("--held-scrim", scrim.toFixed(4));
+        },
+      });
+
+      // Keeps the resolved frame visible as a fixed backdrop behind Trust and
+      // Services, fading it out only in the final stretch before Projects
+      // takes over with its own solid background — "system" becomes the
+      // environment the rest of the proof sits inside, no hard cut.
+      const visibilityTrigger = ScrollTrigger.create({
+        trigger: wrapperRef.current,
+        start: "top top",
+        endTrigger: "#projects",
+        end: "top 80%",
+        scrub: heroBehavior.scrubSmoothing,
+        onUpdate: (self) => {
+          const fadeStart = 0.85;
+          const visibility =
+            self.progress < fadeStart
+              ? 1
+              : Math.max(0, 1 - (self.progress - fadeStart) / (1 - fadeStart));
+          stickyRef.current?.style.setProperty("--backdrop-opacity", visibility.toFixed(4));
+          if (stickyRef.current) {
+            stickyRef.current.style.visibility = visibility > 0.001 ? "visible" : "hidden";
+          }
+        },
+      });
+
+      return () => {
+        scrubTrigger.kill();
+        visibilityTrigger.kill();
+      };
     });
-
-    // Keeps the resolved frame visible as a fixed backdrop behind Trust and
-    // Services, fading it out only in the final stretch before Projects
-    // takes over with its own solid background — "system" becomes the
-    // environment the rest of the proof sits inside, no hard cut.
-    const visibilityTrigger = ScrollTrigger.create({
-      trigger: wrapperRef.current,
-      start: "top top",
-      endTrigger: "#projects",
-      end: "top 80%",
-      scrub: true,
-      onUpdate: (self) => {
-        const fadeStart = 0.85;
-        const visibility =
-          self.progress < fadeStart
-            ? 1
-            : Math.max(0, 1 - (self.progress - fadeStart) / (1 - fadeStart));
-        stickyRef.current?.style.setProperty("--backdrop-opacity", visibility.toFixed(4));
-        if (stickyRef.current) {
-          stickyRef.current.style.visibility = visibility > 0.001 ? "visible" : "hidden";
-        }
-      },
-    });
-
-    return () => {
-      scrubTrigger.kill();
-      visibilityTrigger.kill();
-    };
   }, [reducedMotion]);
 
   if (reducedMotion) {

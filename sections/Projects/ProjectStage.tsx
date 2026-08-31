@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import type { projects as projectsType } from "@/lib/content";
-import { ensureGsapRegistered, gsap, ScrollTrigger } from "@/animations/gsap";
+import { ensureGsapRegistered, gsap, ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type Project = (typeof projectsType)[number];
@@ -46,12 +46,13 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
   const progressFillRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    ensureGsapRegistered();
-    const pinEl = pinRef.current;
-    if (!pinEl) return;
+    return runScrollTriggerSetup(() => {
+      ensureGsapRegistered();
+      const pinEl = pinRef.current;
+      if (!pinEl) return;
 
-    const count = projects.length;
-    const cards = cardRefs.current;
+      const count = projects.length;
+      const cards = cardRefs.current;
 
     cards.forEach((card) => {
       if (!card) return;
@@ -154,6 +155,7 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
       trigger.kill();
       tl.kill();
     };
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projects.length]);
 
