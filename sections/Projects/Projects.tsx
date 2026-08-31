@@ -1,4 +1,4 @@
-import { projects } from "@/lib/content";
+import { projects, projectsSection } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProjectStage } from "./ProjectStage";
 
@@ -7,9 +7,9 @@ export function Projects() {
     <section id="projects" className="relative z-10 bg-ink py-28 md:py-36">
       <div className="container-edge">
         <SectionHeading
-          eyebrow="Featured Projects"
-          title="One engineering capability. Different systems."
-          description="The same process — understand, design, architect, build, deploy — produces very different software depending on the problem."
+          eyebrow={projectsSection.eyebrow}
+          title={projectsSection.title}
+          description={projectsSection.description}
         />
       </div>
 

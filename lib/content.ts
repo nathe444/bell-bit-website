@@ -101,11 +101,19 @@ export const products = [
   },
 ] as const;
 
+export const projectsSection = {
+  eyebrow: "Case dossiers",
+  title: "One engineering capability. Different systems.",
+  description:
+    "The same process — understand, design, architect, build, deploy — produces very different software depending on the problem.",
+} as const;
+
 export const projects = [
   {
     id: "hoomez",
     name: "Hoomez",
     category: "Commerce",
+    clientId: "hoomez",
     summary:
       "An e-commerce platform developed for a UAE-based client, focused on construction materials, furniture, and property management.",
     detail:
@@ -118,6 +126,7 @@ export const projects = [
     id: "csms",
     name: "CSMS",
     category: "Optimization",
+    clientId: "csms",
     summary:
       "A university-level scheduling system developed for Addis Ababa University.",
     detail:
@@ -130,6 +139,7 @@ export const projects = [
     id: "guansa",
     name: "Guansa",
     category: "Enterprise",
+    clientId: "guansa",
     summary:
       "A corporate platform for Guansa PLC that showcases all subsidiary companies, including Guansa Mead and Guansa Export.",
     detail:
@@ -142,6 +152,7 @@ export const projects = [
     id: "tena-bit",
     name: "Tena-BIT",
     category: "Healthcare",
+    clientId: null,
     summary:
       "A healthcare system designed to track patient movement and medical records.",
     detail:
