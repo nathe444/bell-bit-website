@@ -35,8 +35,8 @@ export const heroBehavior = {
   pinDistanceVh: Math.round(manifest.frameCount * VH_PER_FRAME),
   /** Frames to eagerly preload around frame 0 before the rest load progressively. */
   initialWindow: Math.min(24, Math.max(12, Math.ceil(manifest.frameCount * 0.05))),
-  /** Max decoded frames in memory — larger window for longer sequences. */
-  cacheWindow: Math.min(120, Math.max(72, Math.ceil(manifest.frameCount * 0.28))),
+  /** Max decoded frames in memory — wide enough to avoid re-fetch while scrubbing. */
+  cacheWindow: Math.min(160, Math.max(96, Math.ceil(manifest.frameCount * 0.4))),
   /**
    * ScrollTrigger scrub lag (seconds). A small amount of smoothing keeps the
    * canvas in sync with Lenis without feeling jittery on fast wheel input.

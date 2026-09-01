@@ -62,9 +62,6 @@ export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: He
       height = rect.height;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
-      // Resizing the backing store resets 2D context state, so smoothing
-      // has to be reapplied every time — otherwise it silently reverts to
-      // low quality after the first resize (including the initial one on Safari).
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
     };
@@ -75,6 +72,7 @@ export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: He
 
     let rafId = 0;
     let lastDrawnIndex = -1;
+    let lastPreloadIndex = -1;
 
     const draw = () => {
       rafId = requestAnimationFrame(draw);
@@ -84,11 +82,15 @@ export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: He
         sequence.frameCount - 1,
         Math.floor(progress * sequence.frameCount)
       );
-      preloadAround(frameIndex);
+
+      if (frameIndex !== lastPreloadIndex) {
+        lastPreloadIndex = frameIndex;
+        preloadAround(frameIndex);
+      }
 
       const image = getFrame(frameIndex);
-      if (!image) return;
-      if (frameIndex === lastDrawnIndex) return;
+      if (!image || frameIndex === lastDrawnIndex) return;
+
       lastDrawnIndex = frameIndex;
 
       const canvasW = width * dpr;
@@ -104,11 +106,9 @@ export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: He
       let sh = sequence.frameHeight;
 
       if (srcAspect > dstAspect) {
-        // Source is wider than destination: crop the sides.
         sw = sequence.frameHeight * dstAspect;
         sx = (sequence.frameWidth - sw) / 2;
       } else {
-        // Source is taller than destination: crop top/bottom.
         sh = sequence.frameWidth / dstAspect;
         sy = (sequence.frameHeight - sh) / 2;
       }

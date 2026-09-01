@@ -16,10 +16,9 @@ type FrameEntry = {
 };
 
 /**
- * Loads and caches the hero frame sequence without ever holding all frames
- * decoded in memory at once. Exposes an imperative `getFrame` for the canvas's
- * own render loop (so scroll never triggers a React re-render) plus a small
- * amount of state for the loading indicator.
+ * Loads and caches the hero frame sequence with a bounded hot window.
+ * Evicted frames move to a cold store so the same URL is never fetched twice
+ * in one session.
  */
 export function useFrameSequence({
   frameCount,
@@ -28,8 +27,10 @@ export function useFrameSequence({
   cacheWindow,
 }: SequenceConfig) {
   const cacheRef = useRef<Map<number, FrameEntry>>(new Map());
+  const coldCacheRef = useRef<Map<number, HTMLImageElement>>(new Map());
   const pendingRef = useRef<Set<number>>(new Set());
-  const lastRequestedRef = useRef(0);
+  const lastRequestedRef = useRef(-1);
+  const lastEvictCenterRef = useRef(-1);
   const directionRef = useRef<1 | -1>(1);
   const [firstFrameReady, setFirstFrameReady] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
@@ -40,8 +41,16 @@ export function useFrameSequence({
       if (index < 0 || index >= frameCount) return;
       if (cacheRef.current.has(index) || pendingRef.current.has(index)) return;
 
+      const cold = coldCacheRef.current.get(index);
+      if (cold) {
+        coldCacheRef.current.delete(index);
+        cacheRef.current.set(index, { image: cold, loaded: true, failed: false });
+        return;
+      }
+
       pendingRef.current.add(index);
       const img = new window.Image();
+      img.decoding = "async";
       const entry: FrameEntry = { image: img, loaded: false, failed: false };
 
       const finalize = (failed: boolean) => {
@@ -71,26 +80,50 @@ export function useFrameSequence({
 
   const evictFar = useCallback(
     (centerIndex: number) => {
+      // Only run eviction when the playhead moves — not on redundant calls.
+      if (centerIndex === lastEvictCenterRef.current) return;
+      lastEvictCenterRef.current = centerIndex;
+
       const cache = cacheRef.current;
       if (cache.size <= cacheWindow) return;
-      const distances = Array.from(cache.keys()).sort(
-        (a, b) => Math.abs(b - centerIndex) - Math.abs(a - centerIndex)
-      );
+
+      const keepRadius = Math.ceil(cacheWindow * 0.6);
+      const candidates = Array.from(cache.keys())
+        .filter((idx) => idx !== 0 && idx !== frameCount - 1)
+        .filter((idx) => Math.abs(idx - centerIndex) > keepRadius)
+        .sort((a, b) => Math.abs(b - centerIndex) - Math.abs(a - centerIndex));
+
       const overflow = cache.size - cacheWindow;
-      for (let i = 0; i < overflow; i++) {
-        const idx = distances[i];
-        if (idx === 0) continue; // keep the opening frame resident always
+      for (let i = 0; i < overflow && i < candidates.length; i++) {
+        const idx = candidates[i]!;
+        const entry = cache.get(idx);
+        if (entry?.loaded) coldCacheRef.current.set(idx, entry.image);
         cache.delete(idx);
       }
+
+      // Bound cold storage — drop oldest far-from-center images only after hot eviction.
+      const coldMax = cacheWindow * 2;
+      if (coldCacheRef.current.size > coldMax) {
+        const coldKeys = Array.from(coldCacheRef.current.keys()).sort(
+          (a, b) => Math.abs(b - centerIndex) - Math.abs(a - centerIndex)
+        );
+        const coldOverflow = coldCacheRef.current.size - coldMax;
+        for (let i = 0; i < coldOverflow; i++) {
+          coldCacheRef.current.delete(coldKeys[i]!);
+        }
+      }
     },
-    [cacheWindow]
+    [cacheWindow, frameCount]
   );
 
   /** Requests frames around `index`, prioritized by distance and scroll direction. */
   const preloadAround = useCallback(
     (index: number) => {
-      if (index > lastRequestedRef.current) directionRef.current = 1;
-      else if (index < lastRequestedRef.current) directionRef.current = -1;
+      const prev = lastRequestedRef.current;
+      if (index === prev) return;
+
+      if (index > prev) directionRef.current = 1;
+      else if (index < prev) directionRef.current = -1;
       lastRequestedRef.current = index;
 
       const dir = directionRef.current;
@@ -102,13 +135,14 @@ export function useFrameSequence({
         if (d === 0) {
           order.push(index);
         } else {
-          order.push(ahead, behind);
+          if (ahead >= 0 && ahead < frameCount) order.push(ahead);
+          if (behind >= 0 && behind < frameCount) order.push(behind);
         }
       }
       order.forEach((i) => loadFrame(i));
       evictFar(index);
     },
-    [cacheWindow, loadFrame, evictFar]
+    [cacheWindow, frameCount, loadFrame, evictFar]
   );
 
   /** Synchronous lookup for the render loop: exact frame, or nearest available. */
@@ -127,47 +161,22 @@ export function useFrameSequence({
 
   useEffect(() => {
     mountedRef.current = true;
+    cacheRef.current.clear();
+    coldCacheRef.current.clear();
+    pendingRef.current.clear();
+    lastRequestedRef.current = -1;
+    lastEvictCenterRef.current = -1;
+
     for (let i = 0; i < Math.min(initialWindow, frameCount); i++) {
       loadFrame(i);
     }
-    // Also warm the closing frame immediately so the "resolved system" end
-    // state can appear even before the full sequence finishes loading.
     loadFrame(frameCount - 1);
-
-    // Background warm-up: request every remaining frame in small batches
-    // during idle time. This is what keeps fast scrolling from ever falling
-    // back to a stale/far-away frame — by the time the user gets there, the
-    // browser has already fetched (and often decoded) it. Decoded-frame
-    // memory still stays bounded: we evict around the *real* current scroll
-    // position after every batch, not around wherever this scan currently is.
-    let cancelled = false;
-    let cursor = 0;
-    const BATCH_SIZE = 16;
-
-    const scheduleIdle = (callback: () => void) => {
-      if (typeof window.requestIdleCallback === "function") {
-        window.requestIdleCallback(callback, { timeout: 500 });
-      } else {
-        window.setTimeout(callback, 120);
-      }
-    };
-
-    const step = () => {
-      if (cancelled || cursor >= frameCount) return;
-      for (let n = 0; n < BATCH_SIZE && cursor < frameCount; cursor++, n++) {
-        loadFrame(cursor);
-      }
-      evictFar(lastRequestedRef.current);
-      scheduleIdle(step);
-    };
-    scheduleIdle(step);
 
     return () => {
       mountedRef.current = false;
-      cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [frameCount]);
 
   return { getFrame, preloadAround, firstFrameReady, loadedCount };
 }
