@@ -1,5 +1,16 @@
 import manifest from "@/public/assets/bellbit/hero/manifest.json";
 
+type HeroManifest = typeof manifest & {
+  frameExtension?: string;
+  mobileFrameExtension?: string;
+  posterExtension?: string;
+};
+
+const m = manifest as HeroManifest;
+const desktopExt = m.frameExtension ?? "jpg";
+const mobileExt = m.mobileFrameExtension ?? "jpg";
+const posterExt = m.posterExtension ?? "jpg";
+
 /**
  * Everything about the hero frame sequence lives here so nothing else in the
  * codebase hardcodes a frame count, path, or dimension. Values come straight
@@ -7,24 +18,24 @@ import manifest from "@/public/assets/bellbit/hero/manifest.json";
  * Bell bit hero frames/ source folder.
  */
 export const heroSequence = {
-  frameCount: manifest.frameCount,
-  frameWidth: manifest.frameWidth,
-  frameHeight: manifest.frameHeight,
+  frameCount: m.frameCount,
+  frameWidth: m.frameWidth,
+  frameHeight: m.frameHeight,
   framePath: (index: number) =>
-    `/assets/bellbit/hero/frames/frame-${String(index + 1).padStart(manifest.padWidth, "0")}.jpg`,
+    `/assets/bellbit/hero/frames/frame-${String(index + 1).padStart(m.padWidth, "0")}.${desktopExt}`,
 
   mobile: {
-    frameCount: manifest.mobileFrameCount,
-    frameWidth: manifest.mobileFrameWidth,
-    frameHeight: manifest.mobileFrameHeight,
+    frameCount: m.mobileFrameCount,
+    frameWidth: m.mobileFrameWidth,
+    frameHeight: m.mobileFrameHeight,
     framePath: (index: number) =>
       `/assets/bellbit/hero/frames-mobile/frame-${String(index + 1).padStart(
-        manifest.mobilePadWidth,
+        m.mobilePadWidth,
         "0"
-      )}.jpg`,
+      )}.${mobileExt}`,
   },
 
-  posterPath: "/assets/bellbit/hero/poster.jpg",
+  posterPath: `/assets/bellbit/hero/poster.${posterExt}`,
 } as const;
 
 /** ~0.72vh of scroll per desktop frame — enough room for copy to breathe. */
@@ -32,11 +43,11 @@ const VH_PER_FRAME = 0.72;
 
 export const heroBehavior = {
   /** Scroll distance mapped to the full frame sequence, in viewport heights. */
-  pinDistanceVh: Math.round(manifest.frameCount * VH_PER_FRAME),
+  pinDistanceVh: Math.round(m.frameCount * VH_PER_FRAME),
   /** Frames to eagerly preload around frame 0 before the rest load progressively. */
-  initialWindow: Math.min(24, Math.max(12, Math.ceil(manifest.frameCount * 0.05))),
+  initialWindow: Math.min(24, Math.max(12, Math.ceil(m.frameCount * 0.05))),
   /** Max decoded frames in memory — wide enough to avoid re-fetch while scrubbing. */
-  cacheWindow: Math.min(160, Math.max(96, Math.ceil(manifest.frameCount * 0.4))),
+  cacheWindow: Math.min(160, Math.max(96, Math.ceil(m.frameCount * 0.4))),
   /**
    * ScrollTrigger scrub lag (seconds). A small amount of smoothing keeps the
    * canvas in sync with Lenis without feeling jittery on fast wheel input.

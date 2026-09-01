@@ -1,10 +1,10 @@
 /**
  * Ingests the raw hero frame sequence from "Bell bit hero frames/" into
  * public/assets/bellbit/hero/, producing:
- *   - frames/frame-XXX.jpg        desktop sequence, renumbered 1..N
- *   - frames-mobile/frame-XXX.jpg lighter subset, downscaled, for small screens
- *   - poster.jpg                  first frame, used as the immediate/SSR poster
- *   - manifest.json               frame counts, dimensions, pad widths
+ *   - frames/frame-XXX.webp      desktop sequence, full res, WebP (~55% smaller than raw JPEG)
+ *   - frames-mobile/frame-XXX.webp lighter subset, downscaled, for small screens
+ *   - poster.webp                  first frame, used as the immediate/SSR poster
+ *   - manifest.json               frame counts, dimensions, pad widths, extensions
  *
  * Supports source filenames:
  *   - frame_000000.jpg  (current export)
@@ -12,7 +12,7 @@
  *
  * Run with: npm run process-hero-frames
  */
-import { readdir, mkdir, copyFile, writeFile, rm } from "node:fs/promises";
+import { readdir, mkdir, writeFile, rm } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -24,6 +24,15 @@ const OUT_MOBILE = path.join(OUT_BASE, "frames-mobile");
 
 const MOBILE_STRIDE = 3;
 const MOBILE_WIDTH = 640;
+
+/** Full-resolution desktop WebP — q80 is visually lossless for scroll scrub at ~40% smaller than source JPEG. */
+const DESKTOP_WEBP_QUALITY = 80;
+const DESKTOP_WEBP_EFFORT = 4;
+
+const MOBILE_WEBP_QUALITY = 80;
+const MOBILE_WEBP_EFFORT = 4;
+
+const FRAME_EXT = "webp";
 
 const FRAME_PATTERNS = [
   /^frame_(\d+)\.jpg$/i,
@@ -41,6 +50,16 @@ function parseFrameNumber(filename) {
 
 function pad(n, width) {
   return String(n).padStart(width, "0");
+}
+
+function frameName(index, padWidth) {
+  return `frame-${pad(index, padWidth)}.${FRAME_EXT}`;
+}
+
+async function encodeDesktopFrame(sourcePath, destPath) {
+  await sharp(sourcePath)
+    .webp({ quality: DESKTOP_WEBP_QUALITY, effort: DESKTOP_WEBP_EFFORT })
+    .toFile(destPath);
 }
 
 async function main() {
@@ -63,17 +82,20 @@ async function main() {
   await mkdir(OUT_FRAMES, { recursive: true });
   await mkdir(OUT_MOBILE, { recursive: true });
 
-  const first = sharp(path.join(SOURCE_DIR, files[0]));
-  const meta = await first.metadata();
+  const firstPath = path.join(SOURCE_DIR, files[0]);
+  const meta = await sharp(firstPath).metadata();
   const width = meta.width;
   const height = meta.height;
 
   console.log(`Found ${frameCount} frames at ${width}x${height}`);
+  console.log(
+    `Encoding desktop → WebP q${DESKTOP_WEBP_QUALITY}, mobile → ${MOBILE_WIDTH}px WebP q${MOBILE_WEBP_QUALITY}`
+  );
 
   for (let i = 0; i < files.length; i++) {
-    await copyFile(
+    await encodeDesktopFrame(
       path.join(SOURCE_DIR, files[i]),
-      path.join(OUT_FRAMES, `frame-${pad(i + 1, padWidth)}.jpg`)
+      path.join(OUT_FRAMES, frameName(i + 1, padWidth))
     );
     if ((i + 1) % 60 === 0 || i + 1 === frameCount) {
       console.log(`  desktop ${i + 1}/${frameCount}`);
@@ -90,24 +112,33 @@ async function main() {
   for (let i = 0; i < mobileFiles.length; i++) {
     await sharp(path.join(SOURCE_DIR, mobileFiles[i]))
       .resize(MOBILE_WIDTH, mobileHeight)
-      .jpeg({ quality: 72 })
-      .toFile(path.join(OUT_MOBILE, `frame-${pad(i + 1, mobilePadWidth)}.jpg`));
+      .webp({ quality: MOBILE_WEBP_QUALITY, effort: MOBILE_WEBP_EFFORT })
+      .toFile(path.join(OUT_MOBILE, frameName(i + 1, mobilePadWidth)));
     if ((i + 1) % 40 === 0 || i + 1 === mobileFiles.length) {
       console.log(`  mobile ${i + 1}/${mobileFiles.length}`);
     }
   }
 
-  await copyFile(path.join(SOURCE_DIR, files[0]), path.join(OUT_BASE, "poster.jpg"));
+  await sharp(firstPath)
+    .webp({ quality: DESKTOP_WEBP_QUALITY, effort: DESKTOP_WEBP_EFFORT })
+    .toFile(path.join(OUT_BASE, `poster.${FRAME_EXT}`));
 
   const manifest = {
     frameCount,
     frameWidth: width,
     frameHeight: height,
+    frameExtension: FRAME_EXT,
     mobileFrameCount: mobileFiles.length,
     mobileFrameWidth: MOBILE_WIDTH,
     mobileFrameHeight: mobileHeight,
+    mobileFrameExtension: FRAME_EXT,
+    posterExtension: FRAME_EXT,
     padWidth,
     mobilePadWidth,
+    encode: {
+      desktop: { format: "webp", quality: DESKTOP_WEBP_QUALITY },
+      mobile: { format: "webp", quality: MOBILE_WEBP_QUALITY, width: MOBILE_WIDTH },
+    },
     generatedAt: new Date().toISOString(),
   };
 
