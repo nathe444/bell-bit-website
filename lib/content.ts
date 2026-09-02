@@ -38,20 +38,61 @@ export const contact = {
 } as const;
 
 export const servicesSection = {
-  eyebrow: "Our Services",
-  title: "Software development and technical solutions.",
-  description:
-    "Our core services focus on software development and related technical solutions.",
+  title: "Our Services",
 } as const;
 
+export const servicePhases = [
+  { id: "discover", label: "Discover" },
+  { id: "design", label: "Design" },
+  { id: "build", label: "Build" },
+  { id: "operate", label: "Operate" },
+] as const;
+
+export type ServicePhaseId = (typeof servicePhases)[number]["id"];
+
 export const services = [
-  { id: "custom-design", title: "Custom software and system design" },
-  { id: "custom-development", title: "Custom software and system development" },
-  { id: "analysis", title: "System analysis and requirement gathering" },
-  { id: "architecture", title: "System architecture design & solution engineering" },
-  { id: "deployment", title: "Software deployment and infrastructure management" },
-  { id: "mobile", title: "Mobile application development" },
-  { id: "uiux", title: "UI/UX design" },
+  {
+    id: "analysis",
+    phase: "discover" as const,
+    title: "System analysis and requirement gathering",
+    tagline: "Map the real problem before a single line of code is written.",
+  },
+  {
+    id: "custom-design",
+    phase: "design" as const,
+    title: "Custom software and system design",
+    tagline: "Shape how the system looks, flows, and behaves for its users.",
+  },
+  {
+    id: "uiux",
+    phase: "design" as const,
+    title: "UI/UX design",
+    tagline: "Interfaces built around how people actually work.",
+  },
+  {
+    id: "custom-development",
+    phase: "build" as const,
+    title: "Custom software and system development",
+    tagline: "Engineering tailored to your requirements — not a template.",
+  },
+  {
+    id: "architecture",
+    phase: "build" as const,
+    title: "System architecture design & solution engineering",
+    tagline: "Structure that scales, integrates, and holds up under load.",
+  },
+  {
+    id: "mobile",
+    phase: "build" as const,
+    title: "Mobile application development",
+    tagline: "Extend the system into native and cross-platform experiences.",
+  },
+  {
+    id: "deployment",
+    phase: "operate" as const,
+    title: "Software deployment and infrastructure management",
+    tagline: "Take it live and keep the infrastructure behind it reliable.",
+  },
 ] as const;
 
 /** Globe markers / arcs for the services section. */
@@ -158,6 +199,130 @@ export const projects = [
   },
 ] as const;
 
+export const technologySection = {
+  eyebrow: "Technology Stack",
+  title: "Depth at every layer, not a wall of logos.",
+  description:
+    "Scroll through each stack — frontend, backend, infrastructure, and AI — one group at a time.",
+} as const;
+
+export const technologyGroups = [
+  {
+    id: "frontend-mobile",
+    label: "Frontend & Mobile",
+    title: "Interfaces and applications",
+    description:
+      "From web experiences to native and cross-platform apps — the full surface area users touch.",
+    items: [
+      "React",
+      "Next.js",
+      "Tailwind",
+      "HTML",
+      "CSS",
+      "SvelteKit",
+      "WordPress",
+      "Flutter",
+      "React Native",
+      "Swift",
+      "Dart",
+    ],
+    iconSlugs: [
+      "react",
+      "nextdotjs",
+      "tailwindcss",
+      "html5",
+      "css",
+      "svelte",
+      "wordpress",
+      "flutter",
+      "swift",
+      "dart",
+      "expo",
+    ],
+  },
+  {
+    id: "backend",
+    label: "Backend",
+    title: "Services and APIs",
+    description:
+      "Server-side systems, APIs, and content layers engineered for reliability and scale.",
+    items: [
+      "Nest.js",
+      "Spring Boot",
+      "Java",
+      "FastAPI",
+      "Node.js",
+      "Payload CMS",
+      "TypeScript",
+    ],
+    iconSlugs: [
+      "nestjs",
+      "springboot",
+      "openjdk",
+      "fastapi",
+      "nodedotjs",
+      "typescript",
+    ],
+  },
+  {
+    id: "database-infrastructure",
+    label: "Database, Infrastructure & Tools",
+    title: "Data and operations",
+    description:
+      "Persistence, messaging, containers, and the tooling that keeps systems running in production.",
+    items: [
+      "PostgreSQL",
+      "Docker",
+      "Kubernetes",
+      "RabbitMQ",
+      "Kafka",
+      "Redis",
+      "GitHub",
+      "Postman",
+      "Jest",
+    ],
+    iconSlugs: [
+      "postgresql",
+      "docker",
+      "kubernetes",
+      "rabbitmq",
+      "apachekafka",
+      "redis",
+      "github",
+      "postman",
+      "jest",
+    ],
+  },
+  {
+    id: "automation-ai",
+    label: "Automation & AI",
+    title: "Intelligent workflows",
+    description:
+      "Automation pipelines, LLM integrations, and retrieval systems for modern AI-powered products.",
+    items: [
+      "LangChain",
+      "n8n",
+      "LangGraph",
+      "Vector Database",
+      "RAG",
+      "Claude",
+      "OpenAI",
+    ],
+    iconSlugs: [
+      "langchain",
+      "n8n",
+      "langgraph",
+      "pinecone",
+      "weaviate",
+      "anthropic",
+      "openai",
+    ],
+  },
+] as const;
+
+export type TechnologyGroup = (typeof technologyGroups)[number];
+
+/** @deprecated Use technologyGroups — kept for inline copy references. */
 export const technologies = {
   backend: ["Nest.js", "Spring Boot"],
   mobile: ["Flutter", "React Native"],

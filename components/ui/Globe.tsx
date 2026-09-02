@@ -204,7 +204,7 @@ export function Globe({ markers = [], arcs = [], className = "" }: GlobeProps) {
 
   return (
     <div
-      className={`relative aspect-square w-full max-w-[min(100%,580px)] select-none lg:max-w-[640px] ${className}`}
+      className={`relative aspect-square w-full select-none ${className}`}
     >
       <canvas
         ref={canvasRef}
