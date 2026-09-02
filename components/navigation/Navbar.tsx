@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { BrandLogo } from "@/components/brand/BrandLogo";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { nav } from "@/lib/content";
 
 export function Navbar() {
@@ -25,33 +26,35 @@ export function Navbar() {
         aria-label="Primary"
       >
         <a href="#hero" aria-label="BellBit home" className="flex items-center">
-          <Image
-            src="/assets/bellbit/brand/bellbit-logo.png"
-            alt="BellBit"
-            width={110}
-            height={40}
-            priority
-            className="h-7 w-auto object-contain brightness-0 invert"
-          />
+          <BrandLogo className="h-7 w-auto" width={110} height={40} priority forceInverted={!scrolled} />
         </a>
         <ul className="hidden items-center gap-8 md:flex">
           {nav.map((item) => (
             <li key={item.href}>
               <a
                 href={item.href}
-                className="text-xs font-medium uppercase tracking-[0.2em] text-paper-dim transition-colors hover:text-paper"
+                className={`text-xs font-medium uppercase tracking-[0.2em] transition-colors hover:text-signal-soft ${
+                  scrolled ? "text-paper-dim hover:text-paper" : "text-scene-paper-dim hover:text-scene-paper"
+                }`}
               >
                 {item.label}
               </a>
             </li>
           ))}
         </ul>
-        <a
-          href="#contact"
-          className="rounded-full border border-line-strong px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-paper transition-colors hover:border-signal-soft hover:text-signal-soft"
-        >
-          Contact
-        </a>
+        <div className="flex items-center gap-3">
+          <ThemeToggle className={!scrolled ? "border-scene-line-strong text-scene-paper-dim hover:border-signal-soft hover:text-scene-paper" : undefined} />
+          <a
+            href="#contact"
+            className={`rounded-full border px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] transition-colors hover:border-signal-soft hover:text-signal-soft ${
+              scrolled
+                ? "border-line-strong text-paper"
+                : "border-scene-line-strong text-scene-paper hover:text-scene-paper"
+            }`}
+          >
+            Contact
+          </a>
+        </div>
       </nav>
     </header>
   );

@@ -1,23 +1,33 @@
 @import "tailwindcss";
 
+/* Light mode (default) */
 :root {
-  /* Deep navy / blue-black foundation. */
-  --color-void: #05070c;
-  --color-ink: #0a0e17;
-  --color-surface: #10151f;
-  --color-surface-raised: #161c29;
-  --color-line: rgba(226, 232, 245, 0.1);
-  --color-line-strong: rgba(226, 232, 245, 0.18);
+  --color-void: #f3f5fa;
+  --color-ink: #e8ecf4;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f8fafc;
+  --color-line: rgba(10, 14, 23, 0.08);
+  --color-line-strong: rgba(10, 14, 23, 0.14);
 
-  /* BellBit blue accent family. */
-  --color-signal: #3d7bfd;
-  --color-signal-soft: #6f9dff;
-  --color-signal-dim: rgba(61, 123, 253, 0.16);
+  --color-signal: #2563eb;
+  --color-signal-soft: #3d7bfd;
+  --color-signal-dim: rgba(37, 99, 235, 0.12);
+  --color-signal-glow: rgba(37, 99, 235, 0.32);
+  --color-on-signal: #ffffff;
 
-  /* Neutral text. */
-  --color-paper: #f3f5fa;
-  --color-paper-dim: #aab2c5;
-  --color-paper-faint: #8891a3;
+  --color-paper: #0a0e17;
+  --color-paper-dim: #475569;
+  --color-paper-faint: #64748b;
+
+  /* Dark-rendered hero / CTA media — stays deep for frame sequence contrast */
+  --color-scene-void: #0a0e17;
+  --color-scene-paper: #f3f5fa;
+  --color-scene-paper-dim: #aab2c5;
+  --color-scene-paper-faint: #8891a3;
+  --color-scene-line: rgba(226, 232, 245, 0.12);
+  --color-scene-line-strong: rgba(226, 232, 245, 0.2);
+
+  --cta-media-opacity: 0.08;
 
   --background: var(--color-void);
   --foreground: var(--color-paper);
@@ -29,6 +39,39 @@
   --duration-slow: 1.1s;
   --duration-medium: 0.7s;
   --duration-fast: 0.35s;
+
+  color-scheme: light;
+}
+
+/*
+ * Dark mode — soft charcoal (Linear / Vercel style).
+ * Lifted off pure black; text is off-white to reduce glare.
+ * Hero/CTA scene tokens stay darker for 3D frame media.
+ */
+.dark {
+  --color-void: #141820;
+  --color-ink: #1a1f2b;
+  --color-surface: #222836;
+  --color-surface-raised: #2a3142;
+  --color-line: rgba(226, 232, 245, 0.08);
+  --color-line-strong: rgba(226, 232, 245, 0.14);
+
+  --color-signal: #4d84f7;
+  --color-signal-soft: #7ba4ff;
+  --color-signal-dim: rgba(77, 132, 247, 0.14);
+  --color-signal-glow: rgba(77, 132, 247, 0.38);
+  --color-on-signal: #141820;
+
+  --color-paper: #e4e7ee;
+  --color-paper-dim: #9aa3b5;
+  --color-paper-faint: #727d92;
+
+  --cta-media-opacity: 0.11;
+
+  --background: var(--color-void);
+  --foreground: var(--color-paper);
+
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -41,9 +84,16 @@
   --color-signal: var(--color-signal);
   --color-signal-soft: var(--color-signal-soft);
   --color-signal-dim: var(--color-signal-dim);
+  --color-on-signal: var(--color-on-signal);
   --color-paper: var(--color-paper);
   --color-paper-dim: var(--color-paper-dim);
   --color-paper-faint: var(--color-paper-faint);
+  --color-scene-void: var(--color-scene-void);
+  --color-scene-paper: var(--color-scene-paper);
+  --color-scene-paper-dim: var(--color-scene-paper-dim);
+  --color-scene-paper-faint: var(--color-scene-paper-faint);
+  --color-scene-line: var(--color-scene-line);
+  --color-scene-line-strong: var(--color-scene-line-strong);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-body);
@@ -56,7 +106,6 @@
 
 html {
   background: var(--color-void);
-  color-scheme: dark;
 }
 
 body {
@@ -69,7 +118,7 @@ body {
 
 ::selection {
   background: var(--color-signal);
-  color: var(--color-void);
+  color: var(--color-on-signal);
 }
 
 h1, h2, h3, h4 {
@@ -89,7 +138,68 @@ a {
   text-wrap: balance;
 }
 
+.cta-media-opacity {
+  opacity: var(--cta-media-opacity);
+}
+
+.claim-glow {
+  box-shadow: 0 0 40px -8px var(--color-signal-glow);
+}
+
+/* Trust marquee — GPU transforms, seamless loop, edge fade */
+@keyframes marquee-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left linear infinite;
+}
+
+.animate-marquee-right {
+  animation: marquee-right linear infinite;
+}
+
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .animate-marquee-left,
+  .animate-marquee-right {
+    animation: none;
+  }
+
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

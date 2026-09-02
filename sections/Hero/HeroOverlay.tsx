@@ -87,12 +87,12 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
             <p className="mb-6 text-xs font-medium uppercase tracking-[0.3em] text-signal-soft">
               BellBit Software Technologies
             </p>
-            <h1 className="text-balance font-display text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.98] text-paper">
+            <h1 className="text-balance font-display text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.98] text-scene-paper">
               We turn complexity
               <br />
               into systems.
             </h1>
-            <p className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-paper-dim md:text-xl">
+            <p className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-scene-paper-dim md:text-xl">
               BellBit builds intelligent software and digital products that turn complex business
               problems into simple, scalable experiences.
             </p>
@@ -101,14 +101,14 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
               <MagneticButton
                 as="a"
                 href="#contact"
-                className="inline-flex items-center gap-3 rounded-full bg-signal px-7 py-4 text-sm font-semibold uppercase tracking-wide text-void"
+                className="inline-flex items-center gap-3 rounded-full bg-signal px-7 py-4 text-sm font-semibold uppercase tracking-wide text-on-signal"
               >
                 Let&rsquo;s work together
               </MagneticButton>
               <MagneticButton
                 as="a"
                 href="#projects"
-                className="inline-flex items-center gap-2 border-b border-line-strong pb-1 text-sm font-medium uppercase tracking-wide text-paper-dim transition-colors hover:border-signal-soft hover:text-paper"
+                className="inline-flex items-center gap-2 border-b border-scene-line-strong pb-1 text-sm font-medium uppercase tracking-wide text-scene-paper-dim transition-colors hover:border-signal-soft hover:text-scene-paper"
               >
                 See our work
               </MagneticButton>
@@ -123,12 +123,12 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
             <p className="text-xs font-medium uppercase tracking-[0.3em] text-signal-soft">
               {heroSecondary.eyebrow}
             </p>
-            <h2 className="mt-4 font-display text-2xl font-medium leading-tight text-paper md:text-3xl">
+            <h2 className="mt-4 font-display text-2xl font-medium leading-tight text-scene-paper md:text-3xl">
               {heroSecondary.title}
             </h2>
-            <ul className="mt-6 space-y-4 border-l border-line-strong pl-5">
+            <ul className="mt-6 space-y-4 border-l border-scene-line-strong pl-5">
               {heroSecondary.items.map((item) => (
-                <li key={item} className="text-sm leading-relaxed text-paper-dim md:text-base">
+                <li key={item} className="text-sm leading-relaxed text-scene-paper-dim md:text-base">
                   {item}
                 </li>
               ))}
@@ -136,7 +136,7 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
             <MagneticButton
               as="a"
               href="#trust"
-              className="mt-8 inline-flex items-center gap-2 border-b border-line-strong pb-1 text-sm font-medium uppercase tracking-wide text-paper-dim transition-colors hover:border-signal-soft hover:text-paper"
+              className="mt-8 inline-flex items-center gap-2 border-b border-scene-line-strong pb-1 text-sm font-medium uppercase tracking-wide text-scene-paper-dim transition-colors hover:border-signal-soft hover:text-scene-paper"
             >
               Meet our clients
             </MagneticButton>
@@ -145,15 +145,15 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
       </div>
 
       <div
-        className="container-edge flex items-center justify-between pb-10 text-xs uppercase tracking-[0.25em] text-paper-faint"
+        className="container-edge flex items-center justify-between pb-10 text-xs uppercase tracking-[0.25em] text-scene-paper-faint"
         style={{
           opacity: "calc(1 - var(--hero-progress) * 2.2)",
         }}
       >
         <span>Complexity</span>
-        <span className="h-px flex-1 mx-6 bg-line" />
+        <span className="h-px flex-1 mx-6 bg-scene-line" />
         <span>Structure</span>
-        <span className="h-px flex-1 mx-6 bg-line" />
+        <span className="h-px flex-1 mx-6 bg-scene-line" />
         <span>System</span>
       </div>
     </div>

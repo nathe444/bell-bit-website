@@ -1,43 +1,48 @@
 import { clients, partners, trustSection } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { RegistryBlock } from "./RegistryBlock";
-import { RegistryPanel } from "./RegistryPanel";
+import { MarqueeRow } from "./MarqueeRow";
 
 export function Trust() {
   return (
     <section
       id="trust"
-      className="relative z-10 border-y border-line bg-void pt-20 pb-24 md:pt-24 md:pb-28"
+      className="relative z-10 overflow-x-hidden border-y border-line bg-void py-20 md:py-28"
     >
       <div className="container-edge">
-        <div className="grid gap-12 md:grid-cols-[minmax(0,0.38fr)_minmax(0,0.62fr)] md:gap-16 lg:gap-20">
-          <div className="md:sticky md:top-28 md:self-start">
-            <Reveal>
-              <SectionHeading
-                eyebrow={trustSection.eyebrow}
-                title={trustSection.title}
-                description={trustSection.description}
-              />
-            </Reveal>
-          </div>
+        <Reveal>
+          <SectionHeading
+            eyebrow={trustSection.eyebrow}
+            title={trustSection.title}
+            description={trustSection.description}
+            align="center"
+          />
+        </Reveal>
+      </div>
 
-          <RegistryPanel>
-            <RegistryBlock
-              title="Clients"
-              variant="client"
-              entries={clients}
-              idPrefix="C"
-            />
-            <RegistryBlock
-              title="Partners"
-              variant="partner"
-              entries={partners}
-              idPrefix="P"
-              subordinate
-            />
-          </RegistryPanel>
+      <div className="mt-14 md:mt-20">
+        <MarqueeRow
+          label="Clients"
+          directionLabel="←"
+          entries={clients}
+          direction="left"
+          durationSeconds={58}
+        />
+
+        <div
+          className="mx-auto my-12 max-w-3xl px-6 md:my-20"
+          aria-hidden="true"
+        >
+          <div className="h-px w-full bg-line" />
         </div>
+
+        <MarqueeRow
+          label="Partners"
+          directionLabel="→"
+          entries={partners}
+          direction="right"
+          durationSeconds={74}
+        />
       </div>
     </section>
   );

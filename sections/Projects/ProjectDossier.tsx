@@ -24,7 +24,7 @@ export function ProjectDossier({ project, index, className, claimed }: ProjectDo
       <div
         className={`relative overflow-hidden border bg-surface ${
           claimed
-            ? "border-signal/40 shadow-[0_0_40px_-8px_rgba(61,123,253,0.55)]"
+            ? "border-signal/40 claim-glow"
             : "border-line"
         } ${isPortrait ? "mx-auto w-full max-w-[220px] md:mx-0 md:max-w-none" : "w-full"}`}
       >

@@ -12,7 +12,7 @@ export function CTA() {
         alt=""
         fill
         aria-hidden="true"
-        className="object-cover opacity-[0.14]"
+        className="object-cover cta-media-opacity"
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-void via-void/70 to-void" />
 
@@ -37,7 +37,7 @@ export function CTA() {
           <MagneticButton
             as="a"
             href={`mailto:${contact.email}`}
-            className="inline-flex items-center gap-3 rounded-full bg-signal px-8 py-4 text-sm font-semibold uppercase tracking-wide text-void"
+            className="inline-flex items-center gap-3 rounded-full bg-signal px-8 py-4 text-sm font-semibold uppercase tracking-wide text-on-signal"
           >
             {contact.email}
           </MagneticButton>

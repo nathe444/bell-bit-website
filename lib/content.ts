@@ -37,50 +37,45 @@ export const contact = {
   referencesNote: "Client references and case studies are available upon request.",
 } as const;
 
+export const servicesSection = {
+  eyebrow: "Our Services",
+  title: "Software development and technical solutions.",
+  description:
+    "Our core services focus on software development and related technical solutions.",
+} as const;
+
 export const services = [
-  {
-    id: "understand",
-    stage: "Understand",
-    title: "System analysis & requirement gathering",
-    description:
-      "We study the real business problem before writing a line of code — how the organization works today and what the software needs to do.",
-  },
-  {
-    id: "design",
-    stage: "Design",
-    title: "UI/UX design",
-    description:
-      "Interfaces designed around how people actually work, so the system is usable from day one.",
-  },
-  {
-    id: "architect",
-    stage: "Architect",
-    title: "System architecture design & solution engineering",
-    description:
-      "We define the structure underneath the software — how it will scale, integrate, and hold up under real use.",
-  },
-  {
-    id: "build",
-    stage: "Build",
-    title: "Custom software & system design and development",
-    description:
-      "Products and custom digital solutions engineered end-to-end for the client's actual requirements.",
-  },
-  {
-    id: "extend",
-    stage: "Extend",
-    title: "Mobile application development",
-    description:
-      "Native and cross-platform mobile experiences that extend a system beyond the desktop.",
-  },
-  {
-    id: "deploy",
-    stage: "Deploy",
-    title: "Software deployment & infrastructure management",
-    description:
-      "We take systems live and keep the infrastructure behind them reliable.",
-  },
+  { id: "custom-design", title: "Custom software and system design" },
+  { id: "custom-development", title: "Custom software and system development" },
+  { id: "analysis", title: "System analysis and requirement gathering" },
+  { id: "architecture", title: "System architecture design & solution engineering" },
+  { id: "deployment", title: "Software deployment and infrastructure management" },
+  { id: "mobile", title: "Mobile application development" },
+  { id: "uiux", title: "UI/UX design" },
 ] as const;
+
+/** Globe markers / arcs for the services section. */
+const HQ: [number, number] = [9.032, 38.746];
+
+export const servicesGlobe = {
+  markers: [
+    { id: "hq", location: HQ, label: "Addis Ababa" },
+    { id: "europe", location: [51.507, -0.127] as [number, number], label: "Europe" },
+    { id: "dubai", location: [25.2048, 55.2708] as [number, number], label: "Dubai" },
+    { id: "china", location: [39.9042, 116.4074] as [number, number], label: "China" },
+    {
+      id: "south-africa",
+      location: [-26.2041, 28.0473] as [number, number],
+      label: "South Africa",
+    },
+  ],
+  arcs: [
+    { id: "arc-london", from: HQ, to: [51.507, -0.127] as [number, number] },
+    { id: "arc-dubai", from: HQ, to: [25.2048, 55.2708] as [number, number] },
+    { id: "arc-china", from: HQ, to: [39.9042, 116.4074] as [number, number] },
+    { id: "arc-south-africa", from: HQ, to: [-26.2041, 28.0473] as [number, number] },
+  ],
+} as const;
 
 export const products = [
   {
@@ -181,9 +176,8 @@ export const architectureStages = [
 
 export const trustSection = {
   eyebrow: "Proof layer",
-  title: "Organizations in production.",
-  description:
-    "Domestic and international clients whose problems became deployed systems — and partners who extend our delivery capacity.",
+  title: "Organizations in Production",
+  description: "Trusted by teams building what comes next.",
 } as const;
 
 /**

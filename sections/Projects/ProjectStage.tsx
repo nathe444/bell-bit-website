@@ -199,7 +199,7 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
   return (
     <div ref={pinRef} className="relative">
       <div className="relative flex h-screen w-full flex-col overflow-hidden md:block">
-        <div className="container-edge flex h-full flex-col py-8 md:grid md:grid-cols-[minmax(0,0.22fr)_minmax(0,0.78fr)] md:gap-8 md:py-10 lg:gap-12">
+        <div className="container-edge grid h-full flex-col py-8 md:grid-cols-[minmax(0,0.22fr)_minmax(0,0.78fr)] md:items-stretch md:gap-8 md:py-10 lg:gap-12">
           <ProjectIndexRail
             projects={projects}
             activeIndex={activeIndex}

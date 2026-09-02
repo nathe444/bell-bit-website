@@ -19,7 +19,7 @@ export function ProjectIndexRail({
     <>
       {/* Desktop vertical rail */}
       <nav
-        className="hidden flex-col justify-between border-r border-line pr-6 md:flex lg:pr-8"
+        className="hidden h-full flex-col justify-center border-r border-line pr-6 md:flex lg:pr-8"
         aria-label="Case dossier index"
       >
         <ul className="space-y-1">

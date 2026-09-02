@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { company, contact, nav } from "@/lib/content";
 
 export function Footer() {
@@ -8,13 +8,7 @@ export function Footer() {
     <footer className="relative z-10 border-t border-line bg-ink py-16">
       <div className="container-edge flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
         <div className="max-w-xs">
-          <Image
-            src="/assets/bellbit/brand/bellbit-logo.png"
-            alt={company.name}
-            width={140}
-            height={52}
-            className="h-9 w-auto object-contain brightness-0 invert"
-          />
+          <BrandLogo className="h-9 w-auto" width={140} height={52} />
           <p className="mt-5 text-sm text-paper-dim">{company.overview}</p>
         </div>
 

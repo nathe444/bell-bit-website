@@ -3,7 +3,7 @@ import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
 import { SmoothScrollProvider } from "@/animations/SmoothScrollProvider";
 import { Navbar } from "@/components/navigation/Navbar";
-import { CustomCursor } from "@/components/navigation/CustomCursor";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -46,14 +46,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} min-h-full`}
+      className={`${manrope.variable} ${inter.variable} min-h-full dark`}
+      suppressHydrationWarning
     >
       <body className="min-h-full bg-void text-paper antialiased">
-        <SmoothScrollProvider>
-          <CustomCursor />
-          <Navbar />
-          <main>{children}</main>
-        </SmoothScrollProvider>
+        <ThemeProvider>
+          <SmoothScrollProvider>
+            <Navbar />
+            <main>{children}</main>
+          </SmoothScrollProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
