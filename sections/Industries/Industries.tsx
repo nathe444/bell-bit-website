@@ -4,7 +4,7 @@ import { IndustriesGrid } from "./IndustriesGrid";
 
 export function Industries() {
   return (
-    <section id="industries" className="relative z-10 bg-ink py-28 md:py-36">
+    <section id="industries" className="relative z-10 bg-ink pt-10 pb-28 md:pt-14 md:pb-36">
       <div className="container-edge">
         <SectionHeading
           eyebrow="Industries We Serve"

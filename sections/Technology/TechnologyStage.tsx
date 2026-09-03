@@ -231,7 +231,7 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
   }, [groups.length]);
 
   return (
-    <section id="technology" className="relative isolate bg-ink py-28 md:py-36">
+    <section id="technology" className="relative isolate bg-ink pt-28 pb-10 md:pt-36 md:pb-14">
       <div ref={pinRef} className="relative">
         <div
           className="relative h-[100svh] w-full overflow-hidden"
@@ -278,7 +278,7 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
 
 function TechnologyStageStatic({ groups, title }: TechnologyStageProps) {
   return (
-    <section id="technology" className="relative z-10 bg-ink py-28 md:py-36">
+    <section id="technology" className="relative z-10 bg-ink pt-28 pb-10 md:pt-36 md:pb-14">
       <div className="container-edge mx-auto max-w-6xl">
         <h2 className="text-balance text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-medium leading-tight text-paper">
           {title}
