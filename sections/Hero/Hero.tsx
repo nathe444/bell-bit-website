@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { heroSecondary } from "@/lib/content";
 import { HeroCanvas } from "./HeroCanvas";
 import { HeroOverlay } from "./HeroOverlay";
 import { heroSequence, heroBehavior } from "./hero.config";
@@ -144,33 +145,42 @@ function HeroStatic() {
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-scene-void via-scene-void/10 to-scene-void/40" />
       <div className="relative z-10 flex h-full flex-col justify-center">
-        <div className="container-edge max-w-4xl">
-          <p className="mb-6 text-xs font-medium uppercase tracking-[0.3em] text-signal-soft">
-            BellBit Software Technologies
-          </p>
-          <h1 className="text-balance font-display text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.98] text-scene-paper">
-            We turn complexity
-            <br />
-            into systems.
-          </h1>
-          <p className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-scene-paper-dim md:text-xl">
-            BellBit builds software products and custom digital solutions that
-            solve real business problems — through reliable, scalable, and
-            well-designed systems.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-6">
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-3 rounded-full bg-signal px-7 py-4 text-sm font-semibold uppercase tracking-wide text-on-signal"
-            >
-              Let&rsquo;s work together
-            </a>
-            <a
-              href="#projects"
-              className="inline-flex items-center gap-2 border-b border-scene-line-strong pb-1 text-sm font-medium uppercase tracking-wide text-scene-paper-dim"
-            >
-              Explore our work
-            </a>
+        <div className="container-edge relative w-full">
+          <div className="max-w-4xl">
+            <p className="mb-6 text-xs font-medium uppercase tracking-[0.3em] text-signal-soft">
+              BellBit Software Technologies
+            </p>
+            <h1 className="text-balance font-display text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.98] text-scene-paper">
+              We turn complexity
+              <br />
+              into systems.
+            </h1>
+            <p className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-scene-paper-dim md:text-xl">
+              BellBit builds intelligent systems and digital products that turn complex business
+              problems into simple, scalable experiences.
+            </p>
+            <div className="mt-10">
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-3 rounded-full bg-signal px-7 py-4 text-sm font-semibold uppercase tracking-wide text-on-signal"
+              >
+                Let&rsquo;s work together
+              </a>
+            </div>
+          </div>
+
+          <div className="mt-14 max-w-md md:absolute md:right-0 md:top-1/2 md:mt-0 md:max-w-md md:-translate-y-1/2 lg:max-w-lg">
+            <h2 className="font-display text-3xl font-medium leading-tight text-scene-paper md:text-4xl">
+              {heroSecondary.title}
+            </h2>
+            {heroSecondary.items.map((item, index) => (
+              <p
+                key={item}
+                className={`text-base leading-relaxed text-scene-paper-dim md:text-lg ${index === 0 ? "mt-6" : "mt-5"}`}
+              >
+                {item}
+              </p>
+            ))}
           </div>
         </div>
       </div>

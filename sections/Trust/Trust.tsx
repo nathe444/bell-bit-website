@@ -12,7 +12,6 @@ export function Trust() {
       <div className="container-edge">
         <Reveal>
           <SectionHeading
-            eyebrow={trustSection.eyebrow}
             title={trustSection.title}
             description={trustSection.description}
             align="center"
@@ -22,7 +21,7 @@ export function Trust() {
 
       <div className="mt-14 md:mt-20">
         <MarqueeRow
-          label="Clients"
+          label="Partners We Work With"
           directionLabel="←"
           entries={clients}
           direction="left"

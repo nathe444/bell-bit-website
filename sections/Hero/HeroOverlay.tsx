@@ -93,11 +93,11 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
               into systems.
             </h1>
             <p className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-scene-paper-dim md:text-xl">
-              BellBit builds intelligent software and digital products that turn complex business
+              BellBit builds intelligent systems and digital products that turn complex business
               problems into simple, scalable experiences.
             </p>
 
-            <div className="mt-10 flex flex-wrap items-center gap-6">
+            <div className="mt-10">
               <MagneticButton
                 as="a"
                 href="#contact"
@@ -105,34 +105,25 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
               >
                 Let&rsquo;s work together
               </MagneticButton>
-              <MagneticButton
-                as="a"
-                href="#projects"
-                className="inline-flex items-center gap-2 border-b border-scene-line-strong pb-1 text-sm font-medium uppercase tracking-wide text-scene-paper-dim transition-colors hover:border-signal-soft hover:text-scene-paper"
-              >
-                See our work
-              </MagneticButton>
             </div>
           </div>
 
           {/* Secondary — holds until Trust / Clients & Partners scrolls in */}
           <div
-            className="mt-14 max-w-md md:absolute md:right-0 md:top-1/2 md:mt-0 md:max-w-sm md:-translate-y-1/2 lg:max-w-md"
+            className="mt-14 max-w-md md:absolute md:right-0 md:top-1/2 md:mt-0 md:max-w-md md:-translate-y-1/2 lg:max-w-lg"
             style={{ opacity: "var(--hero-secondary)" }}
           >
-            <p className="text-xs font-medium uppercase tracking-[0.3em] text-signal-soft">
-              {heroSecondary.eyebrow}
-            </p>
-            <h2 className="mt-4 font-display text-2xl font-medium leading-tight text-scene-paper md:text-3xl">
+            <h2 className="font-display text-3xl font-medium leading-tight text-scene-paper md:text-4xl">
               {heroSecondary.title}
             </h2>
-            <ul className="mt-6 space-y-4 border-l border-scene-line-strong pl-5">
-              {heroSecondary.items.map((item) => (
-                <li key={item} className="text-sm leading-relaxed text-scene-paper-dim md:text-base">
-                  {item}
-                </li>
-              ))}
-            </ul>
+            {heroSecondary.items.map((item, index) => (
+              <p
+                key={item}
+                className={`text-base leading-relaxed text-scene-paper-dim md:text-lg ${index === 0 ? "mt-6" : "mt-5"}`}
+              >
+                {item}
+              </p>
+            ))}
             <MagneticButton
               as="a"
               href="#trust"

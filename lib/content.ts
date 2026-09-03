@@ -328,9 +328,8 @@ export const technologies = {
 } as const;
 
 export const trustSection = {
-  eyebrow: "Proof layer",
-  title: "Organizations in Production",
-  description: "Trusted by teams building what comes next.",
+  title: "Organizations Working With Us",
+  description: "Trusted by big names across industries",
 } as const;
 
 /**
@@ -483,11 +482,10 @@ export const nav = [
 
 /** Fades in on the hero's right side after the primary headline scrolls away. */
 export const heroSecondary = {
-  eyebrow: "What we deliver",
-  title: "From problem to production.",
+  title: "What we deliver",
   items: [
-    "Real-world problem solving — not hypothetical briefs",
-    "Reliable, scalable systems built for actual use",
-    "End-to-end delivery from planning through support",
+    "End To End Solution — From problem to production.",
+    "Reliable, Scalable and Relevant",
+    "Security, Support and Training",
   ],
 } as const;
