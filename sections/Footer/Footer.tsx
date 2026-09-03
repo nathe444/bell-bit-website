@@ -10,7 +10,7 @@ export function Footer() {
         aria-hidden
         className="pointer-events-none absolute inset-0 flex items-end justify-center overflow-hidden"
       >
-        <span className="translate-y-[18%] font-display text-[clamp(6rem,28vw,18rem)] font-medium leading-[0.85] tracking-[-0.04em] text-paper/[0.045] select-none">
+        <span className="block w-[80%] max-w-none translate-y-[12%] text-center font-display text-[clamp(10rem,22vw,32rem)] font-medium leading-[0.85] tracking-[-0.04em] text-paper/[0.045] select-none whitespace-nowrap">
           {company.shortName}
         </span>
       </div>

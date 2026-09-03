@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { projects as projectsType } from "@/lib/content";
-import { projectRegistryId } from "./project.config";
 
 export type Project = (typeof projectsType)[number];
 
@@ -14,28 +13,21 @@ type ProjectDossierProps = {
 };
 
 export function ProjectDossier({ project, index, className, claimed }: ProjectDossierProps) {
-  const registryId = projectRegistryId(index);
-  const isPortrait = project.imageOrientation === "portrait";
-
   return (
     <article
       className={`grid h-full items-center gap-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-10 lg:gap-14 ${className ?? ""}`}
     >
       <div
-        className={`relative overflow-hidden border bg-surface ${
-          claimed
-            ? "border-signal/40 claim-glow"
-            : "border-line"
-        } ${isPortrait ? "mx-auto w-full max-w-[220px] md:mx-0 md:max-w-none" : "w-full"}`}
+        className={`relative w-full overflow-hidden border bg-surface/60 ${
+          claimed ? "border-signal/40 claim-glow" : "border-line"
+        }`}
       >
-        <div
-          className={`relative w-full ${isPortrait ? "aspect-[9/16]" : "aspect-[16/10]"}`}
-        >
+        <div className="relative aspect-[16/10] w-full">
           <Image
             src={project.image}
             alt={`${project.name} interface screenshot`}
             fill
-            className="object-cover"
+            className="object-contain object-center p-2 md:p-3"
             sizes="(min-width: 768px) 45vw, 100vw"
             priority={index === 0}
           />
@@ -44,8 +36,6 @@ export function ProjectDossier({ project, index, className, claimed }: ProjectDo
 
       <div className="flex min-w-0 flex-col justify-center">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs uppercase tracking-[0.2em] text-paper-faint">
-          <span className="font-mono text-signal-soft">{registryId}</span>
-          <span aria-hidden="true">·</span>
           <span>{project.category}</span>
           <span aria-hidden="true">·</span>
           <span>{project.industry}</span>

@@ -1,8 +1,8 @@
 type ServiceIconId =
   | "analysis"
-  | "custom-design"
+  | "custom-software"
+  | "system-design"
   | "uiux"
-  | "custom-development"
   | "architecture"
   | "mobile"
   | "deployment";
@@ -35,11 +35,21 @@ export function ServiceIcon({ id, className = "h-4 w-4" }: ServiceIconProps) {
           <path d="M8 11h6M11 8v6" />
         </svg>
       );
-    case "custom-design":
+    case "custom-software":
       return (
         <svg {...props}>
           <rect x="3" y="3" width="18" height="18" rx="2" />
-          <path d="M3 9h18M9 3v18" />
+          <path d="M8 9l-3 3 3 3M16 9l3 3-3 3" />
+        </svg>
+      );
+    case "system-design":
+      return (
+        <svg {...props}>
+          <path d="M4 18h16M7 14l3-8 3 5 4-9" />
+          <circle cx="7" cy="14" r="1.5" fill={stroke} stroke="none" />
+          <circle cx="10" cy="11" r="1.5" fill={stroke} stroke="none" />
+          <circle cx="13" cy="16" r="1.5" fill={stroke} stroke="none" />
+          <circle cx="17" cy="7" r="1.5" fill={stroke} stroke="none" />
         </svg>
       );
     case "uiux":
@@ -47,14 +57,6 @@ export function ServiceIcon({ id, className = "h-4 w-4" }: ServiceIconProps) {
         <svg {...props}>
           <rect x="3" y="4" width="18" height="16" rx="2" />
           <path d="M7 8h4M7 12h10M7 16h7" />
-        </svg>
-      );
-    case "custom-development":
-      return (
-        <svg {...props}>
-          <path d="M8 9l-3 3 3 3" />
-          <path d="M16 9l3 3-3 3" />
-          <path d="M13 7l-2 10" />
         </svg>
       );
     case "architecture":

@@ -27,7 +27,7 @@ export function Navbar() {
     >
       <nav
         className={cn(
-          "flex w-full items-center justify-between rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "grid w-full grid-cols-[1fr_auto] items-center md:grid-cols-[1fr_auto_1fr] rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
           scrolled
             ? "max-w-4xl border border-line bg-void/80 px-4 py-2 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.35)] backdrop-blur-md dark:shadow-[0_8px_32px_-12px_rgba(0,0,0,0.55)]"
             : "max-w-5xl border border-transparent bg-transparent px-5 py-3",
@@ -38,7 +38,7 @@ export function Navbar() {
           href="#hero"
           aria-label="BellBit home"
           className={cn(
-            "relative flex shrink-0 items-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+            "relative flex shrink-0 items-center justify-self-start transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
             scrolled ? "h-6 w-6" : "h-7 w-[7.5rem] sm:h-8",
           )}
         >
@@ -77,7 +77,7 @@ export function Navbar() {
           </span>
         </a>
 
-        <ul className="hidden items-center gap-8 md:flex">
+        <ul className="hidden items-center gap-8 justify-self-center md:flex">
           {nav.map((item) => (
             <li key={item.href}>
               <a
@@ -95,7 +95,7 @@ export function Navbar() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="col-start-2 flex items-center gap-2 justify-self-end sm:gap-3 md:col-start-3">
           <ThemeToggle
             className={
               scrolled

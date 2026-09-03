@@ -1,6 +1,5 @@
 import type { RefObject } from "react";
 import type { projects as projectsType } from "@/lib/content";
-import { projectRegistryId } from "./project.config";
 
 type Project = (typeof projectsType)[number];
 
@@ -35,11 +34,8 @@ export function ProjectIndexRail({
                   }`}
                   aria-current={isActive ? "step" : undefined}
                 >
-                  <span className="block font-mono text-[10px] tracking-wider text-paper-faint lg:text-xs">
-                    {projectRegistryId(index)}
-                  </span>
                   <span
-                    className={`mt-1 block font-display text-sm lg:text-base ${
+                    className={`block font-display text-sm lg:text-base ${
                       isActive ? "font-medium" : "font-normal"
                     }`}
                   >
@@ -58,8 +54,8 @@ export function ProjectIndexRail({
               className="h-full origin-left scale-x-0 bg-signal"
             />
           </div>
-          <p className="mt-3 font-mono text-[10px] uppercase tracking-wider text-paper-faint">
-            Scroll dossier
+          <p className="mt-3 font-mono text-[10px] tracking-wider text-paper-faint">
+            Scroll to see more
           </p>
         </div>
       </nav>
@@ -79,10 +75,7 @@ export function ProjectIndexRail({
               }`}
               aria-current={isActive ? "step" : undefined}
             >
-              <span className="block font-mono text-[10px] tracking-wider">
-                {projectRegistryId(index)}
-              </span>
-              <span className="mt-0.5 block text-sm font-medium">{project.name}</span>
+              <span className="block text-sm font-medium">{project.name}</span>
             </div>
           );
         })}

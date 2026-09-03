@@ -58,28 +58,28 @@ export const services = [
     tagline: "Map the real problem before a single line of code is written.",
   },
   {
-    id: "custom-design",
+    id: "custom-software",
     phase: "design" as const,
-    title: "Custom software and system design",
-    tagline: "Shape how the system looks, flows, and behaves for its users.",
+    title: "Custom software design and development",
+    tagline: "Shape and build software tailored to how your organization works.",
   },
   {
-    id: "uiux",
-    phase: "design" as const,
-    title: "UI/UX design",
-    tagline: "Interfaces built around how people actually work.",
-  },
-  {
-    id: "custom-development",
+    id: "system-design",
     phase: "build" as const,
-    title: "Custom software and system development",
-    tagline: "Engineering tailored to your requirements — not a template.",
+    title: "System design and implementation",
+    tagline: "Turn requirements into working systems — designed right, built to last.",
   },
   {
     id: "architecture",
     phase: "build" as const,
-    title: "System architecture design & solution engineering",
+    title: "System architecture design & Solution engineering",
     tagline: "Structure that scales, integrates, and holds up under load.",
+  },
+  {
+    id: "deployment",
+    phase: "operate" as const,
+    title: "Software deployment and infrastructure management",
+    tagline: "Take it live and keep the infrastructure behind it reliable.",
   },
   {
     id: "mobile",
@@ -88,10 +88,10 @@ export const services = [
     tagline: "Extend the system into native and cross-platform experiences.",
   },
   {
-    id: "deployment",
-    phase: "operate" as const,
-    title: "Software deployment and infrastructure management",
-    tagline: "Take it live and keep the infrastructure behind it reliable.",
+    id: "uiux",
+    phase: "design" as const,
+    title: "UI/UX design",
+    tagline: "Interfaces built around how people actually work.",
   },
 ] as const;
 
@@ -141,7 +141,7 @@ export const projectsSection = {
   eyebrow: "Case dossiers",
   title: "One engineering capability. Different systems.",
   description:
-    "The same process — understand, design, architect, build, deploy — produces very different software depending on the problem.",
+    "BellBit has delivered large projects for both domestic and international clients, from small scale website development to complex system development. These are some of the works we have done previously.",
 } as const;
 
 export const projects = [
@@ -443,6 +443,11 @@ export const industries = [
     project: "BinWise",
   },
 ] as const;
+
+export const whyBellBitSection = {
+  title: "Why Work With Us",
+  description: "Built by people who are close to the problem and are technically fit!",
+} as const;
 
 export const whyBellBit = [
   {

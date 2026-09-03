@@ -6,7 +6,7 @@ import { ensureGsapRegistered, gsap, ScrollTrigger, runScrollTriggerSetup } from
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ProjectDossier } from "./ProjectDossier";
 import { ProjectIndexRail } from "./ProjectIndexRail";
-import { projectBehavior, projectRegistryId } from "./project.config";
+import { projectBehavior } from "./project.config";
 
 type Project = (typeof projectsType)[number];
 
@@ -258,9 +258,6 @@ function ProjectStageStatic({ projects }: ProjectStageProps) {
     <div className="container-edge flex flex-col gap-24 md:gap-28">
       {projects.map((project, index) => (
         <article key={project.id} className="border-t border-line pt-10">
-          <p className="mb-8 font-mono text-xs uppercase tracking-[0.25em] text-paper-faint">
-            {projectRegistryId(index)}
-          </p>
           <ProjectDossier project={project} index={index} />
         </article>
       ))}

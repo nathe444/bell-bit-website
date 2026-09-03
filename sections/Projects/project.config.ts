@@ -12,7 +12,3 @@ export const projectBehavior = {
   claimEase: "back.out(2.4)",
   claimExitEase: "power3.in",
 } as const;
-
-export function projectRegistryId(index: number) {
-  return `PRJ-${String(index + 1).padStart(2, "0")}`;
-}

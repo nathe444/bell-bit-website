@@ -1,6 +1,6 @@
 "use client";
 
-import { services, servicesGlobe, servicesSection } from "@/lib/content";
+import { servicesGlobe, servicesSection } from "@/lib/content";
 import { Reveal } from "@/components/ui/Reveal";
 import { Globe } from "@/components/ui/Globe";
 import { ServicesModuleList } from "./ServicesModuleList";
@@ -10,13 +10,10 @@ export function Services() {
     <section id="services" className="relative z-10 bg-void py-20 md:py-28">
       <div className="container-edge">
         <Reveal>
-          <div className="flex items-end justify-between gap-6 border-b border-line pb-6 md:pb-8">
+          <div className="border-b border-line pb-6 md:pb-8">
             <h2 className="max-w-3xl text-balance font-display text-[clamp(2.25rem,5.5vw,4rem)] font-medium leading-[1.02] text-paper">
               {servicesSection.title}
             </h2>
-            <p className="hidden shrink-0 pb-1 font-mono text-[11px] uppercase tracking-[0.35em] text-paper-faint sm:block md:text-xs">
-              {String(services.length).padStart(2, "0")} services
-            </p>
           </div>
         </Reveal>
 

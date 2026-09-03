@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { whyBellBit, team, company } from "@/lib/content";
+import { whyBellBit, whyBellBitSection, team, company } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 
@@ -9,8 +9,8 @@ export function WhyBellBit() {
       <div className="container-edge grid gap-16 md:grid-cols-2 md:gap-20">
         <div>
           <SectionHeading
-            eyebrow="Why BellBit"
-            title="Built by people who stay close to the problem."
+            title={whyBellBitSection.title}
+            description={whyBellBitSection.description}
           />
 
           <ul className="mt-12 space-y-8">
