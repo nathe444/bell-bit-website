@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { projects as projectsType } from "@/lib/content";
 import { ensureGsapRegistered, gsap, ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ProjectDossier } from "./ProjectDossier";
 import { ProjectIndexRail } from "./ProjectIndexRail";
@@ -56,8 +57,9 @@ function getVisibleIndex(cards: Array<HTMLDivElement | null>) {
 
 export function ProjectStage({ projects }: ProjectStageProps) {
   const reducedMotion = useReducedMotion();
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
 
-  if (reducedMotion) {
+  if (reducedMotion || isSmallScreen) {
     return <ProjectStageStatic projects={projects} />;
   }
 
@@ -255,9 +257,9 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
 /** prefers-reduced-motion: vertical dossier stack, no scroll-jacking. */
 function ProjectStageStatic({ projects }: ProjectStageProps) {
   return (
-    <div className="container-edge flex flex-col gap-24 md:gap-28">
+    <div className="container-edge flex flex-col gap-14 md:gap-28">
       {projects.map((project, index) => (
-        <article key={project.id} className="border-t border-line pt-10">
+        <article key={project.id} className="border-t border-line pt-8 md:pt-10">
           <ProjectDossier project={project} index={index} />
         </article>
       ))}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { technologyGroups as technologyGroupsType } from "@/lib/content";
 import { ensureGsapRegistered, gsap, ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { TechnologyGroupPanel } from "./TechnologyGroupPanel";
 import { technologyBehavior } from "./technology.config";
@@ -83,8 +84,9 @@ function getVisibleIndex(panels: Array<HTMLDivElement | null>) {
 
 export function TechnologyStage({ groups, title }: TechnologyStageProps) {
   const reducedMotion = useReducedMotion();
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
 
-  if (reducedMotion) {
+  if (reducedMotion || isSmallScreen) {
     return <TechnologyStageStatic groups={groups} title={title} />;
   }
 
@@ -278,16 +280,16 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
 
 function TechnologyStageStatic({ groups, title }: TechnologyStageProps) {
   return (
-    <section id="technology" className="relative z-10 bg-ink pt-28 pb-10 md:pt-36 md:pb-14">
+    <section id="technology" className="relative z-10 bg-ink pt-20 pb-10 md:pt-36 md:pb-14">
       <div className="container-edge mx-auto max-w-6xl">
         <h2 className="text-balance text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-medium leading-tight text-paper">
           {title}
         </h2>
       </div>
 
-      <div className="container-edge mx-auto mt-16 flex max-w-6xl flex-col gap-20 md:mt-24 md:gap-24">
+      <div className="container-edge mx-auto mt-10 flex max-w-6xl flex-col gap-14 md:mt-24 md:gap-24">
         {groups.map((group, index) => (
-          <article key={group.id} className="border-t border-line pt-10">
+          <article key={group.id} className="border-t border-line pt-8 md:pt-10">
             <TechnologyGroupPanel group={group} index={index} />
           </article>
         ))}
