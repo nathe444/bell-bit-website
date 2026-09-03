@@ -27,13 +27,8 @@ export function CTA() {
             Let&rsquo;s build the next one.
           </h2>
         </Reveal>
-        <Reveal delay={0.1}>
-          <p className="mt-6 text-balance text-lg leading-relaxed text-paper-dim">
-            {contact.closingStatement} {contact.closingStatementContinued}
-          </p>
-        </Reveal>
 
-        <Reveal delay={0.15} className="mt-10 flex flex-wrap items-center justify-center gap-6">
+        <Reveal delay={0.1} className="mt-10 flex flex-wrap items-center justify-center gap-6">
           <MagneticButton
             as="a"
             href={`mailto:${contact.email}`}
@@ -43,7 +38,7 @@ export function CTA() {
           </MagneticButton>
         </Reveal>
 
-        <Reveal delay={0.2} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-paper-dim">
+        <Reveal delay={0.15} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-paper-dim">
           <a href={`tel:${contact.phonePrimary}`} className="hover:text-paper">
             {contact.phonePrimary}
           </a>
@@ -51,12 +46,6 @@ export function CTA() {
           <a href={`tel:${contact.phoneSecondary}`} className="hover:text-paper">
             {contact.phoneSecondary}
           </a>
-        </Reveal>
-
-        <Reveal delay={0.25}>
-          <p className="mt-10 text-xs uppercase tracking-[0.25em] text-paper-faint">
-            {contact.referencesNote}
-          </p>
         </Reveal>
       </div>
     </section>
