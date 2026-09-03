@@ -29,13 +29,40 @@ const PANEL_SETTLED = {
   transformOrigin: "50% 50%",
 } as const;
 
-/** Exits past the viewer — out of the screen toward you. */
+/** Exits into the screen — stays inside the clipped stage (no bleed over other sections). */
 const PANEL_EXIT = {
   opacity: 0,
-  scale: 1.14,
-  z: 560,
+  scale: 0.82,
+  z: -420,
   transformOrigin: "50% 50%",
 } as const;
+
+function flattenPanels(
+  panels: Array<HTMLDivElement | null>,
+  activeIndex = panels.length - 1,
+) {
+  panels.forEach((panel, i) => {
+    if (!panel) return;
+    const isActive = i === activeIndex;
+    gsap.set(panel, {
+      opacity: isActive ? 1 : 0,
+      scale: 1,
+      z: 0,
+      force3D: false,
+      clearProps: "transform",
+    });
+  });
+}
+
+function clampHiddenPanels(panels: Array<HTMLDivElement | null>, activeIndex: number) {
+  panels.forEach((panel, i) => {
+    if (!panel || i === activeIndex) return;
+    const opacity = Number(gsap.getProperty(panel, "opacity") ?? 0);
+    if (opacity < 0.08) {
+      gsap.set(panel, { opacity: 0, scale: 1, z: 0, force3D: false });
+    }
+  });
+}
 
 function getVisibleIndex(panels: Array<HTMLDivElement | null>) {
   let bestIndex = 0;
@@ -157,39 +184,36 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
         }
       });
 
-      const lockLastPanel = () => {
-        panels.forEach((panel, i) => {
-          if (!panel) return;
-          if (i === count - 1) {
-            gsap.set(panel, { ...PANEL_SETTLED, force3D: false });
-          } else {
-            gsap.set(panel, { opacity: 0, scale: 1, z: 0, force3D: false });
-          }
-        });
-      };
-
       const trigger = ScrollTrigger.create({
         trigger: pinEl,
         start: "top top",
         end: () => `+=${window.innerHeight * tl.duration() * vhPerGroup}`,
         pin: true,
-        anticipatePin: 1,
+        pinSpacing: true,
+        anticipatePin: 0,
         scrub: scrubSmoothing,
         animation: tl,
         onUpdate: (self) => {
-          if (self.progress >= 0.999) {
-            lockLastPanel();
-          }
-
           const index = getVisibleIndex(panels);
+          clampHiddenPanels(panels, index);
+
           if (index !== activeIndexRef.current) {
             activeIndexRef.current = index;
             setActiveIndex(index);
           }
+
+          if (self.progress >= 0.999 && self.direction === 1) {
+            flattenPanels(panels, count - 1);
+          }
         },
         onLeave: () => {
-          tl.progress(1);
-          lockLastPanel();
+          flattenPanels(panels, count - 1);
+        },
+        onLeaveBack: () => {
+          flattenPanels(panels, 0);
+        },
+        onEnterBack: () => {
+          flattenPanels(panels, count - 1);
         },
       });
 
@@ -207,9 +231,12 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
   }, [groups.length]);
 
   return (
-    <section id="technology" className="relative z-10 bg-ink py-28 md:py-36">
+    <section id="technology" className="relative isolate bg-ink py-28 md:py-36">
       <div ref={pinRef} className="relative">
-        <div className="relative h-[100svh] w-full overflow-hidden">
+        <div
+          className="relative h-[100svh] w-full overflow-hidden"
+          style={{ clipPath: "inset(0 round 0)" }}
+        >
           <div
             ref={headingRef}
             className="pointer-events-none absolute inset-x-0 top-0 z-10 container-edge mx-auto w-full max-w-6xl pt-6 will-change-[transform,opacity] md:pt-10"
@@ -231,9 +258,8 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
                 ref={(el) => {
                   panelRefs.current[index] = el;
                 }}
-                className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
+                className="absolute inset-0 flex items-center justify-center"
                 style={{
-                  transformStyle: "preserve-3d",
                   ...(index === 0
                     ? { opacity: 1, transform: "translate3d(0px, 0px, 0px) scale(1, 1)" }
                     : { opacity: 0 }),
