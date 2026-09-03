@@ -157,20 +157,39 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
         }
       });
 
+      const lockLastPanel = () => {
+        panels.forEach((panel, i) => {
+          if (!panel) return;
+          if (i === count - 1) {
+            gsap.set(panel, { ...PANEL_SETTLED, force3D: false });
+          } else {
+            gsap.set(panel, { opacity: 0, scale: 1, z: 0, force3D: false });
+          }
+        });
+      };
+
       const trigger = ScrollTrigger.create({
         trigger: pinEl,
         start: "top top",
-        end: () => `+=${window.innerHeight * count * vhPerGroup}`,
+        end: () => `+=${window.innerHeight * tl.duration() * vhPerGroup}`,
         pin: true,
         anticipatePin: 1,
         scrub: scrubSmoothing,
         animation: tl,
-        onUpdate: () => {
+        onUpdate: (self) => {
+          if (self.progress >= 0.999) {
+            lockLastPanel();
+          }
+
           const index = getVisibleIndex(panels);
           if (index !== activeIndexRef.current) {
             activeIndexRef.current = index;
             setActiveIndex(index);
           }
+        },
+        onLeave: () => {
+          tl.progress(1);
+          lockLastPanel();
         },
       });
 
