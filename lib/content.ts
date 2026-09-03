@@ -200,10 +200,7 @@ export const projects = [
 ] as const;
 
 export const technologySection = {
-  eyebrow: "Technology Stack",
-  title: "Depth at every layer, not a wall of logos.",
-  description:
-    "Scroll through each stack — frontend, backend, infrastructure, and AI — one group at a time.",
+  title: "Our Technology stack",
 } as const;
 
 export const technologyGroups = [
@@ -329,15 +326,6 @@ export const technologies = {
   frontend: ["React", "SvelteKit"],
   platform: ["DevOps", "Software Architecture"],
 } as const;
-
-export const architectureStages = [
-  { id: "problem", label: "Problem", description: "A real business challenge, as it exists before any solution." },
-  { id: "requirements", label: "Requirements", description: "System analysis and requirement gathering with the client." },
-  { id: "architecture", label: "Architecture", description: "Solution engineering and system architecture design." },
-  { id: "engineering", label: "Engineering", description: "Custom software and system development." },
-  { id: "deployment", label: "Deployment", description: "Software deployment and infrastructure management." },
-  { id: "system", label: "System", description: "A reliable, scalable, well-designed system in production." },
-] as const;
 
 export const trustSection = {
   eyebrow: "Proof layer",
@@ -490,7 +478,6 @@ export const team = {
 export const nav = [
   { label: "Work", href: "#projects" },
   { label: "Services", href: "#services" },
-  { label: "Approach", href: "#architecture" },
   { label: "Contact", href: "#contact" },
 ] as const;
 

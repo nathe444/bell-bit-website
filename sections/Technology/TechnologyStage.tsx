@@ -11,6 +11,7 @@ type TechnologyGroup = (typeof technologyGroupsType)[number];
 
 type TechnologyStageProps = {
   groups: readonly TechnologyGroup[];
+  title: string;
 };
 
 /** Deep in the screen — arrives toward the viewer. */
@@ -53,18 +54,19 @@ function getVisibleIndex(panels: Array<HTMLDivElement | null>) {
   return bestIndex;
 }
 
-export function TechnologyStage({ groups }: TechnologyStageProps) {
+export function TechnologyStage({ groups, title }: TechnologyStageProps) {
   const reducedMotion = useReducedMotion();
 
   if (reducedMotion) {
-    return <TechnologyStageStatic groups={groups} />;
+    return <TechnologyStageStatic groups={groups} title={title} />;
   }
 
-  return <TechnologyStageMotion groups={groups} />;
+  return <TechnologyStageMotion groups={groups} title={title} />;
 }
 
-function TechnologyStageMotion({ groups }: TechnologyStageProps) {
+function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
   const pinRef = useRef<HTMLDivElement | null>(null);
+  const headingRef = useRef<HTMLDivElement | null>(null);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -73,6 +75,7 @@ function TechnologyStageMotion({ groups }: TechnologyStageProps) {
     return runScrollTriggerSetup(() => {
       ensureGsapRegistered();
       const pinEl = pinRef.current;
+      const headingEl = headingRef.current;
       if (!pinEl) return;
 
       const count = groups.length;
@@ -81,24 +84,55 @@ function TechnologyStageMotion({ groups }: TechnologyStageProps) {
         enterDuration,
         holdDuration,
         exitDuration,
+        firstStackHoldDuration,
         vhPerGroup,
         scrubSmoothing,
         enterEase,
         exitEase,
       } = technologyBehavior;
 
-      panels.forEach((panel) => {
+      panels.forEach((panel, i) => {
         if (!panel) return;
-        gsap.set(panel, { ...PANEL_ENTER, force3D: true });
+        gsap.set(panel, {
+          ...(i === 0 ? PANEL_SETTLED : PANEL_ENTER),
+          force3D: true,
+        });
       });
 
       const tl = gsap.timeline();
+
+      let headingFadeTrigger: ScrollTrigger | undefined;
+      if (headingEl) {
+        gsap.set(headingEl, { opacity: 1, y: 0 });
+        headingFadeTrigger = ScrollTrigger.create({
+          trigger: pinEl,
+          start: "top 82%",
+          end: "top top",
+          scrub: scrubSmoothing,
+          onUpdate: (self) => {
+            gsap.set(headingEl, {
+              opacity: 1 - self.progress,
+              y: -36 * self.progress,
+            });
+          },
+        });
+      }
 
       groups.forEach((_, i) => {
         const panel = panels[i];
         if (!panel) return;
         const label = `stack-${i}`;
         tl.addLabel(label);
+
+        if (i === 0) {
+          // Stack 1: visible on arrival, no enter/exit animation while viewing.
+          tl.to({}, { duration: firstStackHoldDuration }, label);
+          return;
+        }
+
+        if (i === 1 && panels[0]) {
+          tl.set(panels[0], { ...PANEL_EXIT, force3D: true }, label);
+        }
 
         tl.fromTo(
           panel,
@@ -107,6 +141,7 @@ function TechnologyStageMotion({ groups }: TechnologyStageProps) {
             ...PANEL_SETTLED,
             duration: enterDuration,
             ease: enterEase,
+            force3D: true,
           },
           label,
         );
@@ -116,7 +151,7 @@ function TechnologyStageMotion({ groups }: TechnologyStageProps) {
         if (i < count - 1) {
           tl.to(
             panel,
-            { ...PANEL_EXIT, duration: exitDuration, ease: exitEase },
+            { ...PANEL_EXIT, duration: exitDuration, ease: exitEase, force3D: true },
             `${label}+=${enterDuration + holdDuration}`,
           );
         }
@@ -144,6 +179,7 @@ function TechnologyStageMotion({ groups }: TechnologyStageProps) {
 
       return () => {
         window.removeEventListener("load", refresh);
+        headingFadeTrigger?.kill();
         trigger.kill();
         tl.kill();
       };
@@ -152,39 +188,65 @@ function TechnologyStageMotion({ groups }: TechnologyStageProps) {
   }, [groups.length]);
 
   return (
-    <div ref={pinRef} className="relative">
-      <div className="relative h-[100svh] w-full overflow-hidden">
-        <div
-          className="container-edge relative mx-auto h-full max-w-6xl py-8 md:py-10"
-          style={{ perspective: "1400px" }}
-        >
-          {groups.map((group, index) => (
-            <div
-              key={group.id}
-              ref={(el) => {
-                panelRefs.current[index] = el;
-              }}
-              className="absolute inset-0 flex items-center will-change-[transform,opacity]"
-              style={{ transformStyle: "preserve-3d" }}
-              aria-hidden={index !== activeIndex}
-            >
-              <TechnologyGroupPanel group={group} index={index} />
+    <section id="technology" className="relative z-10 bg-ink py-28 md:py-36">
+      <div ref={pinRef} className="relative">
+        <div className="relative h-[100svh] w-full overflow-hidden">
+          <div
+            ref={headingRef}
+            className="pointer-events-none absolute inset-x-0 top-0 z-10 container-edge mx-auto w-full max-w-6xl pt-6 will-change-[transform,opacity] md:pt-10"
+          >
+            <div className="pb-8 md:pb-10">
+              <h2 className="text-balance text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-medium leading-tight text-paper">
+                {title}
+              </h2>
             </div>
-          ))}
+          </div>
+
+          <div
+            className="container-edge absolute inset-0 mx-auto flex max-w-6xl items-center justify-center"
+            style={{ perspective: "1400px" }}
+          >
+            {groups.map((group, index) => (
+              <div
+                key={group.id}
+                ref={(el) => {
+                  panelRefs.current[index] = el;
+                }}
+                className="absolute inset-0 flex items-center justify-center will-change-[transform,opacity]"
+                style={{
+                  transformStyle: "preserve-3d",
+                  ...(index === 0
+                    ? { opacity: 1, transform: "translate3d(0px, 0px, 0px) scale(1, 1)" }
+                    : { opacity: 0 }),
+                }}
+                aria-hidden={index !== activeIndex}
+              >
+                <TechnologyGroupPanel group={group} index={index} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
-function TechnologyStageStatic({ groups }: TechnologyStageProps) {
+function TechnologyStageStatic({ groups, title }: TechnologyStageProps) {
   return (
-    <div className="container-edge mx-auto flex max-w-6xl flex-col gap-20 md:gap-24">
-      {groups.map((group, index) => (
-        <article key={group.id} className="border-t border-line pt-10">
-          <TechnologyGroupPanel group={group} index={index} />
-        </article>
-      ))}
-    </div>
+    <section id="technology" className="relative z-10 bg-ink py-28 md:py-36">
+      <div className="container-edge mx-auto max-w-6xl">
+        <h2 className="text-balance text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-medium leading-tight text-paper">
+          {title}
+        </h2>
+      </div>
+
+      <div className="container-edge mx-auto mt-16 flex max-w-6xl flex-col gap-20 md:mt-24 md:gap-24">
+        {groups.map((group, index) => (
+          <article key={group.id} className="border-t border-line pt-10">
+            <TechnologyGroupPanel group={group} index={index} />
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }

@@ -4,7 +4,6 @@ import { Services } from "@/sections/Services/Services";
 import { Projects } from "@/sections/Projects/Projects";
 import { WhyBellBit } from "@/sections/WhyBellBit/WhyBellBit";
 import { Technology } from "@/sections/Technology/Technology";
-import { Architecture } from "@/sections/Architecture/Architecture";
 import { Industries } from "@/sections/Industries/Industries";
 import { Testimonials } from "@/sections/Testimonials/Testimonials";
 import { CTA } from "@/sections/CTA/CTA";
@@ -35,7 +34,6 @@ export default function Home() {
       <Projects />
       <WhyBellBit />
       <Technology />
-      <Architecture />
       <Industries />
       <Testimonials />
       <CTA />

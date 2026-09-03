@@ -2,7 +2,6 @@
 
 import { IconCloud } from "@/components/ui/IconCloud";
 import type { TechnologyGroup } from "@/lib/content";
-import { technologyGroupId } from "./technology.config";
 
 type TechnologyGroupPanelProps = {
   group: TechnologyGroup;
@@ -22,15 +21,12 @@ export function TechnologyGroupPanel({ group, index }: TechnologyGroupPanelProps
       </div>
 
       <div className={`min-w-0 ${cloudFirst ? "md:order-2" : "md:order-1"}`}>
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-signal-soft md:text-xs">
-          {technologyGroupId(index)} — {group.label}
+        <p className="font-display text-2xl font-medium leading-tight text-signal-soft md:text-3xl lg:text-4xl">
+          {group.label}
         </p>
-        <h3 className="mt-3 font-display text-2xl font-medium leading-tight text-paper md:text-3xl lg:text-[2rem]">
+        <h3 className="mt-2 font-display text-base font-medium leading-snug text-paper md:text-lg lg:text-xl">
           {group.title}
         </h3>
-        <p className="mt-4 text-base leading-relaxed text-paper-dim md:text-lg">
-          {group.description}
-        </p>
         <ul className="mt-6 flex flex-wrap gap-2">
           {group.items.map((item) => (
             <li
