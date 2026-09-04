@@ -237,7 +237,7 @@ export function StaggerTestimonials({ testimonials }: StaggerTestimonialsProps) 
         <button
           type="button"
           onClick={() => handleMove(-1)}
-          className="flex h-12 w-12 items-center justify-center border-2 border-line-strong bg-surface text-paper transition-colors hover:border-signal-soft hover:bg-signal hover:text-on-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+          className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-line-strong bg-surface text-paper transition-colors hover:border-signal-soft hover:bg-signal hover:text-on-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
           aria-label="Previous testimonial"
         >
           <ChevronIcon direction="left" />
@@ -258,7 +258,7 @@ export function StaggerTestimonials({ testimonials }: StaggerTestimonialsProps) 
         <button
           type="button"
           onClick={() => handleMove(1)}
-          className="flex h-12 w-12 items-center justify-center border-2 border-line-strong bg-surface text-paper transition-colors hover:border-signal-soft hover:bg-signal hover:text-on-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+          className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-line-strong bg-surface text-paper transition-colors hover:border-signal-soft hover:bg-signal hover:text-on-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
           aria-label="Next testimonial"
         >
           <ChevronIcon direction="right" />
