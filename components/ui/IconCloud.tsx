@@ -59,11 +59,19 @@ export const renderCustomIcon = (icon: SimpleIcon, theme: string) => {
 export type IconCloudProps = {
   iconSlugs: readonly string[];
   className?: string;
+  compact?: boolean;
 };
 
 type IconData = Awaited<ReturnType<typeof fetchSimpleIcons>>;
 
-export function IconCloud({ iconSlugs, className = "" }: IconCloudProps) {
+function getCloudOptions(compact: boolean) {
+  return {
+    ...cloudProps.options,
+    imageScale: compact ? 1.72 : cloudProps.options.imageScale,
+  };
+}
+
+export function IconCloud({ iconSlugs, className = "", compact = false }: IconCloudProps) {
   const [data, setData] = useState<IconData | null>(null);
   const { resolvedTheme } = useTheme();
   const theme = resolvedTheme === "dark" ? "dark" : "light";
@@ -77,19 +85,41 @@ export function IconCloud({ iconSlugs, className = "" }: IconCloudProps) {
     if (!data) return null;
 
     return Object.values(data.simpleIcons).map((icon) =>
-      renderCustomIcon(icon, theme),
+      renderSimpleIcon({
+        icon,
+        bgHex: theme === "light" ? "#e8ecf4" : "#1a1f2b",
+        fallbackHex: theme === "light" ? "#64748b" : "#9aa3b5",
+        minContrastRatio: theme === "dark" ? 2 : 1.2,
+        size: compact ? 36 : 42,
+        aProps: {
+          href: undefined,
+          target: undefined,
+          rel: undefined,
+          onClick: (e: MouseEvent) => e.preventDefault(),
+        },
+      }),
     );
-  }, [data, theme]);
+  }, [data, theme, compact]);
 
   return (
     <div
-      className={`relative flex min-h-[280px] w-full items-center justify-center sm:min-h-[320px] md:min-h-[360px] ${className}`}
+      className={`relative flex w-full items-center justify-center ${
+        compact
+          ? "min-h-[220px] sm:min-h-[250px] md:min-h-[280px]"
+          : "min-h-[280px] sm:min-h-[320px] md:min-h-[360px]"
+      } ${className}`}
       aria-hidden={!data}
     >
       {data ? (
-        <Cloud {...cloudProps}>{renderedIcons}</Cloud>
+        <Cloud {...cloudProps} options={getCloudOptions(compact)}>
+          {renderedIcons}
+        </Cloud>
       ) : (
-        <div className="h-[280px] w-full animate-pulse rounded-2xl bg-surface/40 sm:h-[320px] md:h-[360px]" />
+        <div
+          className={`w-full animate-pulse rounded-2xl bg-surface/40 ${
+            compact ? "h-[220px] sm:h-[250px] md:h-[280px]" : "h-[280px] sm:h-[320px] md:h-[360px]"
+          }`}
+        />
       )}
     </div>
   );

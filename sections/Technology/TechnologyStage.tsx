@@ -95,7 +95,6 @@ export function TechnologyStage({ groups, title }: TechnologyStageProps) {
 
 function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
   const pinRef = useRef<HTMLDivElement | null>(null);
-  const headingRef = useRef<HTMLDivElement | null>(null);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -104,7 +103,6 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
     return runScrollTriggerSetup(() => {
       ensureGsapRegistered();
       const pinEl = pinRef.current;
-      const headingEl = headingRef.current;
       if (!pinEl) return;
 
       const count = groups.length;
@@ -129,23 +127,6 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
       });
 
       const tl = gsap.timeline();
-
-      let headingFadeTrigger: ScrollTrigger | undefined;
-      if (headingEl) {
-        gsap.set(headingEl, { opacity: 1, y: 0 });
-        headingFadeTrigger = ScrollTrigger.create({
-          trigger: pinEl,
-          start: "top 82%",
-          end: "top top",
-          scrub: scrubSmoothing,
-          onUpdate: (self) => {
-            gsap.set(headingEl, {
-              opacity: 1 - self.progress,
-              y: -36 * self.progress,
-            });
-          },
-        });
-      }
 
       groups.forEach((_, i) => {
         const panel = panels[i];
@@ -224,7 +205,6 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
 
       return () => {
         window.removeEventListener("load", refresh);
-        headingFadeTrigger?.kill();
         trigger.kill();
         tl.kill();
       };
@@ -233,25 +213,14 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
   }, [groups.length]);
 
   return (
-    <section id="technology" className="relative isolate bg-ink pt-28 pb-10 md:pt-36 md:pb-14">
+    <section id="technology" className="relative isolate bg-ink pb-10 md:pb-14">
       <div ref={pinRef} className="relative">
         <div
           className="relative h-[100svh] w-full overflow-hidden"
           style={{ clipPath: "inset(0 round 0)" }}
         >
           <div
-            ref={headingRef}
-            className="pointer-events-none absolute inset-x-0 top-0 z-10 container-edge mx-auto w-full max-w-6xl pt-6 will-change-[transform,opacity] md:pt-10"
-          >
-            <div className="pb-8 md:pb-10">
-              <h2 className="text-balance text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-medium leading-tight text-paper">
-                {title}
-              </h2>
-            </div>
-          </div>
-
-          <div
-            className="container-edge absolute inset-0 mx-auto flex max-w-6xl items-center justify-center"
+            className="container-edge absolute inset-0 mx-auto flex max-w-6xl flex-col px-4 pb-10 pt-24 md:pb-12 md:pt-28"
             style={{ perspective: "1400px" }}
           >
             {groups.map((group, index) => (
@@ -260,7 +229,7 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
                 ref={(el) => {
                   panelRefs.current[index] = el;
                 }}
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolute inset-0 flex flex-col px-4 pb-10 pt-24 md:pb-12 md:pt-28"
                 style={{
                   ...(index === 0
                     ? { opacity: 1, transform: "translate3d(0px, 0px, 0px) scale(1, 1)" }
@@ -268,7 +237,9 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
                 }}
                 aria-hidden={index !== activeIndex}
               >
-                <TechnologyGroupPanel group={group} index={index} />
+                <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center min-h-0 py-2 md:py-4">
+                  <TechnologyGroupPanel group={group} index={index} sectionTitle={title} />
+                </div>
               </div>
             ))}
           </div>
@@ -280,17 +251,11 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
 
 function TechnologyStageStatic({ groups, title }: TechnologyStageProps) {
   return (
-    <section id="technology" className="relative z-10 bg-ink pt-20 pb-10 md:pt-36 md:pb-14">
-      <div className="container-edge mx-auto max-w-6xl">
-        <h2 className="text-balance text-center font-display text-[clamp(1.75rem,4vw,3rem)] font-medium leading-tight text-paper">
-          {title}
-        </h2>
-      </div>
-
-      <div className="container-edge mx-auto mt-10 flex max-w-6xl flex-col gap-14 md:mt-24 md:gap-24">
+    <section id="technology" className="relative z-10 bg-ink pb-10 pt-24 md:pb-14 md:pt-28">
+      <div className="container-edge mx-auto flex max-w-6xl flex-col gap-16 md:gap-24">
         {groups.map((group, index) => (
-          <article key={group.id} className="border-t border-line pt-8 md:pt-10">
-            <TechnologyGroupPanel group={group} index={index} />
+          <article key={group.id} className="border-t border-line pt-10 md:pt-12">
+            <TechnologyGroupPanel group={group} index={index} sectionTitle={title} />
           </article>
         ))}
       </div>
