@@ -65,9 +65,10 @@ export type IconCloudProps = {
 type IconData = Awaited<ReturnType<typeof fetchSimpleIcons>>;
 
 function getCloudOptions(compact: boolean) {
+  const baseOptions = cloudProps.options ?? {};
   return {
-    ...cloudProps.options,
-    imageScale: compact ? 1.72 : cloudProps.options.imageScale,
+    ...baseOptions,
+    imageScale: compact ? 1.72 : (baseOptions.imageScale ?? 2),
   };
 }
 
