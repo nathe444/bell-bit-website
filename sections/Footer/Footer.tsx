@@ -62,7 +62,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container-edge relative z-10 mt-14 flex flex-col gap-2 border-t border-line pt-6 text-xs text-paper-faint sm:flex-row sm:items-center sm:justify-between">
+      <div className="container-edge relative z-10 mt-14 flex flex-col gap-2 pt-6 text-xs text-paper-faint sm:flex-row sm:items-center sm:justify-between">
         <span>
           © {year} {company.name}. All rights reserved.
         </span>
