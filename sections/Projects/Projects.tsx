@@ -13,7 +13,7 @@ export function Projects() {
         />
       </div>
 
-      <div className="mt-10 md:mt-20">
+      <div className="mt-6 md:mt-10">
         <ProjectStage projects={projects} />
       </div>
     </section>

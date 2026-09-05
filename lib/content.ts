@@ -169,7 +169,7 @@ export const projects = [
     detail: "",
     industry: "Construction",
     image: "/assets/bellbit/projects/lucky-path.png",
-    imageAspect: "664 / 436",
+    imageAspect: "6000 / 3959",
   },
   {
     id: "csms",

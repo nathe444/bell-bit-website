@@ -16,7 +16,7 @@ type ProjectDossierProps = {
 export function ProjectDossier({ project, index, className, claimed }: ProjectDossierProps) {
   return (
     <article
-      className={`grid h-full min-w-0 items-center gap-5 max-md:content-start md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-10 lg:gap-14 ${className ?? ""}`}
+      className={`grid h-full min-w-0 items-center gap-5 max-md:content-start md:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] md:gap-10 lg:gap-14 ${className ?? ""}`}
     >
       <div className="flex w-full min-w-0 items-center justify-center overflow-hidden">
         <div
@@ -25,7 +25,7 @@ export function ProjectDossier({ project, index, className, claimed }: ProjectDo
             claimed && "drop-shadow-[0_0_48px_color-mix(in_srgb,var(--color-signal)_35%,transparent)]",
           )}
         >
-          <div className="relative mx-auto h-[min(36vh,260px)] w-full max-w-full overflow-hidden rounded-lg sm:h-[min(44vh,340px)] md:h-[min(48vh,380px)]">
+          <div className="relative mx-auto h-[min(42vh,300px)] w-full max-w-full overflow-hidden rounded-lg sm:h-[min(50vh,380px)] md:h-[min(56vh,440px)] lg:h-[min(58vh,480px)]">
             <Image
               src={project.image}
               alt={`${project.name} interface screenshot`}

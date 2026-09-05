@@ -44,7 +44,9 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
 
       heroLines.forEach((_, index) => {
         const window = heroBehavior.secondaryLineWindows[index];
-        const reveal = window ? heroLineOpacity(p, window) : 0;
+        const reveal = window
+          ? heroLineOpacity(p, window, { isLast: index === heroLines.length - 1 })
+          : 0;
         el.style.setProperty(`--hero-line-${index}`, reveal.toFixed(4));
         secondaryPeak = Math.max(secondaryPeak, reveal);
       });

@@ -98,11 +98,16 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
 
       cards.forEach((card, i) => {
         if (!card) return;
-        gsap.set(card, { ...CLAIM_ENTER, force3D: true });
+        gsap.set(card, {
+          ...(i === 0 ? CLAIM_SETTLED : CLAIM_ENTER),
+          force3D: true,
+        });
         const shine = shines[i];
         const glow = glows[i];
         if (shine) gsap.set(shine, { xPercent: -130, opacity: 0 });
-        if (glow) gsap.set(glow, { scale: 0.55, opacity: 0 });
+        if (glow) {
+          gsap.set(glow, i === 0 ? { scale: 1, opacity: 0.22 } : { scale: 0.55, opacity: 0 });
+        }
       });
 
       const tl = gsap.timeline();
@@ -115,49 +120,53 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
         const label = `project-${i}`;
         tl.addLabel(label);
 
-        // Claim pop — scale overshoot, 3D tilt forward, brightness snap
-        tl.fromTo(
-          card,
-          { ...CLAIM_ENTER },
-          {
-            ...CLAIM_SETTLED,
-            duration: enterDuration,
-            ease: claimEase,
-          },
-          label
-        );
-
-        if (shine) {
+        if (i === 0) {
+          tl.to(card, { duration: holdDuration }, label);
+        } else {
+          // Claim pop — scale overshoot, 3D tilt forward, brightness snap
           tl.fromTo(
-            shine,
-            { xPercent: -130, opacity: 0 },
-            { xPercent: 230, opacity: 0.9, duration: enterDuration * 0.85, ease: "power2.out" },
+            card,
+            { ...CLAIM_ENTER },
+            {
+              ...CLAIM_SETTLED,
+              duration: enterDuration,
+              ease: claimEase,
+            },
             label
           );
-          tl.to(shine, { opacity: 0, duration: enterDuration * 0.15 }, `${label}+=${enterDuration * 0.7}`);
-        }
 
-        if (glow) {
-          tl.fromTo(
-            glow,
-            { scale: 0.55, opacity: 0 },
-            { scale: 1.2, opacity: 0.55, duration: enterDuration * 0.55, ease: "power2.out" },
-            label
-          );
-          tl.to(
-            glow,
-            { scale: 1, opacity: 0.22, duration: enterDuration * 0.45, ease: "power1.out" },
-            `${label}+=${enterDuration * 0.55}`
-          );
-        }
+          if (shine) {
+            tl.fromTo(
+              shine,
+              { xPercent: -130, opacity: 0 },
+              { xPercent: 230, opacity: 0.9, duration: enterDuration * 0.85, ease: "power2.out" },
+              label
+            );
+            tl.to(shine, { opacity: 0, duration: enterDuration * 0.15 }, `${label}+=${enterDuration * 0.7}`);
+          }
 
-        tl.to(card, { duration: holdDuration }, `${label}+=${enterDuration}`);
+          if (glow) {
+            tl.fromTo(
+              glow,
+              { scale: 0.55, opacity: 0 },
+              { scale: 1.2, opacity: 0.55, duration: enterDuration * 0.55, ease: "power2.out" },
+              label
+            );
+            tl.to(
+              glow,
+              { scale: 1, opacity: 0.22, duration: enterDuration * 0.45, ease: "power1.out" },
+              `${label}+=${enterDuration * 0.55}`
+            );
+          }
+
+          tl.to(card, { duration: holdDuration }, `${label}+=${enterDuration}`);
+        }
 
         if (i < count - 1) {
           tl.to(
             card,
             { ...CLAIM_EXIT, duration: exitDuration, ease: claimExitEase },
-            `${label}+=${enterDuration + holdDuration}`
+            `${label}+=${i === 0 ? holdDuration : enterDuration + holdDuration}`
           );
           if (glow) {
             tl.to(glow, { opacity: 0, scale: 0.7, duration: exitDuration * 0.8 }, `<`);

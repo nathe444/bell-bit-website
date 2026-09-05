@@ -17,15 +17,15 @@ type MarqueeItemProps = {
 export function MarqueeItem({ entry }: MarqueeItemProps) {
   return (
     <div className="flex w-[7.5rem] shrink-0 flex-col items-center gap-3 text-center sm:w-[8.5rem] md:w-[10rem] md:gap-4 lg:w-[11rem]">
-      <div className="relative flex h-[4.25rem] w-[4.25rem] shrink-0 items-center justify-center rounded-full bg-white p-3 shadow-[0_2px_14px_rgba(0,0,0,0.1)] md:h-[4.75rem] md:w-[4.75rem] md:p-3.5 lg:h-20 lg:w-20">
+      <div className="relative flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center rounded-full bg-white p-2 shadow-[0_2px_14px_rgba(0,0,0,0.1)] md:h-[4.75rem] md:w-[4.75rem] md:p-2.5 lg:h-20 lg:w-20">
         {entry.logo ? (
           <div className="relative h-full w-full">
             <Image
               src={entry.logo}
               alt=""
               fill
-              className="object-contain transition-transform duration-300 group-hover/item:scale-105"
-              sizes="80px"
+              className="object-contain object-center p-0.5 transition-transform duration-300 group-hover/item:scale-[1.03]"
+              sizes="(max-width: 768px) 60px, 72px"
             />
           </div>
         ) : (

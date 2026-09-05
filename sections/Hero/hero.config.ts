@@ -59,13 +59,15 @@ export const heroBehavior = {
    */
   primaryHoldEnd: 0.07,
   primaryFadeEnd: 0.2,
-  /** Equal-length windows with gaps; line 3 exits only as hero progress reaches 1. */
+  /** Equal windows from primary exit → hero end; last line fades only at the final scroll. */
   secondaryLineWindows: [
-    { start: 0.18, end: 0.4 },
-    { start: 0.47, end: 0.69 },
+    { start: 0.2, end: 0.44 },
+    { start: 0.48, end: 0.72 },
     { start: 0.76, end: 1 },
   ] as const,
-  secondaryLineFade: 0.07,
+  secondaryLineFade: 0.055,
+  /** Last line exit — kept short so remaining frames are used as visible hold time. */
+  secondaryLineLastExitFade: 0.035,
 } as const;
 
 export type HeroLineWindow = (typeof heroBehavior.secondaryLineWindows)[number];
@@ -80,23 +82,31 @@ export function heroPrimaryOpacity(progress: number): number {
 }
 
 /** Secondary line: ease in at window start, hold, ease out at window end (mirrors entrance motion). */
-export function heroLineOpacity(progress: number, window: HeroLineWindow): number {
-  const fade = heroBehavior.secondaryLineFade;
+export function heroLineOpacity(
+  progress: number,
+  window: HeroLineWindow,
+  options?: { isLast?: boolean },
+): number {
+  const fadeIn = heroBehavior.secondaryLineFade;
+  const fadeOut =
+    options?.isLast && window.end === 1
+      ? heroBehavior.secondaryLineLastExitFade
+      : fadeIn;
   const { start, end } = window;
 
   if (progress <= start) return 0;
   if (progress > end) return 0;
 
-  const fadeInEnd = start + fade;
-  const fadeOutStart = end - fade;
+  const fadeInEnd = start + fadeIn;
+  const fadeOutStart = end - fadeOut;
 
   if (progress < fadeInEnd) {
-    const t = (progress - start) / fade;
+    const t = (progress - start) / fadeIn;
     return 1 - (1 - t) ** 3;
   }
 
   if (progress > fadeOutStart) {
-    const t = (progress - fadeOutStart) / fade;
+    const t = (progress - fadeOutStart) / fadeOut;
     return (1 - t) ** 3;
   }
 
