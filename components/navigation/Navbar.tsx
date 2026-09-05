@@ -26,6 +26,7 @@ export function Navbar() {
       )}
     >
       <nav
+        data-over-hero={scrolled ? undefined : true}
         className={cn(
           "grid w-full grid-cols-[1fr_auto] items-center md:grid-cols-[1fr_auto_1fr] rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
           scrolled
@@ -83,10 +84,10 @@ export function Navbar() {
               <a
                 href={item.href}
                 className={cn(
-                  "text-xs font-medium uppercase tracking-[0.2em] transition-colors hover:text-signal-soft",
+                  "text-xs font-bold uppercase tracking-[0.2em] transition-colors",
                   scrolled
                     ? "text-paper-dim hover:text-paper"
-                    : "text-scene-paper-dim hover:text-scene-paper",
+                    : "text-white/80 hover:text-white",
                 )}
               >
                 {item.label}
@@ -99,17 +100,17 @@ export function Navbar() {
           <ThemeToggle
             className={
               scrolled
-                ? undefined
-                : "border-scene-line-strong text-scene-paper-dim hover:border-signal-soft hover:text-scene-paper"
+                ? "border-line-strong text-paper-dim hover:border-signal-soft hover:text-paper"
+                : "border-white/30 text-white/80 hover:border-white/50 hover:text-white"
             }
           />
           <a
             href="#contact"
             className={cn(
-              "rounded-full border px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.2em] transition-all duration-500 hover:border-signal-soft hover:text-signal-soft sm:px-4 sm:py-2",
+              "rounded-full border px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.2em] transition-all duration-500 sm:px-4 sm:py-2",
               scrolled
-                ? "border-line-strong text-paper"
-                : "border-scene-line-strong text-scene-paper hover:text-scene-paper",
+                ? "border-line-strong text-paper hover:border-signal-soft hover:text-signal-soft"
+                : "border-white/30 text-white hover:border-white/50 hover:text-white",
             )}
           >
             Contact

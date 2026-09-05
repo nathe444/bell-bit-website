@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 type ThemeToggleProps = {
   className?: string;
@@ -18,7 +19,10 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       <button
         type="button"
         aria-label="Toggle color theme"
-        className={`flex h-9 w-9 items-center justify-center rounded-full border border-line-strong text-paper-dim ${className ?? ""}`}
+        className={cn(
+          "flex h-9 w-9 items-center justify-center rounded-full border transition-colors",
+          className ?? "border-line-strong text-paper-dim",
+        )}
       />
     );
   }
@@ -30,7 +34,10 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       type="button"
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={`flex h-9 w-9 items-center justify-center rounded-full border border-line-strong text-paper-dim transition-colors hover:border-signal-soft hover:text-paper ${className ?? ""}`}
+      className={cn(
+        "flex h-9 w-9 items-center justify-center rounded-full border transition-colors",
+        className ?? "border-line-strong text-paper-dim hover:border-signal-soft hover:text-paper",
+      )}
     >
       {isDark ? (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
