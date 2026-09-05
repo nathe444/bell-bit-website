@@ -15,6 +15,7 @@ export const company = {
   teamSize: 8,
   overview:
     "BellBit Software Technologies is a software development company that builds both software products and custom digital solutions for clients. We help organizations and individuals solve real business problems through reliable, scalable, and well-designed software systems.",
+  footerBlurb: "Software products and custom solutions for real business problems.",
   mission:
     "To create digital solutions and technologies that help people run their businesses efficiently.",
   vision:
@@ -132,7 +133,7 @@ export const products = [
     name: "Tena-Bit",
     tag: "Patient Record Tracking Management System",
     description:
-      "A system designed for hospitals and clinics to track patient flow and medical records across departments.",
+      "A healthcare system designed to track patient movement and medical records across registration, OPD, laboratory testing, results management, and medication prescription workflows.",
     url: null,
   },
 ] as const;
@@ -164,20 +165,18 @@ export const projects = [
     category: "ERP",
     clientId: "lucky-path",
     summary:
-      "An ERP system developed for Lucky Path Construction PLC, focused on the construction sector.",
-    detail:
-      "The system includes project and resource management, operational workflow tracking, and integrated business processes — giving construction teams one platform to plan, track, and run projects end to end.",
+      "A custom and tailored semi-complete ERP system implemented to support the company's core business operations, workflows, and management processes.",
+    detail: "",
     industry: "Construction",
     image: "/assets/bellbit/projects/lucky-path.png",
     imageAspect: "664 / 436",
   },
   {
     id: "csms",
-    name: "CSMS",
+    name: "AAU CSMS",
     category: "Optimization",
     clientId: "csms",
-    summary:
-      "A university-level scheduling system developed for Addis Ababa University.",
+    summary: "A university-level scheduling system developed for Addis Ababa University.",
     detail:
       "It manages academic resources and includes a constraint satisfaction engine that automatically generates semester schedules based on curriculum, instructors, classrooms, and availability.",
     industry: "Education",
@@ -203,9 +202,9 @@ export const projects = [
     category: "Healthcare",
     clientId: null,
     summary:
-      "A healthcare system designed to track patient movement and medical records.",
+      "A healthcare system designed to track patient movement and medical records across registration, OPD, laboratory testing, results management, and medication prescription workflows.",
     detail:
-      "It covers registration, OPD, laboratory testing, results management, and medication prescription workflows.",
+      "This system has been implemented in two health care facilities, Abyssinia Clinic and Nain MCH.",
     industry: "Healthcare",
     image: "/assets/bellbit/projects/tena-bit-dashboard.jpeg",
     imageAspect: "16 / 9",

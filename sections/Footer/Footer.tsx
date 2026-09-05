@@ -10,7 +10,7 @@ export function Footer() {
         aria-hidden
         className="pointer-events-none absolute inset-0 flex items-end justify-center overflow-hidden"
       >
-        <span className="block w-[80%] max-w-none translate-y-[12%] text-center font-display text-[clamp(10rem,22vw,32rem)] font-medium leading-[0.85] tracking-[-0.04em] text-paper/[0.045] select-none whitespace-nowrap">
+        <span className="block w-[88%] max-w-none translate-y-[12%] text-center font-display text-[clamp(10rem,25vw,35rem)] font-medium leading-[0.85] tracking-[-0.03em] text-paper/[0.045] select-none whitespace-nowrap">
           {company.shortName}
         </span>
       </div>
@@ -18,7 +18,9 @@ export function Footer() {
       <div className="container-edge relative z-10 flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
         <div className="max-w-xs">
           <BrandLogo className="h-9 w-auto" width={140} height={52} />
-          <p className="mt-5 text-sm text-paper-dim">{company.overview}</p>
+          <p className="mt-4 max-w-[16rem] text-xs leading-relaxed text-paper-faint">
+            {company.footerBlurb}
+          </p>
         </div>
 
         <div className="flex flex-wrap gap-16">
@@ -62,11 +64,10 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container-edge relative z-10 mt-14 flex flex-col gap-2 pt-6 text-xs text-paper-faint sm:flex-row sm:items-center sm:justify-between">
+      <div className="container-edge relative z-10 mt-14 pt-6 text-xs text-paper-faint">
         <span>
           © {year} {company.name}. All rights reserved.
         </span>
-        <span>Founded {company.founded} · Licensed {company.licensed}</span>
       </div>
     </footer>
   );

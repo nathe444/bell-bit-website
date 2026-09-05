@@ -59,9 +59,11 @@ export function ProjectDossier({ project, index, className, claimed }: ProjectDo
         <p className="mt-3 text-base leading-relaxed text-paper-dim max-md:text-pretty md:mt-5 md:text-lg">
           {project.summary}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-paper-faint max-md:text-pretty md:mt-3 md:text-base">
-          {project.detail}
-        </p>
+        {project.detail ? (
+          <p className="mt-2 text-sm leading-relaxed text-paper-faint max-md:text-pretty md:mt-3 md:text-base">
+            {project.detail}
+          </p>
+        ) : null}
 
         {project.clientId ? (
           <Link
