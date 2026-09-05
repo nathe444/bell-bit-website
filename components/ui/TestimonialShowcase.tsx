@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { Testimonial } from "@/lib/testimonials";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,8 @@ type TestimonialShowcaseProps = {
   testimonials: readonly Testimonial[];
 };
 
+const AUTO_ROTATE_MS = 5500;
+
 export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) {
   const reducedMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -16,26 +18,48 @@ export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) 
   const [displayedQuote, setDisplayedQuote] = useState(testimonials[0]?.quote ?? "");
   const [displayedRole, setDisplayedRole] = useState(testimonials[0]?.role ?? "");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [paused, setPaused] = useState(false);
 
-  const handleSelect = (index: number) => {
-    if (index === activeIndex || isAnimating) return;
+  const activeIndexRef = useRef(activeIndex);
+  const isAnimatingRef = useRef(isAnimating);
 
-    if (reducedMotion) {
-      setDisplayedQuote(testimonials[index].quote);
-      setDisplayedRole(testimonials[index].role);
-      setActiveIndex(index);
-      return;
-    }
+  activeIndexRef.current = activeIndex;
+  isAnimatingRef.current = isAnimating;
 
-    setIsAnimating(true);
+  const transitionToIndex = useCallback(
+    (index: number) => {
+      if (index === activeIndexRef.current || isAnimatingRef.current) return;
 
-    window.setTimeout(() => {
-      setDisplayedQuote(testimonials[index].quote);
-      setDisplayedRole(testimonials[index].role);
-      setActiveIndex(index);
-      window.setTimeout(() => setIsAnimating(false), 400);
-    }, 200);
-  };
+      if (reducedMotion) {
+        setDisplayedQuote(testimonials[index].quote);
+        setDisplayedRole(testimonials[index].role);
+        setActiveIndex(index);
+        return;
+      }
+
+      setIsAnimating(true);
+
+      window.setTimeout(() => {
+        setDisplayedQuote(testimonials[index].quote);
+        setDisplayedRole(testimonials[index].role);
+        setActiveIndex(index);
+        window.setTimeout(() => setIsAnimating(false), 400);
+      }, 200);
+    },
+    [reducedMotion, testimonials],
+  );
+
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+
+    const id = window.setInterval(() => {
+      if (paused || isAnimatingRef.current || document.hidden) return;
+      const next = (activeIndexRef.current + 1) % testimonials.length;
+      transitionToIndex(next);
+    }, AUTO_ROTATE_MS);
+
+    return () => window.clearInterval(id);
+  }, [paused, testimonials.length, transitionToIndex]);
 
   if (testimonials.length === 0) return null;
 
@@ -43,6 +67,15 @@ export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) 
     <div
       className="mx-auto flex max-w-4xl flex-col items-center gap-12 md:gap-14"
       aria-label="Client testimonials"
+      aria-roledescription="carousel"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setPaused(false);
+        }
+      }}
     >
       <div className="relative px-6 md:px-10">
         <span
@@ -96,7 +129,7 @@ export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) 
                 type="button"
                 aria-label={`Show testimonial from ${testimonial.author}`}
                 aria-pressed={isActive}
-                onClick={() => handleSelect(index)}
+                onClick={() => transitionToIndex(index)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 className={cn(
