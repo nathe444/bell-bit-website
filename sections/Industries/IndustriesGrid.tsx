@@ -37,14 +37,13 @@ function queryGridParts(grid: HTMLElement) {
   const scans = cards.map((card) => card.querySelector<HTMLElement>('[data-role="scan"]'));
   const glows = cards.map((card) => card.querySelector<HTMLElement>('[data-role="glow"]'));
   const texts = cards.map((card) => card.querySelector<HTMLElement>('[data-role="text"]'));
-  const labels = cards.map((card) => card.querySelector<HTMLElement>('[data-role="label"]'));
 
-  return { rail, cards, scans, glows, texts, labels };
+  return { rail, cards, scans, glows, texts };
 }
 
 function setPoweredState(grid: HTMLElement, hideScans = true) {
   ensureGsapRegistered();
-  const { rail, cards, scans, glows, texts, labels } = queryGridParts(grid);
+  const { rail, cards, scans, glows, texts } = queryGridParts(grid);
   const { lit } = getBorderColors();
 
   gsap.set(rail, { scaleX: 1, transformOrigin: "left center" });
@@ -52,12 +51,11 @@ function setPoweredState(grid: HTMLElement, hideScans = true) {
   gsap.set(scans, hideScans ? { autoAlpha: 0 } : { xPercent: 220, autoAlpha: 0 });
   gsap.set(glows, { autoAlpha: 0.45 });
   gsap.set(texts, { autoAlpha: 1, y: 0 });
-  gsap.set(labels, { autoAlpha: 1, scale: 1 });
 }
 
 function setUnpoweredState(grid: HTMLElement) {
   ensureGsapRegistered();
-  const { rail, cards, scans, glows, texts, labels } = queryGridParts(grid);
+  const { rail, cards, scans, glows, texts } = queryGridParts(grid);
   const { dim } = getBorderColors();
 
   gsap.set(rail, { scaleX: 0, transformOrigin: "left center" });
@@ -65,7 +63,6 @@ function setUnpoweredState(grid: HTMLElement) {
   gsap.set(scans, { xPercent: -120, autoAlpha: 1 });
   gsap.set(glows, { autoAlpha: 0 });
   gsap.set(texts, { autoAlpha: 0, y: 8 });
-  gsap.set(labels, { autoAlpha: 0, scale: 0.96 });
 }
 
 export function IndustriesGrid({ industries }: IndustriesGridProps) {
@@ -96,7 +93,7 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
         primedRef.current = true;
       }
 
-      const { rail, cards, scans, glows, texts, labels } = queryGridParts(grid);
+      const { rail, cards, scans, glows, texts } = queryGridParts(grid);
       const { lit } = getBorderColors();
 
       const tl = gsap.timeline({
@@ -116,11 +113,6 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
         .to(scans, { xPercent: 220, duration: 0.6, ease: "power1.out", stagger: 0.12 }, "<")
         .to(texts, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.12 }, "<0.1")
         .to(glows, { autoAlpha: 0.45, duration: 0.6, ease: "power1.out", stagger: 0.12 }, "<")
-        .to(
-          labels,
-          { autoAlpha: 1, scale: 1, duration: 0.35, ease: "back.out(1.7)", stagger: 0.12 },
-          "<0.15",
-        )
         .set(scans, { autoAlpha: 0 });
 
       return () => {
@@ -131,7 +123,7 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
   }, [reducedMotion, industries.length]);
 
   return (
-    <div ref={gridRef} className="relative mt-16">
+    <div ref={gridRef} className="relative mt-10 md:mt-12">
       <div className="relative mb-5 h-px md:mb-6">
         <div
           data-role="bus-rail"
@@ -145,7 +137,7 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
           <div
             key={industry.id}
             data-role="card"
-            className={`group relative flex min-h-[11.5rem] flex-col justify-between overflow-hidden rounded-2xl border border-line/40 bg-surface/35 p-6 backdrop-blur-sm transition-[background-color] duration-500 md:min-h-[12.5rem] md:p-7 ${cardSpanClass[index] ?? "lg:col-span-2"}`}
+            className={`group relative flex min-h-[12rem] flex-col overflow-hidden rounded-2xl border border-line/40 bg-surface/35 p-6 backdrop-blur-sm transition-[background-color] duration-500 md:min-h-[13rem] md:p-7 ${cardSpanClass[index] ?? "lg:col-span-2"}`}
           >
             <div
               data-role="scan"
@@ -159,22 +151,13 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
             />
 
             <div data-role="text" className="relative z-[2]">
-              <h3 className="font-display text-xl font-medium leading-tight tracking-tight text-paper md:text-2xl">
+              <h3 className="font-display text-lg font-medium leading-tight tracking-tight text-paper md:text-xl">
                 {industry.name}
               </h3>
-              <p className="mt-2.5 max-w-[34ch] text-sm leading-relaxed text-paper-dim md:mt-3">
+              <p className="mt-2.5 max-w-prose text-sm leading-relaxed text-paper-dim md:mt-3 md:text-[0.9375rem] md:leading-relaxed">
                 {industry.description}
               </p>
             </div>
-
-            <p
-              data-role="label"
-              aria-label={`Seen in ${industry.project}`}
-              className="relative z-[2] mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-line-strong bg-void/50 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.16em] text-signal-soft"
-            >
-              <span aria-hidden className="h-1 w-1 rounded-full bg-signal-soft/80" />
-              {industry.project}
-            </p>
           </div>
         ))}
       </div>

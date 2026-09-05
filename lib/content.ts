@@ -428,32 +428,32 @@ export const industries = [
   {
     id: "healthcare",
     name: "Healthcare",
-    description: "Patient movement and medical-record workflows, from registration through prescription.",
-    project: "Tena-BIT",
+    description:
+      "We build reliable digital solutions that help healthcare organizations manage their daily operations, improve patient services, and keep important information organized and accessible.",
   },
   {
     id: "education",
     name: "Education",
-    description: "Academic scheduling built on a constraint satisfaction engine.",
-    project: "CSMS",
+    description:
+      "We help educational institutions simplify their daily operations with reliable digital solutions, including class scheduling and management systems that make planning and coordination easier.",
   },
   {
     id: "commerce-construction",
     name: "Commerce & Construction",
-    description: "E-commerce, tendering, and property management for the construction sector.",
-    project: "Hoomez",
+    description:
+      "We build e-commerce platforms that make selling easier and help construction companies automate their daily business processes, saving time and improving efficiency.",
   },
   {
-    id: "enterprise",
-    name: "Enterprise & Corporate",
-    description: "Corporate platforms and content systems for multi-subsidiary organizations.",
-    project: "Guansa",
+    id: "ngos-development",
+    name: "NGOs & Development Organizations",
+    description:
+      "We help NGOs and development organizations manage their research, projects, and data with simple and reliable digital solutions built around their needs.",
   },
   {
-    id: "business-inventory",
-    name: "Business & Inventory",
-    description: "Cloud-based stock and inventory management for growing businesses.",
-    project: "BinWise",
+    id: "professional-services",
+    name: "Professional Services",
+    description:
+      "We provide digital and AI-powered solutions that help professional service businesses automate routine tasks, improve their workflows, and work more efficiently.",
   },
 ] as const;
 
