@@ -7,29 +7,32 @@ import { ServicesModuleList } from "./ServicesModuleList";
 
 export function Services() {
   return (
-    <section id="services" className="relative z-10 bg-void py-20 md:py-28">
-      <div className="container-edge">
-        <Reveal>
-          <div className="border-b border-line pb-6 md:pb-8">
-            <h2 className="max-w-3xl text-balance font-display text-[clamp(2.25rem,5.5vw,4rem)] font-medium leading-[1.02] text-paper">
-              {servicesSection.title}
-            </h2>
-          </div>
-        </Reveal>
+    <section
+      id="services"
+      className="relative z-10 bg-void py-16 md:flex md:min-h-[100svh] md:items-center md:py-10 lg:py-12"
+    >
+      <div className="container-edge w-full">
+        <div className="grid items-center gap-10 md:grid-cols-[minmax(0,52%)_minmax(0,48%)] md:gap-6 lg:gap-8">
+          <div className="flex min-w-0 flex-col gap-6 md:gap-8 lg:gap-10">
+            <Reveal>
+              <h2 className="text-balance font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.02] text-paper">
+                {servicesSection.title}
+              </h2>
+            </Reveal>
 
-        <div className="mt-8 grid items-center gap-10 md:mt-10 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12 xl:gap-16">
-          <Reveal delay={0.04}>
-            <ServicesModuleList />
-          </Reveal>
+            <Reveal delay={0.04}>
+              <ServicesModuleList />
+            </Reveal>
+          </div>
 
           <Reveal
             delay={0.08}
-            className="flex items-center justify-center md:sticky md:top-[calc(50vh-12rem)] md:self-center"
+            className="flex items-center justify-center md:self-center"
           >
             <Globe
               markers={[...servicesGlobe.markers]}
               arcs={[...servicesGlobe.arcs]}
-              className="mx-auto w-full max-w-[min(100%,360px)] sm:max-w-[min(100%,420px)] md:max-w-[min(100%,440px)] lg:max-w-[min(100%,520px)] xl:max-w-[min(100%,580px)]"
+              className="mx-auto w-full max-w-[min(100%,360px)] sm:max-w-[min(100%,380px)] md:max-w-[min(100%,400px)] lg:max-w-[min(100%,460px)] xl:max-w-[min(100%,500px)]"
             />
           </Reveal>
         </div>
