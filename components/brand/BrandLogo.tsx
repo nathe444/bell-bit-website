@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { brandAssets } from "./brand.config";
 import { cn } from "@/lib/utils";
 
 type BrandLogoAppearance = "default" | "on-dark-scene";
@@ -18,21 +18,15 @@ type BrandLogoProps = {
   forceInverted?: boolean;
 };
 
-function getLogoToneClass(
+function useWhiteLogo(
   appearance: BrandLogoAppearance,
   resolvedTheme: string | undefined,
   mounted: boolean,
   forceInverted?: boolean,
 ) {
-  if (forceInverted || appearance === "on-dark-scene") {
-    return "brightness-0 invert";
-  }
-
-  if (!mounted) {
-    return "brightness-0 invert";
-  }
-
-  return resolvedTheme === "dark" ? "brightness-0 invert" : "";
+  if (forceInverted || appearance === "on-dark-scene") return true;
+  if (!mounted) return true;
+  return resolvedTheme === "dark";
 }
 
 export function BrandLogo({
@@ -49,43 +43,42 @@ export function BrandLogo({
 
   useEffect(() => setMounted(true), []);
 
-  const toneClass = getLogoToneClass(
-    appearance,
-    resolvedTheme,
-    mounted,
-    forceInverted,
-  );
+  const whiteLogo = useWhiteLogo(appearance, resolvedTheme, mounted, forceInverted);
+  const toneClass = whiteLogo ? "brightness-0 invert" : "";
+
+  const imgProps = {
+    alt: "BellBit",
+    width,
+    height,
+    decoding: "async" as const,
+    ...(priority
+      ? { fetchPriority: "high" as const, loading: "eager" as const }
+      : { loading: "lazy" as const }),
+  };
+
+  const fullSrc = whiteLogo ? brandAssets.logoFullMono : brandAssets.logoFullColor;
+  const markSrc = brandAssets.logoMark;
 
   if (variant === "mark") {
     return (
       <span
-        className={cn("relative block shrink-0 overflow-hidden", className)}
+        className={cn("relative block shrink-0", className)}
         style={{ width: height, height }}
-        aria-hidden={false}
       >
-        <Image
-          src="/assets/bellbit/brand/bellbit-logo.png"
-          alt="BellBit"
-          width={width}
-          height={height}
-          priority={priority}
-          className={cn(
-            "absolute left-0 top-1/2 h-full w-auto max-w-none -translate-y-1/2 object-left object-contain",
-            toneClass,
-          )}
+        <img
+          {...imgProps}
+          src={markSrc}
+          className={cn("h-full w-full object-contain object-center", toneClass)}
         />
       </span>
     );
   }
 
   return (
-    <Image
-      src="/assets/bellbit/brand/bellbit-logo.png"
-      alt="BellBit"
-      width={width}
-      height={height}
-      priority={priority}
-      className={cn("object-contain", toneClass, className)}
+    <img
+      {...imgProps}
+      src={fullSrc}
+      className={cn("h-auto w-auto object-contain", toneClass, className)}
     />
   );
 }

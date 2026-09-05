@@ -153,10 +153,23 @@ export const projects = [
     summary:
       "An e-commerce platform developed for a UAE-based client, focused on construction materials, furniture, and property management.",
     detail:
-      "Full e-commerce functionality, AI-powered search using RAG and LLM integration, tender request creation, and video reel uploads for product promotion.",
+      "The system includes full e-commerce functionality, AI-powered search using RAG and LLM integration, tender request creation, and video reel uploads for product promotion.",
     industry: "Commerce / Construction",
-    image: "/assets/bellbit/projects/hoomez.jpeg",
-    imageOrientation: "portrait",
+    image: "/assets/bellbit/projects/hoomez.png",
+    imageAspect: "636 / 852",
+  },
+  {
+    id: "lucky-path",
+    name: "Lucky Path",
+    category: "ERP",
+    clientId: "lucky-path",
+    summary:
+      "An ERP system developed for Lucky Path Construction PLC, focused on the construction sector.",
+    detail:
+      "The system includes project and resource management, operational workflow tracking, and integrated business processes — giving construction teams one platform to plan, track, and run projects end to end.",
+    industry: "Construction",
+    image: "/assets/bellbit/projects/lucky-path.png",
+    imageAspect: "664 / 436",
   },
   {
     id: "csms",
@@ -166,10 +179,10 @@ export const projects = [
     summary:
       "A university-level scheduling system developed for Addis Ababa University.",
     detail:
-      "Manages academic resources and includes a constraint satisfaction engine that automatically generates semester schedules based on curriculum, instructors, classrooms, and availability.",
+      "It manages academic resources and includes a constraint satisfaction engine that automatically generates semester schedules based on curriculum, instructors, classrooms, and availability.",
     industry: "Education",
     image: "/assets/bellbit/projects/csms.png",
-    imageOrientation: "landscape",
+    imageAspect: "540 / 369",
   },
   {
     id: "guansa",
@@ -177,12 +190,12 @@ export const projects = [
     category: "Enterprise",
     clientId: "guansa",
     summary:
-      "A corporate platform for Guansa PLC that showcases all subsidiary companies, including Guansa Mead and Guansa Export.",
+      "The Guansa PLC website is a corporate platform that showcases all subsidiary companies, including Guansa Mead and Guansa Export.",
     detail:
-      "Designed with a modern, clean style and optimized for fast loading and easy use. Includes a custom CMS, allowing the company to manage and update content independently.",
+      "It was designed with a modern, clean style and optimized for fast loading and easy use. The website includes a custom CMS, allowing the company to manage and update content independently.",
     industry: "Enterprise / Corporate",
     image: "/assets/bellbit/projects/guansa.png",
-    imageOrientation: "landscape",
+    imageAspect: "576 / 289",
   },
   {
     id: "tena-bit",
@@ -192,10 +205,10 @@ export const projects = [
     summary:
       "A healthcare system designed to track patient movement and medical records.",
     detail:
-      "Covers registration, OPD, laboratory testing, results management, and medication prescription workflows.",
+      "It covers registration, OPD, laboratory testing, results management, and medication prescription workflows.",
     industry: "Healthcare",
     image: "/assets/bellbit/projects/tena-bit-dashboard.jpeg",
-    imageOrientation: "landscape",
+    imageAspect: "16 / 9",
   },
 ] as const;
 
@@ -347,7 +360,7 @@ export const clients = [
   },
   {
     name: "Guansa PLC",
-    logo: null,
+    logo: "/assets/bellbit/logos/guansa.svg",
     sector: "Enterprise",
     projectId: "guansa",
   },
@@ -355,7 +368,7 @@ export const clients = [
     name: "Lucky Path Construction PLC",
     logo: "/assets/bellbit/logos/lucky-path-construction.png",
     sector: "Construction",
-    projectId: null,
+    projectId: "lucky-path",
   },
   {
     name: "Abyssinia Medium Clinic",
@@ -365,7 +378,7 @@ export const clients = [
   },
   {
     name: "DAK Trading PLC",
-    logo: "/assets/bellbit/logos/dak-trading.png",
+    logo: "/assets/bellbit/logos/dak-trading-plc.png",
     sector: "Commerce",
     projectId: null,
   },
@@ -391,7 +404,7 @@ export const partners = [
   },
   {
     name: "BE Technologies",
-    logo: null,
+    logo: "/assets/bellbit/logos/be-technologies.png",
     focus: "Technology",
   },
   {

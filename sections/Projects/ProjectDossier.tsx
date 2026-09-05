@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { projects as projectsType } from "@/lib/content";
+import { cn } from "@/lib/utils";
 
 export type Project = (typeof projectsType)[number];
 
@@ -17,20 +18,30 @@ export function ProjectDossier({ project, index, className, claimed }: ProjectDo
     <article
       className={`grid h-full items-center gap-5 max-md:content-start md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-10 lg:gap-14 ${className ?? ""}`}
     >
-      <div
-        className={`relative w-full overflow-hidden border bg-surface/60 max-md:rounded-lg ${
-          claimed ? "border-signal/40 claim-glow" : "border-line"
-        }`}
-      >
-        <div className="relative aspect-[16/10] w-full max-md:aspect-[4/3]">
-          <Image
-            src={project.image}
-            alt={`${project.name} interface screenshot`}
-            fill
-            className="object-contain object-center p-1.5 max-md:p-2 md:p-3"
-            sizes="(min-width: 768px) 45vw, 100vw"
-            priority={index === 0}
-          />
+      <div className="flex w-full items-center justify-center">
+        <div
+          className={cn(
+            "relative w-fit max-w-full",
+            claimed && "drop-shadow-[0_0_48px_color-mix(in_srgb,var(--color-signal)_35%,transparent)]",
+          )}
+        >
+          <div
+            className="relative h-[min(40vh,300px)] overflow-hidden rounded-lg sm:h-[min(44vh,340px)] md:h-[min(48vh,380px)]"
+            style={{
+              aspectRatio: project.imageAspect,
+              maxWidth: "100%",
+              width: "auto",
+            }}
+          >
+            <Image
+              src={project.image}
+              alt={`${project.name} interface screenshot`}
+              fill
+              className="object-contain object-center"
+              sizes="(min-width: 768px) 45vw, 100vw"
+              priority={index === 0}
+            />
+          </div>
         </div>
       </div>
 
