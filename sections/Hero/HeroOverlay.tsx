@@ -4,20 +4,19 @@ import { useEffect, useRef } from "react";
 import { heroSecondary } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
-import { heroBehavior, heroLineReveal, heroPrimaryOpacity } from "./hero.config";
+import { heroBehavior, heroLineOpacity, heroPrimaryOpacity } from "./hero.config";
 
 type HeroOverlayProps = {
   progressRef: React.RefObject<number>;
 };
 
-const heroLines = [heroSecondary.title, ...heroSecondary.items] as const;
+const heroLines = heroSecondary.items;
 
 function lineMotionStyle(index: number): React.CSSProperties {
-  const offset = index % 2 === 0 ? -56 : 56;
+  const offset = index % 2 === 0 ? 44 : -44;
   return {
     opacity: `var(--hero-line-${index})`,
-    transform: `translate3d(calc((1 - var(--hero-line-${index})) * ${offset}px), calc((1 - var(--hero-line-${index})) * 32px), 0)`,
+    transform: `translate3d(calc((1 - var(--hero-line-${index})) * ${offset}px), calc((1 - var(--hero-line-${index})) * 28px), 0)`,
   };
 }
 
@@ -27,7 +26,6 @@ function lineMotionStyle(index: number): React.CSSProperties {
  */
 export function HeroOverlay({ progressRef }: HeroOverlayProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const trustCoverRef = useRef(0);
 
   useEffect(() => {
     let rafId = 0;
@@ -37,8 +35,6 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
       if (!el) return;
 
       const p = Math.min(1, Math.max(0, progressRef.current ?? 0));
-      const trustCover = Math.min(1, Math.max(0, trustCoverRef.current));
-      const trustMultiplier = 1 - trustCover;
       const primary = heroPrimaryOpacity(p);
 
       el.style.setProperty("--hero-progress", p.toFixed(4));
@@ -47,36 +43,18 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
       let secondaryPeak = 0;
 
       heroLines.forEach((_, index) => {
-        const reveal =
-          heroLineReveal(p, heroBehavior.secondaryLineStarts[index] ?? 0.24) * trustMultiplier;
+        const window = heroBehavior.secondaryLineWindows[index];
+        const reveal = window ? heroLineOpacity(p, window) : 0;
         el.style.setProperty(`--hero-line-${index}`, reveal.toFixed(4));
         secondaryPeak = Math.max(secondaryPeak, reveal);
       });
-
-      const ctaReveal = heroLineReveal(p, heroBehavior.secondaryCtaStart) * trustMultiplier;
-      el.style.setProperty("--hero-cta", ctaReveal.toFixed(4));
-      secondaryPeak = Math.max(secondaryPeak, ctaReveal);
 
       el.style.pointerEvents = primary > 0.12 || secondaryPeak > 0.45 ? "auto" : "none";
     };
     rafId = requestAnimationFrame(tick);
 
-    const cleanupScroll = runScrollTriggerSetup(() => {
-      const trustTrigger = ScrollTrigger.create({
-        trigger: "#trust",
-        start: "top bottom",
-        end: "top 88%",
-        scrub: heroBehavior.scrubSmoothing,
-        onUpdate: (self) => {
-          trustCoverRef.current = self.progress;
-        },
-      });
-      return () => trustTrigger.kill();
-    });
-
     return () => {
       cancelAnimationFrame(rafId);
-      cleanupScroll?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -94,7 +72,6 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
           ...lineVars,
           "--hero-progress": 0,
           "--hero-primary": 1,
-          "--hero-cta": 0,
         } as React.CSSProperties
       }
     >
@@ -131,46 +108,26 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
           </div>
         </div>
 
-        {/* Secondary — each line reveals in sync with the frame scrub, alternating sides */}
+        {/* Secondary — one line at a time, alternating sides with inset padding */}
         <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2">
-          <div className="container-edge flex flex-col gap-8 py-6 md:gap-12 md:py-10">
+          <div className="container-edge relative py-6 md:py-10">
             {heroLines.map((line, index) => (
               <div
                 key={line}
                 className={cn(
-                  "max-w-[min(100%,44rem)] will-change-[transform,opacity]",
-                  index % 2 === 0 ? "self-start text-left" : "self-end text-right",
+                  "absolute top-1/2 -translate-y-1/2 will-change-[transform,opacity]",
+                  index === 0 ? "max-w-[min(100%,44rem)]" : "max-w-[min(100%,34rem)]",
+                  index % 2 === 0
+                    ? "right-[7%] text-right sm:right-[9%] md:right-[11%] lg:right-[13%]"
+                    : "left-[7%] text-left sm:left-[9%] md:left-[11%] lg:left-[13%]",
                 )}
                 style={lineMotionStyle(index)}
               >
-                {index === 0 ? (
-                  <h2 className="text-balance font-display text-[clamp(2rem,5.5vw,4rem)] font-medium leading-[1.05] text-scene-paper">
-                    {line}
-                  </h2>
-                ) : (
-                  <p className="text-balance font-display text-[clamp(1.35rem,3.4vw,2.65rem)] font-light leading-snug text-scene-paper-dim">
-                    {line}
-                  </p>
-                )}
+                <p className="text-balance font-display text-[clamp(2rem,4.8vw,3.75rem)] font-light leading-snug text-scene-paper">
+                  {line}
+                </p>
               </div>
             ))}
-
-            <div
-              className="pointer-events-auto self-center will-change-[transform,opacity]"
-              style={{
-                opacity: "var(--hero-cta)",
-                transform:
-                  "translate3d(0, calc((1 - var(--hero-cta)) * 24px), 0)",
-              }}
-            >
-              <MagneticButton
-                as="a"
-                href="#trust"
-                className="inline-flex items-center gap-2 border-b border-scene-line-strong pb-1 text-sm font-medium uppercase tracking-wide text-scene-paper-dim transition-colors hover:border-signal-soft hover:text-scene-paper"
-              >
-                Meet our clients
-              </MagneticButton>
-            </div>
           </div>
         </div>
       </div>
@@ -193,35 +150,23 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
 
 export function HeroSecondaryStatic() {
   return (
-    <div className="mt-14 flex flex-col gap-8 md:mt-0 md:absolute md:inset-x-0 md:top-1/2 md:-translate-y-1/2 md:gap-10">
-      <div className="container-edge flex flex-col gap-8 md:gap-10">
+    <div className="mt-14 md:mt-0 md:absolute md:inset-x-0 md:top-1/2 md:-translate-y-1/2">
+      <div className="container-edge flex flex-col gap-8 px-6 md:gap-10 md:px-10">
         {heroLines.map((line, index) => (
           <div
             key={line}
             className={cn(
-              "max-w-[min(100%,44rem)]",
-              index % 2 === 0 ? "self-start text-left" : "self-end text-right",
+              index === 0 ? "max-w-[min(100%,44rem)]" : "max-w-[min(100%,34rem)]",
+              index % 2 === 0
+                ? "self-end pr-[7%] text-right sm:pr-[9%] md:pr-[11%]"
+                : "self-start pl-[7%] text-left sm:pl-[9%] md:pl-[11%]",
             )}
           >
-            {index === 0 ? (
-              <h2 className="text-balance font-display text-[clamp(2rem,5.5vw,3.5rem)] font-medium leading-[1.05] text-scene-paper">
-                {line}
-              </h2>
-            ) : (
-              <p className="text-balance font-display text-[clamp(1.25rem,3vw,2.25rem)] font-light leading-snug text-scene-paper-dim">
-                {line}
-              </p>
-            )}
+            <p className="text-balance font-display text-[clamp(1.5rem,3.5vw,2.65rem)] font-light leading-snug text-scene-paper">
+              {line}
+            </p>
           </div>
         ))}
-        <div className="self-center">
-          <a
-            href="#trust"
-            className="inline-flex items-center gap-2 border-b border-scene-line-strong pb-1 text-sm font-medium uppercase tracking-wide text-scene-paper-dim"
-          >
-            Meet our clients
-          </a>
-        </div>
       </div>
     </div>
   );

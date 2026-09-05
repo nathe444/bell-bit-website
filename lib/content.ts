@@ -497,11 +497,10 @@ export const nav = [
   { label: "Contact", href: "#contact" },
 ] as const;
 
-/** Fades in on the hero's right side after the primary headline scrolls away. */
+/** Fades in on the hero after the primary headline scrolls away — one line at a time. */
 export const heroSecondary = {
-  title: "What we deliver",
   items: [
-    "End To End Solution — From problem to production.",
+    "End To End Solution From problem to production.",
     "Reliable, Scalable and Relevant",
     "Security, Support and Training",
   ],

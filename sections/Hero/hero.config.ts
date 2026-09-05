@@ -59,10 +59,16 @@ export const heroBehavior = {
    */
   primaryHoldEnd: 0.07,
   primaryFadeEnd: 0.2,
-  secondaryLineStarts: [0.24, 0.38, 0.52, 0.66] as const,
-  secondaryCtaStart: 0.8,
-  secondaryLineFade: 0.08,
+  /** Equal-length windows with gaps; line 3 exits only as hero progress reaches 1. */
+  secondaryLineWindows: [
+    { start: 0.18, end: 0.4 },
+    { start: 0.47, end: 0.69 },
+    { start: 0.76, end: 1 },
+  ] as const,
+  secondaryLineFade: 0.07,
 } as const;
+
+export type HeroLineWindow = (typeof heroBehavior.secondaryLineWindows)[number];
 
 /** Primary hero copy: brief hold, then fade before secondary lines begin. */
 export function heroPrimaryOpacity(progress: number): number {
@@ -73,10 +79,26 @@ export function heroPrimaryOpacity(progress: number): number {
   return 1 - t;
 }
 
-/** Secondary line reveal with ease-out so each beat lands gently. */
-export function heroLineReveal(progress: number, start: number): number {
+/** Secondary line: ease in at window start, hold, ease out at window end (mirrors entrance motion). */
+export function heroLineOpacity(progress: number, window: HeroLineWindow): number {
   const fade = heroBehavior.secondaryLineFade;
+  const { start, end } = window;
+
   if (progress <= start) return 0;
-  const t = Math.min(1, (progress - start) / fade);
-  return 1 - (1 - t) ** 3;
+  if (progress > end) return 0;
+
+  const fadeInEnd = start + fade;
+  const fadeOutStart = end - fade;
+
+  if (progress < fadeInEnd) {
+    const t = (progress - start) / fade;
+    return 1 - (1 - t) ** 3;
+  }
+
+  if (progress > fadeOutStart) {
+    const t = (progress - fadeOutStart) / fade;
+    return (1 - t) ** 3;
+  }
+
+  return 1;
 }
