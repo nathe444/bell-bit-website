@@ -257,7 +257,7 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
 /** prefers-reduced-motion: vertical dossier stack, no scroll-jacking. */
 function ProjectStageStatic({ projects }: ProjectStageProps) {
   return (
-    <div className="container-edge flex flex-col gap-14 md:gap-28">
+    <div className="container-edge flex min-w-0 flex-col gap-14 overflow-x-hidden md:gap-28">
       {projects.map((project, index) => (
         <article key={project.id} className="border-t border-line pt-8 md:pt-10">
           <ProjectDossier project={project} index={index} />

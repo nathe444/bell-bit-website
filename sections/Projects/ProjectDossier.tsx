@@ -16,23 +16,16 @@ type ProjectDossierProps = {
 export function ProjectDossier({ project, index, className, claimed }: ProjectDossierProps) {
   return (
     <article
-      className={`grid h-full items-center gap-5 max-md:content-start md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-10 lg:gap-14 ${className ?? ""}`}
+      className={`grid h-full min-w-0 items-center gap-5 max-md:content-start md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-10 lg:gap-14 ${className ?? ""}`}
     >
-      <div className="flex w-full items-center justify-center">
+      <div className="flex w-full min-w-0 items-center justify-center overflow-hidden">
         <div
           className={cn(
-            "relative w-fit max-w-full",
+            "relative w-full min-w-0 max-w-full",
             claimed && "drop-shadow-[0_0_48px_color-mix(in_srgb,var(--color-signal)_35%,transparent)]",
           )}
         >
-          <div
-            className="relative h-[min(40vh,300px)] overflow-hidden rounded-lg sm:h-[min(44vh,340px)] md:h-[min(48vh,380px)]"
-            style={{
-              aspectRatio: project.imageAspect,
-              maxWidth: "100%",
-              width: "auto",
-            }}
-          >
+          <div className="relative mx-auto h-[min(36vh,260px)] w-full max-w-full overflow-hidden rounded-lg sm:h-[min(44vh,340px)] md:h-[min(48vh,380px)]">
             <Image
               src={project.image}
               alt={`${project.name} interface screenshot`}

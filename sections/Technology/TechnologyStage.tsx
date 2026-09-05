@@ -250,14 +250,81 @@ function TechnologyStageMotion({ groups, title }: TechnologyStageProps) {
 }
 
 function TechnologyStageStatic({ groups, title }: TechnologyStageProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const count = groups.length;
+  const activeGroup = groups[activeIndex];
+
+  if (!activeGroup) return null;
+
+  const goTo = (index: number) => {
+    setActiveIndex((index + count) % count);
+  };
+
   return (
     <section id="technology" className="relative z-10 bg-ink pb-10 pt-24 md:pb-14 md:pt-28">
-      <div className="container-edge mx-auto flex max-w-6xl flex-col gap-16 md:gap-24">
-        {groups.map((group, index) => (
-          <article key={group.id} className="border-t border-line pt-10 md:pt-12">
-            <TechnologyGroupPanel group={group} index={index} sectionTitle={title} />
-          </article>
-        ))}
+      <div className="container-edge mx-auto max-w-6xl">
+        <h2 className="relative mb-8 w-full text-balance text-center font-display text-[clamp(1.5rem,3.5vw,2.75rem)] font-medium leading-tight text-paper">
+          {title}
+        </h2>
+
+        <div className="flex items-center gap-3 sm:gap-4">
+          <button
+            type="button"
+            aria-label="Previous technology stack"
+            onClick={() => goTo(activeIndex - 1)}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-paper transition-colors hover:border-signal-soft hover:text-signal-soft"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M15 18l-6-6 6-6"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <div key={activeGroup.id}>
+              <TechnologyGroupPanel group={activeGroup} index={activeIndex} />
+            </div>
+          </div>
+
+          <button
+            type="button"
+            aria-label="Next technology stack"
+            onClick={() => goTo(activeIndex + 1)}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface text-paper transition-colors hover:border-signal-soft hover:text-signal-soft"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M9 18l6-6-6-6"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="mt-6 flex items-center justify-center gap-2">
+          {groups.map((group, index) => (
+            <button
+              key={group.id}
+              type="button"
+              aria-label={`Show ${group.label} stack`}
+              aria-current={index === activeIndex ? "true" : undefined}
+              onClick={() => goTo(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === activeIndex
+                  ? "w-6 bg-signal-soft"
+                  : "w-2 bg-line-strong hover:bg-paper-faint"
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
