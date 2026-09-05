@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { heroSecondary } from "@/lib/content";
 import { HeroCanvas } from "./HeroCanvas";
-import { HeroOverlay } from "./HeroOverlay";
+import { HeroOverlay, HeroSecondaryStatic } from "./HeroOverlay";
 import { heroSequence, heroBehavior } from "./hero.config";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -169,19 +168,7 @@ function HeroStatic() {
             </div>
           </div>
 
-          <div className="mt-14 max-w-md md:absolute md:right-0 md:top-1/2 md:mt-0 md:max-w-md md:-translate-y-1/2 lg:max-w-lg">
-            <h2 className="font-display text-3xl font-medium leading-tight text-scene-paper md:text-4xl">
-              {heroSecondary.title}
-            </h2>
-            {heroSecondary.items.map((item, index) => (
-              <p
-                key={item}
-                className={`text-base leading-relaxed text-scene-paper-dim md:text-lg ${index === 0 ? "mt-6" : "mt-5"}`}
-              >
-                {item}
-              </p>
-            ))}
-          </div>
+          <HeroSecondaryStatic />
         </div>
       </div>
     </section>

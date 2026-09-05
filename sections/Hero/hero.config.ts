@@ -53,4 +53,30 @@ export const heroBehavior = {
    * canvas in sync with Lenis without feeling jittery on fast wheel input.
    */
   scrubSmoothing: 0.55,
+  /**
+   * Scroll choreography (0–1 = full frame sequence).
+   * Primary exits early; secondary lines stagger across the mid/late scrub.
+   */
+  primaryHoldEnd: 0.07,
+  primaryFadeEnd: 0.2,
+  secondaryLineStarts: [0.24, 0.38, 0.52, 0.66] as const,
+  secondaryCtaStart: 0.8,
+  secondaryLineFade: 0.08,
 } as const;
+
+/** Primary hero copy: brief hold, then fade before secondary lines begin. */
+export function heroPrimaryOpacity(progress: number): number {
+  const { primaryHoldEnd, primaryFadeEnd } = heroBehavior;
+  if (progress <= primaryHoldEnd) return 1;
+  if (progress >= primaryFadeEnd) return 0;
+  const t = (progress - primaryHoldEnd) / (primaryFadeEnd - primaryHoldEnd);
+  return 1 - t;
+}
+
+/** Secondary line reveal with ease-out so each beat lands gently. */
+export function heroLineReveal(progress: number, start: number): number {
+  const fade = heroBehavior.secondaryLineFade;
+  if (progress <= start) return 0;
+  const t = Math.min(1, (progress - start) / fade);
+  return 1 - (1 - t) ** 3;
+}
