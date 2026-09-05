@@ -86,31 +86,23 @@ function ServiceRow({
         aria-hidden="true"
       />
 
-      <div className="flex items-start gap-5 md:gap-7 lg:gap-8">
-        <span className="w-7 shrink-0 pt-1 font-mono text-[11px] tabular-nums tracking-widest text-paper-faint transition-colors duration-300 group-hover:text-signal-soft group-data-[active=true]:text-signal-soft md:text-xs">
+      <div className="flex items-center gap-5 md:gap-7 lg:gap-8">
+        <span className="w-7 shrink-0 font-mono text-[11px] tabular-nums tracking-widest text-paper-faint transition-colors duration-300 group-hover:text-signal-soft group-data-[active=true]:text-signal-soft md:text-xs">
           {number}
         </span>
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center justify-between gap-4">
             <p className="font-display text-[1.05rem] font-medium leading-[1.25] text-paper-faint transition-colors duration-300 group-hover:text-paper group-data-[active=true]:text-paper md:text-xl lg:text-[1.35rem]">
               {service.title}
             </p>
             <span
-              className="shrink-0 pt-1 font-mono text-sm text-paper-faint opacity-0 transition-[opacity,transform,color] duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-data-[active=true]:translate-x-0 group-data-[active=true]:text-signal-soft group-data-[active=true]:opacity-100 -translate-x-1"
+              className="shrink-0 font-mono text-sm text-paper-faint opacity-0 transition-[opacity,transform,color] duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-data-[active=true]:translate-x-0 group-data-[active=true]:text-signal-soft group-data-[active=true]:opacity-100 -translate-x-1"
               aria-hidden="true"
             >
               →
             </span>
           </div>
-
-          <p className="grid grid-rows-[0fr] text-sm leading-relaxed text-paper-dim transition-[grid-template-rows,opacity] duration-300 group-hover:grid-rows-[1fr] group-data-[active=true]:grid-rows-[1fr] md:text-[0.9375rem]">
-            <span className="overflow-hidden">
-              <span className="block pt-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-data-[active=true]:opacity-100">
-                {service.tagline}
-              </span>
-            </span>
-          </p>
         </div>
       </div>
     </li>
