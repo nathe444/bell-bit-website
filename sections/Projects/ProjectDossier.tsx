@@ -25,7 +25,7 @@ export function ProjectDossier({ project, index, className, claimed }: ProjectDo
             claimed && "drop-shadow-[0_0_48px_color-mix(in_srgb,var(--color-signal)_35%,transparent)]",
           )}
         >
-          <div className="relative mx-auto h-[min(42vh,300px)] w-full max-w-full overflow-hidden rounded-lg sm:h-[min(50vh,380px)] md:h-[min(56vh,440px)] lg:h-[min(58vh,480px)]">
+          <div className="relative mx-auto h-[min(42vh,300px)] w-full max-w-full sm:h-[min(50vh,380px)] md:h-[min(56vh,440px)] lg:h-[min(58vh,480px)]">
             <Image
               src={project.image}
               alt={`${project.name} interface screenshot`}

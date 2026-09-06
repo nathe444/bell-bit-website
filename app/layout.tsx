@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Inter } from "next/font/google";
+import { Manrope, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { SmoothScrollProvider } from "@/animations/SmoothScrollProvider";
 import { Navbar } from "@/components/navigation/Navbar";
@@ -15,6 +15,12 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+  weight: ["500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -46,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} min-h-full dark`}
+      className={`${manrope.variable} ${inter.variable} ${plusJakartaSans.variable} min-h-full dark`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-void text-paper antialiased">

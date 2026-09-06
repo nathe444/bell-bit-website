@@ -5,6 +5,7 @@ import { heroSecondary } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { heroBehavior, heroLineOpacity, heroPrimaryOpacity } from "./hero.config";
+import { HeroSecondaryCopy } from "./HeroSecondaryCopy";
 
 type HeroOverlayProps = {
   progressRef: React.RefObject<number>;
@@ -125,9 +126,7 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
                 )}
                 style={lineMotionStyle(index)}
               >
-                <p className="text-balance font-display text-[clamp(2rem,4.8vw,3.75rem)] font-light leading-snug text-scene-paper">
-                  {line}
-                </p>
+                <HeroSecondaryCopy text={line} />
               </div>
             ))}
           </div>
@@ -164,9 +163,7 @@ export function HeroSecondaryStatic() {
                 : "self-start pl-[7%] text-left sm:pl-[9%] md:pl-[11%]",
             )}
           >
-            <p className="text-balance font-display text-[clamp(1.5rem,3.5vw,2.65rem)] font-light leading-snug text-scene-paper">
-              {line}
-            </p>
+            <HeroSecondaryCopy text={line} size="static" />
           </div>
         ))}
       </div>

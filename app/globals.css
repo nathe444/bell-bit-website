@@ -34,6 +34,7 @@
 
   --font-display: var(--font-manrope);
   --font-body: var(--font-inter);
+  --font-hero-secondary: var(--font-plus-jakarta);
 
   --ease-signature: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-slow: 1.1s;
@@ -98,6 +99,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
+  --font-hero-secondary: var(--font-hero-secondary);
 }
 
 * {

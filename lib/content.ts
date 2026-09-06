@@ -169,7 +169,7 @@ export const projects = [
     detail: "",
     industry: "Construction",
     image: "/assets/bellbit/projects/lucky-path.png",
-    imageAspect: "6000 / 3959",
+    imageAspect: "1 / 1",
   },
   {
     id: "csms",
@@ -181,7 +181,7 @@ export const projects = [
       "It manages academic resources and includes a constraint satisfaction engine that automatically generates semester schedules based on curriculum, instructors, classrooms, and availability.",
     industry: "Education",
     image: "/assets/bellbit/projects/csms.png",
-    imageAspect: "540 / 369",
+    imageAspect: "1 / 1",
   },
   {
     id: "guansa",
@@ -194,7 +194,7 @@ export const projects = [
       "It was designed with a modern, clean style and optimized for fast loading and easy use. The website includes a custom CMS, allowing the company to manage and update content independently.",
     industry: "Enterprise / Corporate",
     image: "/assets/bellbit/projects/guansa.png",
-    imageAspect: "576 / 289",
+    imageAspect: "6000 / 3959",
   },
   {
     id: "tena-bit",
@@ -208,6 +208,18 @@ export const projects = [
     industry: "Healthcare",
     image: "/assets/bellbit/projects/tena-bit-dashboard.jpeg",
     imageAspect: "16 / 9",
+  },
+  {
+    id: "orda-rms",
+    name: "ORDA RMS",
+    category: "Research",
+    clientId: "orda",
+    summary:
+      "A custom research and project management system built for ORDA Ethiopia's Water and Food Division to process large volumes of data and support reliable research management workflows.",
+    detail: "",
+    industry: "NGOs & Development",
+    image: "/assets/bellbit/logos/orda.png",
+    imageAspect: "1 / 1",
   },
 ] as const;
 
@@ -392,6 +404,12 @@ export const clients = [
     logo: "/assets/bellbit/logos/nain-mch.jpeg",
     sector: "Healthcare",
     projectId: null,
+  },
+  {
+    name: "ORDA Ethiopia",
+    logo: "/assets/bellbit/logos/orda.png",
+    sector: "NGO / Development",
+    projectId: "orda-rms",
   },
 ] as const;
 
