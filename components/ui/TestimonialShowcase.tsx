@@ -9,7 +9,7 @@ type TestimonialShowcaseProps = {
   testimonials: readonly Testimonial[];
 };
 
-const AUTO_ROTATE_MS = 5500;
+const AUTO_ROTATE_MS = 3750;
 
 export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) {
   const reducedMotion = useReducedMotion();
