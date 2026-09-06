@@ -68,7 +68,7 @@ function getCloudOptions(compact: boolean) {
   const baseOptions = cloudProps.options ?? {};
   return {
     ...baseOptions,
-    imageScale: compact ? 1.72 : (baseOptions.imageScale ?? 2),
+    imageScale: compact ? 2.05 : (baseOptions.imageScale ?? 2),
   };
 }
 
@@ -91,7 +91,7 @@ export function IconCloud({ iconSlugs, className = "", compact = false }: IconCl
         bgHex: theme === "light" ? "#e8ecf4" : "#1a1f2b",
         fallbackHex: theme === "light" ? "#64748b" : "#9aa3b5",
         minContrastRatio: theme === "dark" ? 2 : 1.2,
-        size: compact ? 36 : 42,
+        size: compact ? 46 : 42,
         aProps: {
           href: undefined,
           target: undefined,

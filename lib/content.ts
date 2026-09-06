@@ -157,7 +157,7 @@ export const projects = [
       "The system includes full e-commerce functionality, AI-powered search using RAG and LLM integration, tender request creation, and video reel uploads for product promotion.",
     industry: "Commerce / Construction",
     image: "/assets/bellbit/projects/hoomez.png",
-    imageAspect: "636 / 852",
+    imageAspect: "431 / 578",
   },
   {
     id: "lucky-path",

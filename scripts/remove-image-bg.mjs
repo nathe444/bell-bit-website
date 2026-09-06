@@ -12,6 +12,7 @@ if (!input) {
 const whiteThreshold = tight ? 236 : 248;
 const blackThreshold = tight ? 32 : 22;
 const fringeLuminance = tight ? 228 : 0;
+const fringeDarkLuminance = tight ? 42 : 0;
 const fringePasses = tight ? 6 : 0;
 
 function luminance(r, g, b) {
@@ -121,7 +122,10 @@ for (let pass = 0; pass < fringePasses; pass++) {
       const r = pixels[offset];
       const g = pixels[offset + 1];
       const b = pixels[offset + 2];
-      if (luminance(r, g, b) < fringeLuminance) continue;
+      const l = luminance(r, g, b);
+      const isFringe =
+        mode === "black" ? l <= fringeDarkLuminance : l >= fringeLuminance;
+      if (!isFringe) continue;
       if (!hasTransparentNeighbor(x, y)) continue;
       toClear.push(i);
     }
