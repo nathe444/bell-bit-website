@@ -63,12 +63,15 @@ export function heroBootLoadConcurrency(profile: "fast" | "slow" | "unknown") {
   return 12;
 }
 
-/** Max parallel frame requests during scroll scrubbing. */
+/** Max parallel frame requests during scroll scrubbing (after full sequence is cached). */
 export function heroLoadConcurrency(profile: "fast" | "slow" | "unknown") {
-  if (profile === "slow") return 2;
-  if (profile === "unknown") return 3;
-  return 6;
+  if (profile === "slow") return 4;
+  if (profile === "unknown") return 6;
+  return 10;
 }
+
+/** Frames to preload ahead of the current scroll playhead. */
+export const heroScrollLookahead = 32;
 
 export const heroBehavior = {
   /** Scroll distance mapped to the full frame sequence, in viewport heights. */

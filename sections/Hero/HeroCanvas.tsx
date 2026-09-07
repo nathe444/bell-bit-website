@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useFrameSequence } from "./useFrameSequence";
-import { heroBehavior, heroInitialWindow, heroSequence } from "./hero.config";
+import { heroBehavior, heroScrollLookahead, heroSequence } from "./hero.config";
 import { useNetworkProfile } from "@/hooks/useNetworkProfile";
 
 type HeroCanvasProps = {
@@ -50,7 +50,6 @@ export function HeroCanvas({
     useFrameSequence({
       frameCount: sequence.frameCount,
       framePath: sequence.framePath,
-      initialWindow: heroInitialWindow(networkProfile),
       cacheWindow: heroBehavior.cacheWindow,
       networkProfile,
     });
@@ -96,7 +95,6 @@ export function HeroCanvas({
 
     let rafId = 0;
     let lastDrawnIndex = -1;
-    let lastPreloadIndex = -1;
 
     const draw = () => {
       rafId = requestAnimationFrame(draw);
@@ -107,10 +105,7 @@ export function HeroCanvas({
         Math.floor(progress * sequence.frameCount)
       );
 
-      if (frameIndex !== lastPreloadIndex) {
-        lastPreloadIndex = frameIndex;
-        preloadAround(frameIndex);
-      }
+      preloadAround(frameIndex, heroScrollLookahead);
 
       const image = getFrame(frameIndex);
       if (!image || frameIndex === lastDrawnIndex) return;
