@@ -127,12 +127,7 @@ export function Hero() {
 
   return (
     <>
-      <HeroBootScreen
-        visible={bootVisible}
-        progress={bootState.progress}
-        posterReady={firstFrameReady}
-        posterSrc={heroSequence.posterPath}
-      />
+      <HeroBootScreen visible={bootVisible} progress={bootState.progress} />
 
       <section
         ref={wrapperRef}
