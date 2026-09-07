@@ -1,7 +1,7 @@
 {
-  "frameCount": 181,
+  "frameCount": 360,
   "sourceFrameCount": 360,
-  "desktopStride": 2,
+  "desktopStride": 1,
   "frameWidth": 1440,
   "frameHeight": 810,
   "frameExtension": "avif",
@@ -17,7 +17,7 @@
       "format": "avif",
       "maxWidth": 1440,
       "quality": 62,
-      "stride": 2,
+      "stride": 1,
       "effort": 6
     },
     "mobile": {
@@ -28,5 +28,5 @@
       "effort": 6
     }
   },
-  "generatedAt": "2026-09-07T09:12:54.329Z"
+  "generatedAt": "2026-09-07T09:27:01.571Z"
 }

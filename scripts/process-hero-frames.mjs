@@ -24,8 +24,8 @@ const OUT_BASE = path.join(ROOT, "public", "assets", "bellbit", "hero");
 const OUT_FRAMES = path.join(OUT_BASE, "frames");
 const OUT_MOBILE = path.join(OUT_BASE, "frames-mobile");
 
-/** Export every Nth source frame on desktop (2 = half the files, still smooth scrub). */
-const DESKTOP_STRIDE = 2;
+/** Export every Nth source frame on desktop (1 = all frames). */
+const DESKTOP_STRIDE = 1;
 /** Export every Nth source frame on mobile. */
 const MOBILE_STRIDE = 3;
 
