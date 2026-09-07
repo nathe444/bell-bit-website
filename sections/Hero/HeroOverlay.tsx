@@ -111,18 +111,16 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
           </div>
         </div>
 
-        {/* Secondary — one line at a time, alternating sides with inset padding */}
-        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2">
-          <div className="container-edge relative py-6 md:py-10">
+        {/* Secondary — one line at a time, alternating sides within inset band */}
+        <div className="pointer-events-none absolute inset-x-[7%] top-1/2 z-[1] -translate-y-1/2 sm:inset-x-[9%] md:inset-x-[11%] lg:inset-x-[13%]">
+          <div className="relative py-6 md:py-10">
             {heroLines.map((line, index) => (
               <div
                 key={line}
                 className={cn(
                   "absolute top-1/2 -translate-y-1/2 will-change-[transform,opacity]",
-                  index === 0 ? "max-w-[min(100%,44rem)]" : "max-w-[min(100%,34rem)]",
-                  index % 2 === 0
-                    ? "right-[7%] text-right sm:right-[9%] md:right-[11%] lg:right-[13%]"
-                    : "left-[7%] text-left sm:left-[9%] md:left-[11%] lg:left-[13%]",
+                  index === 0 ? "max-w-[44rem]" : "max-w-[34rem]",
+                  index % 2 === 0 ? "right-0 text-right" : "left-0 text-left",
                 )}
                 style={lineMotionStyle(index)}
               >
@@ -152,15 +150,13 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
 export function HeroSecondaryStatic() {
   return (
     <div className="mt-14 md:mt-0 md:absolute md:inset-x-0 md:top-1/2 md:-translate-y-1/2">
-      <div className="container-edge flex flex-col gap-8 px-6 md:gap-10 md:px-10">
+      <div className="container-edge flex flex-col gap-8 md:gap-10">
         {heroLines.map((line, index) => (
           <div
             key={line}
             className={cn(
-              index === 0 ? "max-w-[min(100%,44rem)]" : "max-w-[min(100%,34rem)]",
-              index % 2 === 0
-                ? "self-end pr-[7%] text-right sm:pr-[9%] md:pr-[11%]"
-                : "self-start pl-[7%] text-left sm:pl-[9%] md:pl-[11%]",
+              index === 0 ? "max-w-[44rem]" : "max-w-[34rem]",
+              index % 2 === 0 ? "self-end text-right" : "self-start text-left",
             )}
           >
             <HeroSecondaryCopy text={line} size="static" />

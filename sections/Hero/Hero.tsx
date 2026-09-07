@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { HeroBootScreen } from "./HeroBootScreen";
 import { HeroCanvas } from "./HeroCanvas";
 import { HeroOverlay, HeroSecondaryStatic } from "./HeroOverlay";
 import { heroSequence, heroBehavior } from "./hero.config";
@@ -9,13 +10,66 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
 
+const BOOT_MIN_MS = 750;
+const BOOT_MAX_MS = 180_000;
+
+type BootState = {
+  loadedCount: number;
+  targetCount: number;
+  progress: number;
+  initialReady: boolean;
+};
+
 export function Hero() {
   const reducedMotion = useReducedMotion();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const stickyRef = useRef<HTMLDivElement | null>(null);
   const progressRef = useRef(0);
+  const bootMountRef = useRef(Date.now());
   const [firstFrameReady, setFirstFrameReady] = useState(false);
+  const [bootState, setBootState] = useState<BootState>({
+    loadedCount: 0,
+    targetCount: 1,
+    progress: 0,
+    initialReady: false,
+  });
+  const [bootVisible, setBootVisible] = useState(true);
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
+
+  const handleBootProgress = useCallback((state: BootState) => {
+    setBootState(state);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setBootVisible(false);
+      return;
+    }
+
+    if (!bootState.initialReady) {
+      const failSafe = window.setTimeout(() => setBootVisible(false), BOOT_MAX_MS);
+      return () => window.clearTimeout(failSafe);
+    }
+
+    const elapsed = Date.now() - bootMountRef.current;
+    const delay = Math.max(0, BOOT_MIN_MS - elapsed);
+    const dismiss = window.setTimeout(() => setBootVisible(false), delay);
+    return () => window.clearTimeout(dismiss);
+  }, [bootState.initialReady, reducedMotion]);
+
+  useEffect(() => {
+    if (reducedMotion || bootVisible) return;
+    document.body.style.overflow = "";
+  }, [bootVisible, reducedMotion]);
+
+  useEffect(() => {
+    if (reducedMotion || !bootVisible) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [bootVisible, reducedMotion]);
 
   useEffect(() => {
     if (reducedMotion) return;
@@ -71,46 +125,56 @@ export function Hero() {
   }
 
   return (
-    <section
-      ref={wrapperRef}
-      id="hero"
-      className="relative w-full bg-void"
-      style={{ height: `${heroBehavior.pinDistanceVh}vh` }}
-    >
-      <div
-        ref={stickyRef}
-        className="fixed inset-0 z-0 h-screen w-full overflow-hidden"
-        style={
-          {
-            "--held-scrim": 0,
-            "--backdrop-opacity": 1,
-            opacity: "var(--backdrop-opacity)",
-          } as React.CSSProperties
-        }
+    <>
+      <HeroBootScreen
+        visible={bootVisible}
+        progress={bootState.progress}
+        posterReady={firstFrameReady}
+        posterSrc={heroSequence.posterPath}
+      />
+
+      <section
+        ref={wrapperRef}
+        id="hero"
+        className="relative w-full overflow-x-clip bg-void"
+        style={{ height: `${heroBehavior.pinDistanceVh}vh` }}
       >
-        <Image
-          src={heroSequence.posterPath}
-          alt=""
-          fill
-          priority
-          aria-hidden="true"
-          className="object-cover transition-opacity duration-700"
-          style={{ opacity: firstFrameReady ? 0 : 1 }}
-        />
-        <HeroCanvas
-          key={isSmallScreen ? "mobile" : "desktop"}
-          isSmallScreen={isSmallScreen}
-          progressRef={progressRef}
-          onFirstFrameReady={() => setFirstFrameReady(true)}
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-scene-void via-scene-void/10 to-scene-void/40" />
         <div
-          className="pointer-events-none absolute inset-0 bg-void"
-          style={{ opacity: "calc(var(--held-scrim) * 0.75)" }}
-        />
-        <HeroOverlay progressRef={progressRef} />
-      </div>
-    </section>
+          ref={stickyRef}
+          className="fixed inset-0 z-0 h-screen w-full overflow-hidden"
+          style={
+            {
+              "--held-scrim": 0,
+              "--backdrop-opacity": 1,
+              opacity: "var(--backdrop-opacity)",
+            } as React.CSSProperties
+          }
+        >
+          <Image
+            src={heroSequence.posterPath}
+            alt=""
+            fill
+            priority
+            aria-hidden="true"
+            className="object-cover transition-opacity duration-700"
+            style={{ opacity: firstFrameReady ? 0 : 1 }}
+          />
+          <HeroCanvas
+            key={isSmallScreen ? "mobile" : "desktop"}
+            isSmallScreen={isSmallScreen}
+            progressRef={progressRef}
+            onFirstFrameReady={() => setFirstFrameReady(true)}
+            onBootProgress={handleBootProgress}
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-scene-void via-scene-void/10 to-scene-void/40" />
+          <div
+            className="pointer-events-none absolute inset-0 bg-void"
+            style={{ opacity: "calc(var(--held-scrim) * 0.75)" }}
+          />
+          <HeroOverlay progressRef={progressRef} />
+        </div>
+      </section>
+    </>
   );
 }
 

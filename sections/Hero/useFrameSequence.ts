@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { NetworkProfile } from "@/lib/networkProfile";
-import { heroLoadConcurrency } from "./hero.config";
+import { heroBootTargetCount, heroLoadConcurrency } from "./hero.config";
 
 type SequenceConfig = {
   frameCount: number;
@@ -46,8 +46,10 @@ export function useFrameSequence({
   const directionRef = useRef<1 | -1>(1);
   const [firstFrameReady, setFirstFrameReady] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
+  const [initialReady, setInitialReady] = useState(false);
   const mountedRef = useRef(true);
   const maxConcurrent = heroLoadConcurrency(networkProfile);
+  const bootTarget = heroBootTargetCount(frameCount);
 
   const pumpQueue = useCallback(() => {
     while (pendingRef.current.size < maxConcurrent && queueRef.current.length > 0) {
@@ -61,6 +63,7 @@ export function useFrameSequence({
       if (cold) {
         coldCacheRef.current.delete(index);
         cacheRef.current.set(index, { image: cold, loaded: true, failed: false });
+        setLoadedCount((c) => c + 1);
         if (index === 0) setFirstFrameReady(true);
         continue;
       }
@@ -193,6 +196,13 @@ export function useFrameSequence({
   }, []);
 
   useEffect(() => {
+    if (initialReady) return;
+    if (firstFrameReady && loadedCount >= bootTarget) {
+      setInitialReady(true);
+    }
+  }, [bootTarget, firstFrameReady, initialReady, loadedCount]);
+
+  useEffect(() => {
     mountedRef.current = true;
     cacheRef.current.clear();
     coldCacheRef.current.clear();
@@ -203,32 +213,39 @@ export function useFrameSequence({
     lastEvictCenterRef.current = -1;
     setFirstFrameReady(false);
     setLoadedCount(0);
+    setInitialReady(false);
 
-    // Frame 0 alone first — on slow networks it must not compete with a burst of peers.
     enqueueFrame(0);
 
-    const deferInitialBatch = networkProfile === "slow" ? 400 : 0;
-    const deferFinalFrame = networkProfile === "slow";
+    const deferBootBatch = networkProfile === "slow" ? 400 : 0;
 
-    const batchTimer = window.setTimeout(() => {
-      for (let i = 1; i < Math.min(initialWindow, frameCount); i++) {
+    const bootTimer = window.setTimeout(() => {
+      for (let i = 1; i < bootTarget; i++) {
         enqueueFrame(i);
       }
-      if (!deferFinalFrame) {
+      if (networkProfile !== "slow" && frameCount - 1 >= bootTarget) {
         enqueueFrame(frameCount - 1);
       }
-    }, deferInitialBatch);
+    }, deferBootBatch);
 
-    const finalTimer = deferFinalFrame
-      ? window.setTimeout(() => enqueueFrame(frameCount - 1), deferInitialBatch + 1200)
-      : undefined;
+    const finalTimer =
+      networkProfile === "slow"
+        ? window.setTimeout(() => enqueueFrame(frameCount - 1), deferBootBatch + 1200)
+        : undefined;
 
     return () => {
       mountedRef.current = false;
-      window.clearTimeout(batchTimer);
+      window.clearTimeout(bootTimer);
       if (finalTimer !== undefined) window.clearTimeout(finalTimer);
     };
-  }, [enqueueFrame, frameCount, initialWindow, networkProfile]);
+  }, [bootTarget, enqueueFrame, frameCount, networkProfile]);
 
-  return { getFrame, preloadAround, firstFrameReady, loadedCount };
+  return {
+    getFrame,
+    preloadAround,
+    firstFrameReady,
+    loadedCount,
+    bootTarget,
+    initialReady,
+  };
 }

@@ -9,6 +9,12 @@ type HeroCanvasProps = {
   /** 0..1, mutated by the parent's ScrollTrigger callback every frame — read here, never via React state. */
   progressRef: React.RefObject<number>;
   onFirstFrameReady?: () => void;
+  onBootProgress?: (state: {
+    loadedCount: number;
+    targetCount: number;
+    progress: number;
+    initialReady: boolean;
+  }) => void;
   /**
    * Decided once by the parent and used as its React `key`, so switching
    * breakpoints fully remounts this component instead of reusing a frame
@@ -17,7 +23,12 @@ type HeroCanvasProps = {
   isSmallScreen: boolean;
 };
 
-export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: HeroCanvasProps) {
+export function HeroCanvas({
+  progressRef,
+  onFirstFrameReady,
+  onBootProgress,
+  isSmallScreen,
+}: HeroCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const networkProfile = useNetworkProfile();
 
@@ -35,18 +46,28 @@ export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: He
         frameHeight: heroSequence.frameHeight,
       };
 
-  const { getFrame, preloadAround, firstFrameReady } = useFrameSequence({
-    frameCount: sequence.frameCount,
-    framePath: sequence.framePath,
-    initialWindow: heroInitialWindow(networkProfile),
-    cacheWindow: heroBehavior.cacheWindow,
-    networkProfile,
-  });
+  const { getFrame, preloadAround, firstFrameReady, loadedCount, bootTarget, initialReady } =
+    useFrameSequence({
+      frameCount: sequence.frameCount,
+      framePath: sequence.framePath,
+      initialWindow: heroInitialWindow(networkProfile),
+      cacheWindow: heroBehavior.cacheWindow,
+      networkProfile,
+    });
 
   useEffect(() => {
     if (firstFrameReady) onFirstFrameReady?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstFrameReady]);
+
+  useEffect(() => {
+    onBootProgress?.({
+      loadedCount,
+      targetCount: bootTarget,
+      progress: bootTarget > 0 ? loadedCount / bootTarget : 0,
+      initialReady,
+    });
+  }, [bootTarget, initialReady, loadedCount, onBootProgress]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

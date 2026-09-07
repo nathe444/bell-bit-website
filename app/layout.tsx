@@ -63,7 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeProvider>
           <SmoothScrollProvider>
             <Navbar />
-            <main>{children}</main>
+            <main className="overflow-x-clip">{children}</main>
           </SmoothScrollProvider>
         </ThemeProvider>
       </body>
