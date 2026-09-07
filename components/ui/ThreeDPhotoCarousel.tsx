@@ -18,6 +18,7 @@ export type CarouselImageItem = {
   id: string;
   src: string;
   alt: string;
+  aspectRatio: string;
 };
 
 export type CarouselFounderItem = {
@@ -29,6 +30,81 @@ export type CarouselFounderItem = {
 export type CarouselItem = CarouselImageItem | CarouselFounderItem;
 
 const transitionOverlay = { duration: 0.5, ease: [0.32, 0.72, 0, 1] as const };
+
+const carouselPhotoSizes = "(max-width: 640px) 360px, 560px";
+
+const carouselPhotoImageClass =
+  "object-cover [backface-visibility:hidden] [transform:translateZ(0)]";
+
+const carouselPhotoFrameClass =
+  "relative shrink-0 overflow-hidden rounded-xl border border-line bg-surface";
+
+function getPhotoFrameStyle(aspectRatio: string) {
+  const [width, height] = aspectRatio.split("/").map((part) => Number(part.trim()));
+  const ratio = width / height;
+  const maxHeightRem = 18;
+  const maxWidthRem = 16;
+
+  let frameHeightRem = maxHeightRem;
+  let frameWidthRem = frameHeightRem * ratio;
+
+  if (frameWidthRem > maxWidthRem) {
+    frameWidthRem = maxWidthRem;
+    frameHeightRem = frameWidthRem / ratio;
+  }
+
+  return {
+    aspectRatio,
+    width: `${frameWidthRem}rem`,
+    height: `${frameHeightRem}rem`,
+  };
+}
+
+function CarouselPhotoFrame({
+  item,
+  className,
+  onClick,
+}: {
+  item: CarouselImageItem;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const frameStyle = getPhotoFrameStyle(item.aspectRatio);
+  const image = (
+    <Image
+      src={item.src}
+      alt={item.alt}
+      fill
+      className={carouselPhotoImageClass}
+      sizes={carouselPhotoSizes}
+      quality={90}
+      draggable={false}
+    />
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        style={frameStyle}
+        className={cn(
+          carouselPhotoFrameClass,
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal",
+          className,
+        )}
+      >
+        {image}
+      </button>
+    );
+  }
+
+  return (
+    <div style={frameStyle} className={cn(carouselPhotoFrameClass, className)}>
+      {image}
+    </div>
+  );
+}
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -142,20 +218,7 @@ const Carousel = memo(function Carousel({
             }}
           >
             {item.kind === "image" ? (
-              <button
-                type="button"
-                onClick={() => onImageClick(item.src)}
-                className="relative aspect-square w-full overflow-hidden rounded-xl border border-line bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
-              >
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 140px, 200px"
-                  draggable={false}
-                />
-              </button>
+              <CarouselPhotoFrame item={item} onClick={() => onImageClick(item.src)} />
             ) : (
               <div className="w-full">
                 <FounderFace founder={item.founder} />
@@ -185,9 +248,7 @@ export function ThreeDPhotoCarousel({ items, className }: ThreeDPhotoCarouselPro
       <div className={cn("grid grid-cols-3 gap-2", className)}>
         {preview.map((item) =>
           item.kind === "image" ? (
-            <div key={item.id} className="relative aspect-square overflow-hidden rounded-xl border border-line">
-              <Image src={item.src} alt={item.alt} fill className="object-cover" sizes="120px" />
-            </div>
+            <CarouselPhotoFrame key={item.id} item={item} />
           ) : (
             <FounderFace key={item.id} founder={item.founder} />
           ),
@@ -220,7 +281,14 @@ export function ThreeDPhotoCarousel({ items, className }: ThreeDPhotoCarouselPro
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="relative h-[min(70vh,520px)] w-[min(90vw,520px)]"
             >
-              <Image src={activeImg} alt="" fill className="rounded-xl object-contain" sizes="520px" />
+              <Image
+                src={activeImg}
+                alt=""
+                fill
+                className="rounded-xl object-contain"
+                sizes="(max-width: 768px) 90vw, 720px"
+                quality={95}
+              />
             </motion.div>
           </motion.button>
         ) : null}

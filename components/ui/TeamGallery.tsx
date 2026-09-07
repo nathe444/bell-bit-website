@@ -2,12 +2,11 @@
 
 import { useMemo } from "react";
 import { ThreeDPhotoCarousel, type CarouselItem } from "@/components/ui/ThreeDPhotoCarousel";
-import type { Founder } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 type TeamGalleryProps = {
-  heroImage: { src: string; alt: string };
-  founders: readonly Founder[];
+  heroImage: { src: string; alt: string; aspectRatio: string };
+  photos: readonly { id: string; src: string; alt: string; aspectRatio: string }[];
   overlayTitle: string;
   overlayDescription: string;
   className?: string;
@@ -15,21 +14,29 @@ type TeamGalleryProps = {
 
 export function TeamGallery({
   heroImage,
-  founders,
+  photos,
   overlayTitle,
   overlayDescription,
   className,
 }: TeamGalleryProps) {
   const items = useMemo<CarouselItem[]>(
     () => [
-      { kind: "image", id: "team-hero", src: heroImage.src, alt: heroImage.alt },
-      ...founders.map((founder) => ({
-        kind: "founder" as const,
-        id: founder.id,
-        founder,
+      {
+        kind: "image",
+        id: "team-hero",
+        src: heroImage.src,
+        alt: heroImage.alt,
+        aspectRatio: heroImage.aspectRatio,
+      },
+      ...photos.map((photo) => ({
+        kind: "image" as const,
+        id: photo.id,
+        src: photo.src,
+        alt: photo.alt,
+        aspectRatio: photo.aspectRatio,
       })),
     ],
-    [founders, heroImage.alt, heroImage.src],
+    [heroImage.alt, heroImage.src, photos],
   );
 
   return (

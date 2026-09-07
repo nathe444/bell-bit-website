@@ -24,6 +24,7 @@ export function TechnologyGroupPanel({ group, index, sectionTitle }: TechnologyG
         <div className={`min-w-0 ${cloudFirst ? "md:order-1" : "md:order-2"}`}>
           <IconCloud
             iconSlugs={group.iconSlugs}
+            customIcons={"customIcons" in group ? group.customIcons : undefined}
             compact
             className="mx-auto w-full max-w-[min(100%,300px)] sm:max-w-[340px] md:mx-0 md:max-w-[380px]"
           />

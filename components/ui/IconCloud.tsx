@@ -56,11 +56,46 @@ export const renderCustomIcon = (icon: SimpleIcon, theme: string) => {
   });
 };
 
+export type CustomIcon = {
+  title: string;
+  src: string;
+};
+
 export type IconCloudProps = {
   iconSlugs: readonly string[];
+  customIcons?: readonly CustomIcon[];
   className?: string;
   compact?: boolean;
 };
+
+function renderBrandIcon({
+  icon,
+  theme,
+  size,
+}: {
+  icon: CustomIcon;
+  theme: string;
+  size: number;
+}) {
+  return (
+    <a
+      key={icon.title}
+      title={icon.title}
+      style={{ cursor: "pointer" }}
+      onClick={(e: MouseEvent) => e.preventDefault()}
+    >
+      <img
+        height={size}
+        width={size}
+        alt={icon.title}
+        src={icon.src}
+        style={{
+          filter: theme === "dark" ? "brightness(0) invert(1)" : undefined,
+        }}
+      />
+    </a>
+  );
+}
 
 type IconData = Awaited<ReturnType<typeof fetchSimpleIcons>>;
 
@@ -72,7 +107,12 @@ function getCloudOptions(compact: boolean) {
   };
 }
 
-export function IconCloud({ iconSlugs, className = "", compact = false }: IconCloudProps) {
+export function IconCloud({
+  iconSlugs,
+  customIcons = [],
+  className = "",
+  compact = false,
+}: IconCloudProps) {
   const [data, setData] = useState<IconData | null>(null);
   const { resolvedTheme } = useTheme();
   const theme = resolvedTheme === "dark" ? "dark" : "light";
@@ -85,13 +125,14 @@ export function IconCloud({ iconSlugs, className = "", compact = false }: IconCl
   const renderedIcons = useMemo(() => {
     if (!data) return null;
 
-    return Object.values(data.simpleIcons).map((icon) =>
+    const size = compact ? 46 : 42;
+    const simpleIcons = Object.values(data.simpleIcons).map((icon) =>
       renderSimpleIcon({
         icon,
         bgHex: theme === "light" ? "#e8ecf4" : "#1a1f2b",
         fallbackHex: theme === "light" ? "#64748b" : "#9aa3b5",
         minContrastRatio: theme === "dark" ? 2 : 1.2,
-        size: compact ? 46 : 42,
+        size,
         aProps: {
           href: undefined,
           target: undefined,
@@ -100,7 +141,13 @@ export function IconCloud({ iconSlugs, className = "", compact = false }: IconCl
         },
       }),
     );
-  }, [data, theme, compact]);
+
+    const brandIcons = customIcons.map((icon) =>
+      renderBrandIcon({ icon, theme, size }),
+    );
+
+    return [...simpleIcons, ...brandIcons];
+  }, [customIcons, data, theme, compact]);
 
   return (
     <div

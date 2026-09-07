@@ -157,7 +157,7 @@ export const projects = [
       "The system includes full e-commerce functionality, AI-powered search using RAG and LLM integration, tender request creation, and video reel uploads for product promotion.",
     industry: "Commerce / Construction",
     image: "/assets/bellbit/projects/hoomez.png",
-    imageAspect: "431 / 578",
+    imageAspect: "6000 / 3959",
   },
   {
     id: "lucky-path",
@@ -324,19 +324,16 @@ export const technologyGroups = [
       "LangChain",
       "n8n",
       "LangGraph",
-      "Vector Database",
-      "RAG",
+      "Pinecone",
+      "pgvector",
+      "Make.com",
       "Claude",
       "OpenAI",
     ],
-    iconSlugs: [
-      "langchain",
-      "n8n",
-      "langgraph",
-      "pinecone",
-      "weaviate",
-      "anthropic",
-      "openai",
+    iconSlugs: ["langchain", "n8n", "langgraph", "make", "anthropic", "openai"],
+    customIcons: [
+      { title: "Pinecone", src: "/assets/bellbit/tech/pinecone.svg" },
+      { title: "pgvector", src: "/assets/bellbit/tech/pgvector.svg" },
     ],
   },
 ] as const;
@@ -547,7 +544,34 @@ export const teamGallery = {
   heroImage: {
     src: "/assets/bellbit/team/office.jpeg",
     alt: "BellBit team collaborating at the office",
+    aspectRatio: "640 / 480",
   },
+  photos: [
+    {
+      id: "team-1",
+      src: "/assets/bellbit/team/team-1.jpg",
+      alt: "BellBit team member at work",
+      aspectRatio: "1138 / 927",
+    },
+    {
+      id: "team-2",
+      src: "/assets/bellbit/team/team-2.jpg",
+      alt: "BellBit team collaborating together",
+      aspectRatio: "1600 / 1111",
+    },
+    {
+      id: "team-3",
+      src: "/assets/bellbit/team/team-3.jpg",
+      alt: "BellBit team in the office",
+      aspectRatio: "1280 / 720",
+    },
+    {
+      id: "team-4",
+      src: "/assets/bellbit/team/team-4.jpg",
+      alt: "BellBit team during a working session",
+      aspectRatio: "1280 / 720",
+    },
+  ],
   overlayTitle: "The BellBit team",
   overlayDescription:
     "Eight engineers, designers, and solution architects building reliable software across backend, mobile, frontend, DevOps, and architecture — with regular knowledge-sharing to stay sharp on modern tools.",

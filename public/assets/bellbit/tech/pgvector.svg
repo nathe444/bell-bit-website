@@ -1,0 +1,9 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="pgvector">
+  <path
+    fill="#201D1E"
+    d="M4 4h2v16H4V4zm14 0h2v16h-2V4zM8.5 7.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm7 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-3.5 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM9.2 9.1l5.6 3.2M14.8 9.1l-5.6 3.2M9.2 14.9l5.6-3.2M14.8 14.9l-5.6-3.2"
+    stroke="#201D1E"
+    stroke-width="1.1"
+    stroke-linecap="round"
+  />
+</svg>

@@ -1,4 +1,4 @@
-import { whyBellBit, whyBellBitSection, founders, teamGallery } from "@/lib/content";
+import { whyBellBit, whyBellBitSection, teamGallery } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TeamGallery } from "@/components/ui/TeamGallery";
 import { Reveal } from "@/components/ui/Reveal";
@@ -32,7 +32,7 @@ export function WhyBellBit() {
 
         <TeamGallery
           heroImage={teamGallery.heroImage}
-          founders={founders}
+          photos={teamGallery.photos}
           overlayTitle={teamGallery.overlayTitle}
           overlayDescription={teamGallery.overlayDescription}
         />
