@@ -54,18 +54,37 @@ export function HeroCanvas({
       networkProfile,
     });
 
+  const bootProgressRef = useRef({
+    loadedCount: 0,
+    targetCount: bootTarget,
+    progress: 0,
+    initialReady: false,
+  });
+
   useEffect(() => {
     if (firstFrameReady) onFirstFrameReady?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstFrameReady]);
 
   useEffect(() => {
-    onBootProgress?.({
+    const progress = bootTarget > 0 ? loadedCount / bootTarget : 0;
+    const prev = bootProgressRef.current;
+    if (
+      prev.loadedCount === loadedCount &&
+      prev.targetCount === bootTarget &&
+      prev.initialReady === initialReady &&
+      Math.abs(prev.progress - progress) < 0.001
+    ) {
+      return;
+    }
+
+    bootProgressRef.current = {
       loadedCount,
       targetCount: bootTarget,
-      progress: bootTarget > 0 ? loadedCount / bootTarget : 0,
+      progress,
       initialReady,
-    });
+    };
+    onBootProgress?.(bootProgressRef.current);
   }, [bootTarget, initialReady, loadedCount, onBootProgress]);
 
   useEffect(() => {

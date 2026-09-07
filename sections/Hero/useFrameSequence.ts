@@ -40,6 +40,7 @@ export function useFrameSequence({
 }: SequenceConfig) {
   const cacheRef = useRef<Map<number, FrameEntry>>(new Map());
   const coldCacheRef = useRef<Map<number, HTMLImageElement>>(new Map());
+  const countedIndicesRef = useRef<Set<number>>(new Set());
   const pendingRef = useRef<Set<number>>(new Set());
   const urgentQueueRef = useRef<number[]>([]);
   const backfillQueueRef = useRef<number[]>([]);
@@ -50,6 +51,10 @@ export function useFrameSequence({
   const bootPhaseRef = useRef(true);
   const loadedCountRef = useRef(0);
   const backfillStartedRef = useRef(false);
+  const initialReadyRef = useRef(false);
+  const firstFrameReadyRef = useRef(false);
+  const progressFlushRef = useRef<number | null>(null);
+  const pumpScheduledRef = useRef(false);
   const [firstFrameReady, setFirstFrameReady] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const [initialReady, setInitialReady] = useState(false);
@@ -64,11 +69,65 @@ export function useFrameSequence({
     return scrollConcurrency;
   }, [bootConcurrency, frameCount, scrollConcurrency]);
 
-  const markLoaded = useCallback((index: number) => {
-    loadedCountRef.current += 1;
-    setLoadedCount(loadedCountRef.current);
-    if (index === 0) setFirstFrameReady(true);
+  const schedulePump = useCallback(() => {
+    if (pumpScheduledRef.current) return;
+    pumpScheduledRef.current = true;
+    queueMicrotask(() => {
+      pumpScheduledRef.current = false;
+      if (!mountedRef.current) return;
+      pumpQueueRef.current();
+    });
   }, []);
+
+  const startBackfillRef = useRef<() => void>(() => {});
+  startBackfillRef.current = () => {
+    if (backfillStartedRef.current) return;
+    backfillStartedRef.current = true;
+
+    for (let i = 0; i < frameCount; i++) {
+      if (countedIndicesRef.current.has(i)) continue;
+      queuedSetRef.current.add(i);
+      backfillQueueRef.current.push(i);
+    }
+
+    schedulePump();
+  };
+
+  const maybeFinishBootRef = useRef<() => void>(() => {});
+  maybeFinishBootRef.current = () => {
+    if (initialReadyRef.current) return;
+    if (!firstFrameReadyRef.current) return;
+    if (loadedCountRef.current < bootTarget) return;
+
+    initialReadyRef.current = true;
+    bootPhaseRef.current = false;
+    setInitialReady(true);
+    startBackfillRef.current();
+  };
+
+  const scheduleProgressFlush = useCallback(() => {
+    if (progressFlushRef.current != null) return;
+    progressFlushRef.current = requestAnimationFrame(() => {
+      progressFlushRef.current = null;
+      if (!mountedRef.current) return;
+      setLoadedCount(loadedCountRef.current);
+      maybeFinishBootRef.current();
+    });
+  }, []);
+
+  const markLoadedRef = useRef<(index: number) => void>(() => {});
+  markLoadedRef.current = (index: number) => {
+    if (countedIndicesRef.current.has(index)) return;
+    countedIndicesRef.current.add(index);
+    loadedCountRef.current += 1;
+
+    if (index === 0 && !firstFrameReadyRef.current) {
+      firstFrameReadyRef.current = true;
+      setFirstFrameReady(true);
+    }
+
+    scheduleProgressFlush();
+  };
 
   const isQueuedOrCached = useCallback((index: number) => {
     return (
@@ -78,7 +137,9 @@ export function useFrameSequence({
     );
   }, []);
 
-  const pumpQueue = useCallback(() => {
+  const pumpQueueRef = useRef<() => void>(() => {});
+
+  pumpQueueRef.current = () => {
     const maxConcurrent = getMaxConcurrent();
 
     while (pendingRef.current.size < maxConcurrent) {
@@ -88,13 +149,16 @@ export function useFrameSequence({
       queuedSetRef.current.delete(index);
 
       if (index < 0 || index >= frameCount) continue;
-      if (cacheRef.current.has(index) || pendingRef.current.has(index)) continue;
+
+      const cached = cacheRef.current.get(index);
+      if (cached?.loaded) continue;
+      if (pendingRef.current.has(index)) continue;
 
       const cold = coldCacheRef.current.get(index);
       if (cold) {
         coldCacheRef.current.delete(index);
         cacheRef.current.set(index, { image: cold, loaded: true, failed: false });
-        markLoaded(index);
+        markLoadedRef.current(index);
         continue;
       }
 
@@ -110,20 +174,25 @@ export function useFrameSequence({
         entry.loaded = !failed;
         entry.failed = failed;
         cacheRef.current.set(index, entry);
-        if (!failed) markLoaded(index);
-        pumpQueue();
+        if (!failed) markLoadedRef.current(index);
+        schedulePump();
       };
 
       img.onload = () => finalize(false);
       img.onerror = () => finalize(true);
       img.src = framePath(index);
     }
-  }, [frameCount, framePath, getMaxConcurrent, markLoaded]);
+  };
+
+  const pumpQueue = useCallback(() => {
+    pumpQueueRef.current();
+  }, []);
 
   const enqueueFrame = useCallback(
     (index: number, urgent = false) => {
       if (index < 0 || index >= frameCount) return;
       if (isQueuedOrCached(index)) return;
+      if (countedIndicesRef.current.has(index) && cacheRef.current.has(index)) return;
 
       queuedSetRef.current.add(index);
       if (urgent) {
@@ -131,23 +200,10 @@ export function useFrameSequence({
       } else {
         backfillQueueRef.current.push(index);
       }
-      pumpQueue();
+      schedulePump();
     },
-    [frameCount, isQueuedOrCached, pumpQueue],
+    [frameCount, isQueuedOrCached, schedulePump],
   );
-
-  const startBackfill = useCallback(() => {
-    if (backfillStartedRef.current) return;
-    backfillStartedRef.current = true;
-
-    for (let i = 0; i < frameCount; i++) {
-      enqueueFrame(i, false);
-    }
-    if (frameCount > 1) {
-      enqueueFrame(frameCount - 1, false);
-    }
-    pumpQueue();
-  }, [enqueueFrame, frameCount, pumpQueue]);
 
   const evictFar = useCallback(
     (centerIndex: number) => {
@@ -231,20 +287,13 @@ export function useFrameSequence({
   }, []);
 
   useEffect(() => {
-    if (initialReady) return;
-    if (firstFrameReady && loadedCount >= bootTarget) {
-      bootPhaseRef.current = false;
-      setInitialReady(true);
-      startBackfill();
-      pumpQueue();
-    }
-  }, [bootTarget, firstFrameReady, initialReady, loadedCount, pumpQueue, startBackfill]);
-
-  useEffect(() => {
     mountedRef.current = true;
     bootPhaseRef.current = true;
     backfillStartedRef.current = false;
+    initialReadyRef.current = false;
+    firstFrameReadyRef.current = false;
     loadedCountRef.current = 0;
+    countedIndicesRef.current.clear();
     cacheRef.current.clear();
     coldCacheRef.current.clear();
     pendingRef.current.clear();
@@ -271,6 +320,10 @@ export function useFrameSequence({
     return () => {
       mountedRef.current = false;
       window.clearTimeout(bootTimer);
+      if (progressFlushRef.current != null) {
+        cancelAnimationFrame(progressFlushRef.current);
+        progressFlushRef.current = null;
+      }
     };
   }, [bootTarget, enqueueFrame, frameCount, networkProfile]);
 
