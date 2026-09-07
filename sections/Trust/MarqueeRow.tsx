@@ -23,7 +23,7 @@ function ItemList({
       {entries.map((entry) => (
         <li
           key={`${entry.name}${duplicate ? "-dup" : ""}`}
-          className="group/item px-5 sm:px-7 md:px-10 lg:px-12"
+          className="group/item px-2.5 sm:px-7 md:px-10 lg:px-12"
         >
           <MarqueeItem entry={entry} />
         </li>
@@ -43,9 +43,9 @@ export function MarqueeRow({
 
   if (reducedMotion) {
     return (
-      <div className="py-8 md:py-10">
+      <div className="py-4 md:py-10">
         <RowHeader label={label} directionLabel={directionLabel} />
-        <ul className="mx-auto mt-8 flex max-w-5xl flex-wrap justify-center gap-x-8 gap-y-10 md:gap-x-12 md:gap-y-12">
+        <ul className="mx-auto mt-5 flex max-w-5xl flex-wrap justify-center gap-x-4 gap-y-6 sm:mt-8 sm:gap-x-8 sm:gap-y-10 md:gap-x-12 md:gap-y-12">
           {entries.map((entry) => (
             <li key={entry.name} className="group/item">
               <MarqueeItem entry={entry} />
@@ -60,9 +60,9 @@ export function MarqueeRow({
     direction === "left" ? "animate-marquee-left" : "animate-marquee-right";
 
   return (
-    <div className="marquee-row py-8 md:py-10">
+    <div className="marquee-row py-4 md:py-10">
       <RowHeader label={label} directionLabel={directionLabel} />
-      <div className="marquee-fade relative mx-auto mt-8 w-[90%] overflow-hidden md:mt-10">
+      <div className="marquee-fade relative mx-auto mt-5 w-[90%] overflow-hidden sm:mt-8 md:mt-10">
         <div
           className={`marquee-track flex w-max will-change-transform ${animationClass}`}
           style={{ animationDuration: `${durationSeconds}s` }}

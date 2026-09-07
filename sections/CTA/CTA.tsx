@@ -38,13 +38,9 @@ export function CTA() {
           </MagneticButton>
         </Reveal>
 
-        <Reveal delay={0.15} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-paper-dim">
+        <Reveal delay={0.15} className="mt-8 text-paper-dim">
           <a href={`tel:${contact.phonePrimary}`} className="hover:text-paper">
             {contact.phonePrimary}
-          </a>
-          <span className="hidden text-paper-faint sm:inline">/</span>
-          <a href={`tel:${contact.phoneSecondary}`} className="hover:text-paper">
-            {contact.phoneSecondary}
           </a>
         </Reveal>
       </div>

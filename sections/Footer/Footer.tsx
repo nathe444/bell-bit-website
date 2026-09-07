@@ -56,11 +56,6 @@ export function Footer() {
                   {contact.phonePrimary}
                 </a>
               </li>
-              <li>
-                <a href={`tel:${contact.phoneSecondary}`} className="hover:text-paper">
-                  {contact.phoneSecondary}
-                </a>
-              </li>
             </ul>
           </div>
         </div>

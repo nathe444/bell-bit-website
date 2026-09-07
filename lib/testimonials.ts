@@ -1,49 +1,42 @@
-/**
- * Demo testimonial copy for the showcase UI.
- * Replace entries with verified client quotes when available.
- */
-
 export const testimonials = [
   {
-    id: "alex-techcorp",
-    quote: "My favorite solution in the market. We work 5x faster with BellBit.",
-    author: "Alex",
-    role: "CEO at TechCorp",
-    avatar:
-      "https://cdn.21st.dev/assets/mirror/f0/f02fed36023656a5b5df6f247c83c96c53bfa9db5b98085cdee93ffc938a5f37.jpg",
-  },
-  {
-    id: "dan-securenet",
+    id: "ashine",
     quote:
-      "I'm confident our systems are in safe hands with BellBit. I can't say that about other providers.",
-    author: "Dan",
-    role: "CTO at SecureNet",
-    avatar:
-      "https://cdn.21st.dev/assets/mirror/5b/5b5b2f3487692d40f629010ea6448d150907f780d8c262c4ca194b7386115c2d.jpg",
+      "BellBit is reliable, responsive, and easy to work with. They always find practical solutions.",
+    author: "Ashine",
+    role: "Client Partner",
+    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Ashine&backgroundColor=1a1f2b&textColor=e8ecf4",
   },
   {
-    id: "stephanie-innovate",
-    quote: "We were lost before we found BellBit. Can't thank you guys enough.",
-    author: "Stephanie",
-    role: "COO at InnovateCo",
-    avatar:
-      "https://cdn.21st.dev/assets/mirror/10/10e2bfa5446e5c116e269b649b5f5e0106d96643f0a903048f3a056e40c35cd8.jpg",
+    id: "dr-mersia",
+    quote:
+      "The kids at BellBit are very energetic and eager to learn and do more. It's great to see their enthusiasm and growth.",
+    author: "Dr. Mersia",
+    role: "Healthcare Partner",
+    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Dr%20Mersia&backgroundColor=1a1f2b&textColor=e8ecf4",
   },
   {
-    id: "marie-future",
-    quote: "BellBit makes planning for the future seamless. Can't recommend them enough.",
-    author: "Marie",
-    role: "CFO at FuturePlanning",
-    avatar:
-      "https://cdn.21st.dev/assets/mirror/fa/fae47bb0faba45d1e0696b6557ca36c551a738c7d6e3950e82bb69dd2f963a72.jpg",
+    id: "yonatan",
+    quote: "Great team, great support, and easy to work with.",
+    author: "Yonatan",
+    role: "Client Partner",
+    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Yonatan&backgroundColor=1a1f2b&textColor=e8ecf4",
   },
   {
-    id: "andre-creative",
-    quote: "If I could give 11 stars, I'd give 12.",
-    author: "Andre",
-    role: "Head of Design at CreativeSolutions",
-    avatar:
-      "https://cdn.21st.dev/assets/mirror/4f/4fb45af36b546e069b72527fdf4d904855a2b11b301fa738c8bc4d235595c4df.jpg",
+    id: "dr-woubetu",
+    quote:
+      "BellBit delivered our website on time, and we were really happy with the final result. They understood what we wanted and did a great job.",
+    author: "Dr. Woubetu",
+    role: "Guansa PLC",
+    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Dr%20Woubetu&backgroundColor=1a1f2b&textColor=e8ecf4",
+  },
+  {
+    id: "dr-michael",
+    quote:
+      "I taught them before and was proud to be their teacher. Now, I'm very happy to be working with them and seeing what they're building.",
+    author: "Dr. Michael",
+    role: "Academic Collaborator",
+    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Dr%20Michael&backgroundColor=1a1f2b&textColor=e8ecf4",
   },
 ] as const;
 

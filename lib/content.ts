@@ -29,7 +29,6 @@ export const company = {
 
 export const contact = {
   phonePrimary: "+251949878306",
-  phoneSecondary: "0968127581",
   email: "info@bell-bit.com",
   closingStatement:
     "At BellBit Software Technologies, we believe the best solutions come from close collaboration. Whether you are starting a new idea, improving an existing system, or looking for a reliable technology partner, we are ready to help.",
@@ -157,7 +156,7 @@ export const projects = [
       "The system includes full e-commerce functionality, AI-powered search using RAG and LLM integration, tender request creation, and video reel uploads for product promotion.",
     industry: "Commerce / Construction",
     image: "/assets/bellbit/projects/hoomez.png",
-    imageAspect: "6000 / 3959",
+    imageAspect: "1500 / 990",
   },
   {
     id: "lucky-path",
@@ -169,7 +168,7 @@ export const projects = [
     detail: "",
     industry: "Construction",
     image: "/assets/bellbit/projects/lucky-path.png",
-    imageAspect: "1 / 1",
+    imageAspect: "1080 / 1080",
   },
   {
     id: "csms",
@@ -181,7 +180,7 @@ export const projects = [
       "It manages academic resources and includes a constraint satisfaction engine that automatically generates semester schedules based on curriculum, instructors, classrooms, and availability.",
     industry: "Education",
     image: "/assets/bellbit/projects/csms.png",
-    imageAspect: "1 / 1",
+    imageAspect: "1080 / 1080",
   },
   {
     id: "guansa",
@@ -194,7 +193,7 @@ export const projects = [
       "It was designed with a modern, clean style and optimized for fast loading and easy use. The website includes a custom CMS, allowing the company to manage and update content independently.",
     industry: "Enterprise / Corporate",
     image: "/assets/bellbit/projects/guansa.png",
-    imageAspect: "6000 / 3959",
+    imageAspect: "1500 / 990",
   },
   {
     id: "tena-bit",
@@ -206,8 +205,8 @@ export const projects = [
     detail:
       "This system has been implemented in two health care facilities, Abyssinia Clinic and Nain MCH.",
     industry: "Healthcare",
-    image: "/assets/bellbit/projects/tena-bit-dashboard.jpeg",
-    imageAspect: "16 / 9",
+    image: "/assets/bellbit/projects/tena-bit.png",
+    imageAspect: "1500 / 990",
   },
   {
     id: "orda-rms",
@@ -218,8 +217,8 @@ export const projects = [
       "A custom research and project management system built for ORDA Ethiopia's Water and Food Division to process large volumes of data and support reliable research management workflows.",
     detail: "",
     industry: "NGOs & Development",
-    image: "/assets/bellbit/logos/orda.png",
-    imageAspect: "1 / 1",
+    image: "/assets/bellbit/projects/orda-rms.png",
+    imageAspect: "1500 / 990",
   },
 ] as const;
 

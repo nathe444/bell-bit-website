@@ -29,7 +29,7 @@ export function Trust() {
         />
 
         <div
-          className="mx-auto my-12 max-w-3xl px-6 md:my-20"
+          className="mx-auto my-4 max-w-3xl px-6 md:my-20"
           aria-hidden="true"
         >
           <div className="h-px w-full bg-line" />
