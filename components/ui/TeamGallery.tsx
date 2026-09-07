@@ -43,9 +43,9 @@ export function TeamGallery({
         <ThreeDPhotoCarousel items={items} className="h-full" />
       </div>
 
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-scene-void via-scene-void/92 to-scene-void/20 p-6 md:p-8">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 md:p-8">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-signal-soft">{overlayTitle}</p>
-        <p className="mt-3 max-w-prose text-sm leading-relaxed text-scene-paper md:text-[0.9375rem]">
+        <p className="mt-3 max-w-prose text-sm leading-relaxed text-paper md:text-[0.9375rem]">
           {overlayDescription}
         </p>
       </div>
