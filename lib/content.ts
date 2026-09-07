@@ -589,6 +589,14 @@ export const nav = [
   { label: "Contact", href: "#contact" },
 ] as const;
 
+export const heroPrimary = {
+  eyebrow: "BellBit Software Technologies",
+  headline: ["We Build", "What Matters."],
+  description:
+    "BellBit builds intelligent systems and digital products that turn complex business problems into simple, scalable experiences.",
+  cta: "Let's work together",
+} as const;
+
 /** Fades in on the hero after the primary headline scrolls away — one line at a time. */
 export const heroSecondary = {
   items: [

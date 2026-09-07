@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope, Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { heroPrimary } from "@/lib/content";
 import "./globals.css";
 import { SmoothScrollProvider } from "@/animations/SmoothScrollProvider";
 import { Navbar } from "@/components/navigation/Navbar";
@@ -26,7 +27,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bell-bit.com"),
-  title: "BellBit Software Technologies | We turn complexity into systems",
+  title: `BellBit Software Technologies | ${heroPrimary.headline.join(" ")}`,
   description:
     "BellBit Software Technologies builds software products and custom digital solutions that solve real business problems — custom software, mobile apps, UI/UX, system architecture, and deployment.",
   keywords: [
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
     "Tena-Bit",
   ],
   openGraph: {
-    title: "BellBit Software Technologies | We turn complexity into systems",
+    title: `BellBit Software Technologies | ${heroPrimary.headline.join(" ")}`,
     description:
       "Software products and custom digital solutions that solve real business problems.",
     url: "https://bell-bit.com",

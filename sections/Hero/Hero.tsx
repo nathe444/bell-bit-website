@@ -6,6 +6,7 @@ import { HeroBootScreen } from "./HeroBootScreen";
 import { HeroCanvas } from "./HeroCanvas";
 import { HeroOverlay, HeroSecondaryStatic } from "./HeroOverlay";
 import { heroSequence, heroBehavior } from "./hero.config";
+import { heroPrimary } from "@/lib/content";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
@@ -211,16 +212,15 @@ function HeroStatic() {
         <div className="container-edge relative w-full">
           <div className="max-w-4xl">
             <p className="mb-6 text-xs font-medium uppercase tracking-[0.3em] text-signal-soft">
-              BellBit Software Technologies
+              {heroPrimary.eyebrow}
             </p>
             <h1 className="text-balance font-display text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.98] text-scene-paper">
-              We turn complexity
+              {heroPrimary.headline[0]}
               <br />
-              into systems.
+              {heroPrimary.headline[1]}
             </h1>
             <p className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-scene-paper-dim md:text-xl">
-              BellBit builds intelligent systems and digital products that turn complex business
-              problems into simple, scalable experiences.
+              {heroPrimary.description}
             </p>
             <div className="mt-10">
               <a

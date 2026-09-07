@@ -42,17 +42,17 @@ export function TeamGallery({
   return (
     <div
       className={cn(
-        "relative min-h-[22rem] overflow-hidden rounded-2xl border border-line bg-ink sm:min-h-[26rem] md:min-h-[28rem]",
+        "relative overflow-hidden rounded-2xl border border-line bg-ink md:min-h-[28rem]",
         className,
       )}
     >
-      <div className="relative h-[22rem] sm:h-[26rem] md:h-[28rem]">
+      <div className="relative h-[12.5rem] sm:h-[26rem] md:h-[28rem]">
         <ThreeDPhotoCarousel items={items} className="h-full" />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 md:p-8">
+      <div className="border-t border-line/60 p-5 md:pointer-events-none md:absolute md:inset-x-0 md:bottom-0 md:border-t-0 md:bg-gradient-to-t md:from-ink md:via-ink/95 md:to-transparent md:p-8">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-signal-soft">{overlayTitle}</p>
-        <p className="mt-3 max-w-prose text-sm leading-relaxed text-paper md:text-[0.9375rem]">
+        <p className="mt-2 max-w-prose text-sm leading-relaxed text-paper md:mt-3 md:text-[0.9375rem]">
           {overlayDescription}
         </p>
       </div>

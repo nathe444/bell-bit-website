@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { heroSecondary } from "@/lib/content";
+import { heroPrimary, heroSecondary } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { heroBehavior, heroLineOpacity, heroPrimaryOpacity } from "./hero.config";
@@ -88,16 +88,15 @@ export function HeroOverlay({ progressRef }: HeroOverlayProps) {
           }}
         >
           <p className="mb-6 text-xs font-medium uppercase tracking-[0.3em] text-signal-soft">
-            BellBit Software Technologies
+            {heroPrimary.eyebrow}
           </p>
           <h1 className="text-balance font-display text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.98] text-scene-paper">
-            We turn complexity
+            {heroPrimary.headline[0]}
             <br />
-            into systems.
+            {heroPrimary.headline[1]}
           </h1>
           <p className="mt-8 max-w-xl text-balance text-lg leading-relaxed text-scene-paper-dim md:text-xl">
-            BellBit builds intelligent systems and digital products that turn complex business
-            problems into simple, scalable experiences.
+            {heroPrimary.description}
           </p>
 
           <div className="mt-10">

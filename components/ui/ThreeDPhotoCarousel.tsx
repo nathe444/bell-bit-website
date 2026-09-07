@@ -39,11 +39,11 @@ const carouselPhotoImageClass =
 const carouselPhotoFrameClass =
   "relative shrink-0 overflow-hidden rounded-xl border border-line bg-surface";
 
-function getPhotoFrameStyle(aspectRatio: string) {
+function getPhotoFrameStyle(aspectRatio: string, compact = false) {
   const [width, height] = aspectRatio.split("/").map((part) => Number(part.trim()));
   const ratio = width / height;
-  const maxHeightRem = 18;
-  const maxWidthRem = 16;
+  const maxHeightRem = compact ? 11 : 18;
+  const maxWidthRem = compact ? 10 : 16;
 
   let frameHeightRem = maxHeightRem;
   let frameWidthRem = frameHeightRem * ratio;
@@ -64,12 +64,14 @@ function CarouselPhotoFrame({
   item,
   className,
   onClick,
+  compact = false,
 }: {
   item: CarouselImageItem;
   className?: string;
   onClick?: () => void;
+  compact?: boolean;
 }) {
-  const frameStyle = getPhotoFrameStyle(item.aspectRatio);
+  const frameStyle = getPhotoFrameStyle(item.aspectRatio, compact);
   const image = (
     <Image
       src={item.src}
@@ -136,6 +138,26 @@ function FounderFace({ founder }: { founder: Founder }) {
 }
 
 const AUTO_ROTATE_DEG_PER_SEC = 10;
+
+function MobilePhotoStrip({
+  items,
+  onImageClick,
+}: {
+  items: CarouselImageItem[];
+  onImageClick: (src: string) => void;
+}) {
+  return (
+    <div className="flex h-full items-center">
+      <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {items.map((item) => (
+          <div key={item.id} className="flex shrink-0 snap-center items-center justify-center">
+            <CarouselPhotoFrame compact item={item} onClick={() => onImageClick(item.src)} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const Carousel = memo(function Carousel({
   items,
@@ -238,9 +260,65 @@ type ThreeDPhotoCarouselProps = {
 
 export function ThreeDPhotoCarousel({ items, className }: ThreeDPhotoCarouselProps) {
   const reducedMotion = useReducedMotion();
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const carouselItems = useMemo(() => items, [items]);
+  const imageItems = useMemo(
+    () => carouselItems.filter((item): item is CarouselImageItem => item.kind === "image"),
+    [carouselItems],
+  );
   const [activeImg, setActiveImg] = useState<string | null>(null);
   const [isCarouselActive, setIsCarouselActive] = useState(true);
+
+  const lightbox = (
+    <AnimatePresence>
+      {activeImg ? (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => {
+            setActiveImg(null);
+            setIsCarouselActive(true);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-scene-void/85 p-6 backdrop-blur-sm"
+          transition={transitionOverlay}
+          aria-label="Close image preview"
+        >
+          <motion.div
+            initial={{ scale: 0.92, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.92, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="relative h-[min(70vh,520px)] w-[min(90vw,520px)]"
+          >
+            <Image
+              src={activeImg}
+              alt=""
+              fill
+              className="rounded-xl object-contain"
+              sizes="(max-width: 768px) 90vw, 720px"
+              quality={95}
+            />
+          </motion.div>
+        </motion.button>
+      ) : null}
+    </AnimatePresence>
+  );
+
+  const openImage = (src: string) => {
+    setActiveImg(src);
+    setIsCarouselActive(false);
+  };
+
+  if (isMobile) {
+    return (
+      <motion.div layout className={cn("relative h-full w-full", className)}>
+        {lightbox}
+        <MobilePhotoStrip items={imageItems} onImageClick={openImage} />
+      </motion.div>
+    );
+  }
 
   if (reducedMotion) {
     const preview = carouselItems.slice(0, 3);
@@ -259,48 +337,12 @@ export function ThreeDPhotoCarousel({ items, className }: ThreeDPhotoCarouselPro
 
   return (
     <motion.div layout className={cn("relative h-full w-full", className)}>
-      <AnimatePresence>
-        {activeImg ? (
-          <motion.button
-            type="button"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => {
-              setActiveImg(null);
-              setIsCarouselActive(true);
-            }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-scene-void/85 p-6 backdrop-blur-sm"
-            transition={transitionOverlay}
-            aria-label="Close image preview"
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="relative h-[min(70vh,520px)] w-[min(90vw,520px)]"
-            >
-              <Image
-                src={activeImg}
-                alt=""
-                fill
-                className="rounded-xl object-contain"
-                sizes="(max-width: 768px) 90vw, 720px"
-                quality={95}
-              />
-            </motion.div>
-          </motion.button>
-        ) : null}
-      </AnimatePresence>
+      {lightbox}
 
       <Carousel
         items={carouselItems}
         isCarouselActive={isCarouselActive}
-        onImageClick={(src) => {
-          setActiveImg(src);
-          setIsCarouselActive(false);
-        }}
+        onImageClick={openImage}
       />
     </motion.div>
   );
