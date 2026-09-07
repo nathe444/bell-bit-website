@@ -41,10 +41,25 @@ export const heroSequence = {
 /** ~0.72vh of scroll per desktop frame — enough room for copy to breathe. */
 const VH_PER_FRAME = 0.72;
 
+/** How many frames to prefetch before scroll on fast vs slow networks. */
+export function heroInitialWindow(profile: "fast" | "slow" | "unknown") {
+  const base = Math.min(24, Math.max(12, Math.ceil(m.frameCount * 0.05)));
+  if (profile === "slow") return Math.min(8, base);
+  if (profile === "unknown") return Math.min(12, base);
+  return base;
+}
+
+/** Max parallel frame requests — keeps slow links from stalling frame 0. */
+export function heroLoadConcurrency(profile: "fast" | "slow" | "unknown") {
+  if (profile === "slow") return 2;
+  if (profile === "unknown") return 3;
+  return 6;
+}
+
 export const heroBehavior = {
   /** Scroll distance mapped to the full frame sequence, in viewport heights. */
   pinDistanceVh: Math.round(m.frameCount * VH_PER_FRAME),
-  /** Frames to eagerly preload around frame 0 before the rest load progressively. */
+  /** Default eager preload window (fast networks). Prefer heroInitialWindow() at runtime. */
   initialWindow: Math.min(24, Math.max(12, Math.ceil(m.frameCount * 0.05))),
   /** Max decoded frames in memory — wide enough to avoid re-fetch while scrubbing. */
   cacheWindow: Math.min(160, Math.max(96, Math.ceil(m.frameCount * 0.4))),

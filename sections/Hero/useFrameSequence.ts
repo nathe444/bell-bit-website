@@ -1,12 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { NetworkProfile } from "@/lib/networkProfile";
+import { heroLoadConcurrency } from "./hero.config";
 
 type SequenceConfig = {
   frameCount: number;
   framePath: (index: number) => string;
   initialWindow: number;
   cacheWindow: number;
+  networkProfile: NetworkProfile;
 };
 
 type FrameEntry = {
@@ -14,6 +17,12 @@ type FrameEntry = {
   loaded: boolean;
   failed: boolean;
 };
+
+function setImageFetchPriority(img: HTMLImageElement, priority: "high" | "low" | "auto") {
+  if ("fetchPriority" in img) {
+    (img as HTMLImageElement & { fetchPriority: string }).fetchPriority = priority;
+  }
+}
 
 /**
  * Loads and caches the hero frame sequence with a bounded hot window.
@@ -25,32 +34,41 @@ export function useFrameSequence({
   framePath,
   initialWindow,
   cacheWindow,
+  networkProfile,
 }: SequenceConfig) {
   const cacheRef = useRef<Map<number, FrameEntry>>(new Map());
   const coldCacheRef = useRef<Map<number, HTMLImageElement>>(new Map());
   const pendingRef = useRef<Set<number>>(new Set());
+  const queueRef = useRef<number[]>([]);
+  const queuedSetRef = useRef<Set<number>>(new Set());
   const lastRequestedRef = useRef(-1);
   const lastEvictCenterRef = useRef(-1);
   const directionRef = useRef<1 | -1>(1);
   const [firstFrameReady, setFirstFrameReady] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const mountedRef = useRef(true);
+  const maxConcurrent = heroLoadConcurrency(networkProfile);
 
-  const loadFrame = useCallback(
-    (index: number) => {
-      if (index < 0 || index >= frameCount) return;
-      if (cacheRef.current.has(index) || pendingRef.current.has(index)) return;
+  const pumpQueue = useCallback(() => {
+    while (pendingRef.current.size < maxConcurrent && queueRef.current.length > 0) {
+      const index = queueRef.current.shift()!;
+      queuedSetRef.current.delete(index);
+
+      if (index < 0 || index >= frameCount) continue;
+      if (cacheRef.current.has(index) || pendingRef.current.has(index)) continue;
 
       const cold = coldCacheRef.current.get(index);
       if (cold) {
         coldCacheRef.current.delete(index);
         cacheRef.current.set(index, { image: cold, loaded: true, failed: false });
-        return;
+        if (index === 0) setFirstFrameReady(true);
+        continue;
       }
 
       pendingRef.current.add(index);
       const img = new window.Image();
       img.decoding = "async";
+      setImageFetchPriority(img, index === 0 ? "high" : "low");
       const entry: FrameEntry = { image: img, loaded: false, failed: false };
 
       const finalize = (failed: boolean) => {
@@ -63,6 +81,7 @@ export function useFrameSequence({
           setLoadedCount((c) => c + 1);
           if (index === 0) setFirstFrameReady(true);
         }
+        pumpQueue();
       };
 
       img.onload = () => {
@@ -74,13 +93,28 @@ export function useFrameSequence({
       };
       img.onerror = () => finalize(true);
       img.src = framePath(index);
+    }
+  }, [frameCount, framePath, maxConcurrent]);
+
+  const enqueueFrame = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= frameCount) return;
+      if (
+        cacheRef.current.has(index) ||
+        pendingRef.current.has(index) ||
+        queuedSetRef.current.has(index)
+      ) {
+        return;
+      }
+      queuedSetRef.current.add(index);
+      queueRef.current.push(index);
+      pumpQueue();
     },
-    [frameCount, framePath]
+    [frameCount, pumpQueue],
   );
 
   const evictFar = useCallback(
     (centerIndex: number) => {
-      // Only run eviction when the playhead moves — not on redundant calls.
       if (centerIndex === lastEvictCenterRef.current) return;
       lastEvictCenterRef.current = centerIndex;
 
@@ -101,11 +135,10 @@ export function useFrameSequence({
         cache.delete(idx);
       }
 
-      // Bound cold storage — drop oldest far-from-center images only after hot eviction.
       const coldMax = cacheWindow * 2;
       if (coldCacheRef.current.size > coldMax) {
         const coldKeys = Array.from(coldCacheRef.current.keys()).sort(
-          (a, b) => Math.abs(b - centerIndex) - Math.abs(a - centerIndex)
+          (a, b) => Math.abs(b - centerIndex) - Math.abs(a - centerIndex),
         );
         const coldOverflow = coldCacheRef.current.size - coldMax;
         for (let i = 0; i < coldOverflow; i++) {
@@ -113,7 +146,7 @@ export function useFrameSequence({
         }
       }
     },
-    [cacheWindow, frameCount]
+    [cacheWindow, frameCount],
   );
 
   /** Requests frames around `index`, prioritized by distance and scroll direction. */
@@ -139,10 +172,10 @@ export function useFrameSequence({
           if (behind >= 0 && behind < frameCount) order.push(behind);
         }
       }
-      order.forEach((i) => loadFrame(i));
+      order.forEach((i) => enqueueFrame(i));
       evictFar(index);
     },
-    [cacheWindow, frameCount, loadFrame, evictFar]
+    [cacheWindow, frameCount, enqueueFrame, evictFar],
   );
 
   /** Synchronous lookup for the render loop: exact frame, or nearest available. */
@@ -164,19 +197,38 @@ export function useFrameSequence({
     cacheRef.current.clear();
     coldCacheRef.current.clear();
     pendingRef.current.clear();
+    queueRef.current = [];
+    queuedSetRef.current.clear();
     lastRequestedRef.current = -1;
     lastEvictCenterRef.current = -1;
+    setFirstFrameReady(false);
+    setLoadedCount(0);
 
-    for (let i = 0; i < Math.min(initialWindow, frameCount); i++) {
-      loadFrame(i);
-    }
-    loadFrame(frameCount - 1);
+    // Frame 0 alone first — on slow networks it must not compete with a burst of peers.
+    enqueueFrame(0);
+
+    const deferInitialBatch = networkProfile === "slow" ? 400 : 0;
+    const deferFinalFrame = networkProfile === "slow";
+
+    const batchTimer = window.setTimeout(() => {
+      for (let i = 1; i < Math.min(initialWindow, frameCount); i++) {
+        enqueueFrame(i);
+      }
+      if (!deferFinalFrame) {
+        enqueueFrame(frameCount - 1);
+      }
+    }, deferInitialBatch);
+
+    const finalTimer = deferFinalFrame
+      ? window.setTimeout(() => enqueueFrame(frameCount - 1), deferInitialBatch + 1200)
+      : undefined;
 
     return () => {
       mountedRef.current = false;
+      window.clearTimeout(batchTimer);
+      if (finalTimer !== undefined) window.clearTimeout(finalTimer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frameCount]);
+  }, [enqueueFrame, frameCount, initialWindow, networkProfile]);
 
   return { getFrame, preloadAround, firstFrameReady, loadedCount };
 }

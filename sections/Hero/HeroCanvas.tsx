@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { useFrameSequence } from "./useFrameSequence";
-import { heroSequence, heroBehavior } from "./hero.config";
+import { heroBehavior, heroInitialWindow, heroSequence } from "./hero.config";
+import { useNetworkProfile } from "@/hooks/useNetworkProfile";
 
 type HeroCanvasProps = {
   /** 0..1, mutated by the parent's ScrollTrigger callback every frame — read here, never via React state. */
@@ -18,6 +19,7 @@ type HeroCanvasProps = {
 
 export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: HeroCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const networkProfile = useNetworkProfile();
 
   const sequence = isSmallScreen
     ? {
@@ -36,8 +38,9 @@ export function HeroCanvas({ progressRef, onFirstFrameReady, isSmallScreen }: He
   const { getFrame, preloadAround, firstFrameReady } = useFrameSequence({
     frameCount: sequence.frameCount,
     framePath: sequence.framePath,
-    initialWindow: heroBehavior.initialWindow,
+    initialWindow: heroInitialWindow(networkProfile),
     cacheWindow: heroBehavior.cacheWindow,
+    networkProfile,
   });
 
   useEffect(() => {

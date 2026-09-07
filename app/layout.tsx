@@ -4,6 +4,7 @@ import "./globals.css";
 import { SmoothScrollProvider } from "@/animations/SmoothScrollProvider";
 import { Navbar } from "@/components/navigation/Navbar";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { HeroAssetPreloads } from "@/sections/Hero/HeroAssetPreloads";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -55,6 +56,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${manrope.variable} ${inter.variable} ${plusJakartaSans.variable} min-h-full dark`}
       suppressHydrationWarning
     >
+      <head>
+        <HeroAssetPreloads />
+      </head>
       <body className="min-h-full bg-void text-paper antialiased">
         <ThemeProvider>
           <SmoothScrollProvider>
