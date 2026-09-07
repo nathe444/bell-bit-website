@@ -50,13 +50,20 @@ export function heroInitialWindow(profile: "fast" | "slow" | "unknown") {
 }
 
 /** Frames required before the boot screen dismisses. */
-export const heroBootFrameTarget = 300;
+export const heroBootFrameTarget = 200;
 
 export function heroBootTargetCount(frameCount: number) {
   return Math.min(heroBootFrameTarget, frameCount);
 }
 
-/** Max parallel frame requests — keeps slow links from stalling frame 0. */
+/** Max parallel frame requests while the boot screen is visible. */
+export function heroBootLoadConcurrency(profile: "fast" | "slow" | "unknown") {
+  if (profile === "slow") return 4;
+  if (profile === "unknown") return 8;
+  return 12;
+}
+
+/** Max parallel frame requests during scroll scrubbing. */
 export function heroLoadConcurrency(profile: "fast" | "slow" | "unknown") {
   if (profile === "slow") return 2;
   if (profile === "unknown") return 3;

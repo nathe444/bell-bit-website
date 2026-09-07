@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { NetworkProfile } from "@/lib/networkProfile";
-import { heroBootTargetCount, heroLoadConcurrency } from "./hero.config";
+import {
+  heroBootLoadConcurrency,
+  heroBootTargetCount,
+  heroLoadConcurrency,
+} from "./hero.config";
 
 type SequenceConfig = {
   frameCount: number;
@@ -44,14 +48,28 @@ export function useFrameSequence({
   const lastRequestedRef = useRef(-1);
   const lastEvictCenterRef = useRef(-1);
   const directionRef = useRef<1 | -1>(1);
+  const bootPhaseRef = useRef(true);
   const [firstFrameReady, setFirstFrameReady] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const [initialReady, setInitialReady] = useState(false);
   const mountedRef = useRef(true);
-  const maxConcurrent = heroLoadConcurrency(networkProfile);
+  const scrollConcurrency = heroLoadConcurrency(networkProfile);
+  const bootConcurrency = heroBootLoadConcurrency(networkProfile);
   const bootTarget = heroBootTargetCount(frameCount);
 
+  const getMaxConcurrent = useCallback(
+    () => (bootPhaseRef.current ? bootConcurrency : scrollConcurrency),
+    [bootConcurrency, scrollConcurrency],
+  );
+
+  const markLoaded = useCallback((index: number) => {
+    setLoadedCount((c) => c + 1);
+    if (index === 0) setFirstFrameReady(true);
+  }, []);
+
   const pumpQueue = useCallback(() => {
+    const maxConcurrent = getMaxConcurrent();
+
     while (pendingRef.current.size < maxConcurrent && queueRef.current.length > 0) {
       const index = queueRef.current.shift()!;
       queuedSetRef.current.delete(index);
@@ -63,15 +81,14 @@ export function useFrameSequence({
       if (cold) {
         coldCacheRef.current.delete(index);
         cacheRef.current.set(index, { image: cold, loaded: true, failed: false });
-        setLoadedCount((c) => c + 1);
-        if (index === 0) setFirstFrameReady(true);
+        markLoaded(index);
         continue;
       }
 
       pendingRef.current.add(index);
       const img = new window.Image();
       img.decoding = "async";
-      setImageFetchPriority(img, index === 0 ? "high" : "low");
+      setImageFetchPriority(img, index === 0 ? "high" : bootPhaseRef.current ? "auto" : "low");
       const entry: FrameEntry = { image: img, loaded: false, failed: false };
 
       const finalize = (failed: boolean) => {
@@ -80,24 +97,16 @@ export function useFrameSequence({
         entry.loaded = !failed;
         entry.failed = failed;
         cacheRef.current.set(index, entry);
-        if (!failed) {
-          setLoadedCount((c) => c + 1);
-          if (index === 0) setFirstFrameReady(true);
-        }
+        if (!failed) markLoaded(index);
         pumpQueue();
       };
 
-      img.onload = () => {
-        if (typeof img.decode === "function") {
-          img.decode().then(() => finalize(false)).catch(() => finalize(false));
-        } else {
-          finalize(false);
-        }
-      };
+      // Count frames on load — skip decode during boot; the browser decodes on drawImage.
+      img.onload = () => finalize(false);
       img.onerror = () => finalize(true);
       img.src = framePath(index);
     }
-  }, [frameCount, framePath, maxConcurrent]);
+  }, [frameCount, framePath, getMaxConcurrent, markLoaded]);
 
   const enqueueFrame = useCallback(
     (index: number) => {
@@ -198,12 +207,15 @@ export function useFrameSequence({
   useEffect(() => {
     if (initialReady) return;
     if (firstFrameReady && loadedCount >= bootTarget) {
+      bootPhaseRef.current = false;
       setInitialReady(true);
+      pumpQueue();
     }
-  }, [bootTarget, firstFrameReady, initialReady, loadedCount]);
+  }, [bootTarget, firstFrameReady, initialReady, loadedCount, pumpQueue]);
 
   useEffect(() => {
     mountedRef.current = true;
+    bootPhaseRef.current = true;
     cacheRef.current.clear();
     coldCacheRef.current.clear();
     pendingRef.current.clear();
@@ -217,7 +229,7 @@ export function useFrameSequence({
 
     enqueueFrame(0);
 
-    const deferBootBatch = networkProfile === "slow" ? 400 : 0;
+    const deferBootBatch = networkProfile === "slow" ? 200 : 0;
 
     const bootTimer = window.setTimeout(() => {
       for (let i = 1; i < bootTarget; i++) {
@@ -230,7 +242,7 @@ export function useFrameSequence({
 
     const finalTimer =
       networkProfile === "slow"
-        ? window.setTimeout(() => enqueueFrame(frameCount - 1), deferBootBatch + 1200)
+        ? window.setTimeout(() => enqueueFrame(frameCount - 1), deferBootBatch + 800)
         : undefined;
 
     return () => {
@@ -239,6 +251,13 @@ export function useFrameSequence({
       if (finalTimer !== undefined) window.clearTimeout(finalTimer);
     };
   }, [bootTarget, enqueueFrame, frameCount, networkProfile]);
+
+  useEffect(() => {
+    if (!initialReady) return;
+    for (let i = bootTarget; i < Math.min(initialWindow, frameCount); i++) {
+      enqueueFrame(i);
+    }
+  }, [bootTarget, enqueueFrame, frameCount, initialReady, initialWindow]);
 
   return {
     getFrame,

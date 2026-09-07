@@ -23,13 +23,15 @@ const OUT_FRAMES = path.join(OUT_BASE, "frames");
 const OUT_MOBILE = path.join(OUT_BASE, "frames-mobile");
 
 const MOBILE_STRIDE = 3;
+/** Desktop stride — export every Nth frame (1 = all frames). Re-run process-hero-frames after changing. */
+const DESKTOP_STRIDE = 2;
 const MOBILE_WIDTH = 640;
 
-/** Full-resolution desktop WebP — q80 is visually lossless for scroll scrub at ~40% smaller than source JPEG. */
-const DESKTOP_WEBP_QUALITY = 80;
+/** Full-resolution desktop WebP — q65 keeps scrub quality while cutting ~25% vs q80. */
+const DESKTOP_WEBP_QUALITY = 65;
 const DESKTOP_WEBP_EFFORT = 4;
 
-const MOBILE_WEBP_QUALITY = 80;
+const MOBILE_WEBP_QUALITY = 70;
 const MOBILE_WEBP_EFFORT = 4;
 
 const FRAME_EXT = "webp";
@@ -89,16 +91,26 @@ async function main() {
 
   console.log(`Found ${frameCount} frames at ${width}x${height}`);
   console.log(
-    `Encoding desktop → WebP q${DESKTOP_WEBP_QUALITY}, mobile → ${MOBILE_WIDTH}px WebP q${MOBILE_WEBP_QUALITY}`
+    `Encoding desktop → WebP q${DESKTOP_WEBP_QUALITY} stride ${DESKTOP_STRIDE}, mobile → ${MOBILE_WIDTH}px WebP q${MOBILE_WEBP_QUALITY}`
   );
 
-  for (let i = 0; i < files.length; i++) {
+  const desktopFiles =
+    DESKTOP_STRIDE <= 1
+      ? files
+      : files.filter((_, i) => i % DESKTOP_STRIDE === 0);
+  if (desktopFiles[desktopFiles.length - 1] !== files[files.length - 1]) {
+    desktopFiles.push(files[files.length - 1]);
+  }
+  const desktopFrameCount = desktopFiles.length;
+  const desktopPadWidth = String(desktopFrameCount).length;
+
+  for (let i = 0; i < desktopFiles.length; i++) {
     await encodeDesktopFrame(
-      path.join(SOURCE_DIR, files[i]),
-      path.join(OUT_FRAMES, frameName(i + 1, padWidth))
+      path.join(SOURCE_DIR, desktopFiles[i]),
+      path.join(OUT_FRAMES, frameName(i + 1, desktopPadWidth))
     );
-    if ((i + 1) % 60 === 0 || i + 1 === frameCount) {
-      console.log(`  desktop ${i + 1}/${frameCount}`);
+    if ((i + 1) % 60 === 0 || i + 1 === desktopFrameCount) {
+      console.log(`  desktop ${i + 1}/${desktopFrameCount}`);
     }
   }
 
@@ -124,7 +136,9 @@ async function main() {
     .toFile(path.join(OUT_BASE, `poster.${FRAME_EXT}`));
 
   const manifest = {
-    frameCount,
+    frameCount: desktopFrameCount,
+    sourceFrameCount: frameCount,
+    desktopStride: DESKTOP_STRIDE,
     frameWidth: width,
     frameHeight: height,
     frameExtension: FRAME_EXT,
@@ -133,7 +147,7 @@ async function main() {
     mobileFrameHeight: mobileHeight,
     mobileFrameExtension: FRAME_EXT,
     posterExtension: FRAME_EXT,
-    padWidth,
+    padWidth: desktopPadWidth,
     mobilePadWidth,
     encode: {
       desktop: { format: "webp", quality: DESKTOP_WEBP_QUALITY },
@@ -144,7 +158,7 @@ async function main() {
 
   await writeFile(path.join(OUT_BASE, "manifest.json"), JSON.stringify(manifest, null, 2));
 
-  console.log(`Wrote ${frameCount} desktop frames, ${mobileFiles.length} mobile frames.`);
+  console.log(`Wrote ${desktopFrameCount} desktop frames (stride ${DESKTOP_STRIDE}), ${mobileFiles.length} mobile frames.`);
   console.log("Manifest:", manifest);
 }
 
