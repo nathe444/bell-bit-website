@@ -1,6 +1,6 @@
-import Image from "next/image";
-import { whyBellBit, whyBellBitSection, team, company } from "@/lib/content";
+import { whyBellBit, whyBellBitSection, founders, teamGallery } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { TeamGallery } from "@/components/ui/TeamGallery";
 import { Reveal } from "@/components/ui/Reveal";
 
 export function WhyBellBit() {
@@ -30,22 +30,12 @@ export function WhyBellBit() {
           </ul>
         </div>
 
-        <Reveal delay={0.1} className="flex flex-col">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line">
-            <Image
-              src="/assets/bellbit/team/office.jpeg"
-              alt={`${team.size} people from the BellBit team collaborating at their office`}
-              fill
-              className="object-cover"
-              sizes="(min-width: 768px) 50vw, 100vw"
-            />
-          </div>
-          <p className="mt-6 text-paper-dim">{team.description}</p>
-          <p className="mt-4 text-sm text-paper-faint">
-            {company.shortName} today — {team.size} engineers, designers, and solution
-            architects, grown from an original team of three.
-          </p>
-        </Reveal>
+        <TeamGallery
+          heroImage={teamGallery.heroImage}
+          founders={founders}
+          overlayTitle={teamGallery.overlayTitle}
+          overlayDescription={teamGallery.overlayDescription}
+        />
       </div>
     </section>
   );

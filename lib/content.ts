@@ -502,6 +502,57 @@ export const whyBellBit = [
   },
 ] as const;
 
+/** Original founding team — update names and photos in this file as needed. */
+export const founders = [
+  {
+    id: "nafyad-tadesse",
+    name: "Nafyad Tadesse",
+    role: "CEO",
+    sentence: "Sets company direction and leads BellBit's client partnerships from brief to delivery.",
+    avatar: null,
+  },
+  {
+    id: "natnael-getachew",
+    name: "Natnael Getachew",
+    role: "Co-Founder",
+    sentence: "Architects scalable systems and guides technical decisions across products and client builds.",
+    avatar: null,
+  },
+  {
+    id: "natnael-mulugeta",
+    name: "Natnael Mulugeta",
+    role: "Co-Founder",
+    sentence: "Drives product development and client delivery across BellBit's software portfolio.",
+    avatar: null,
+  },
+  {
+    id: "dawit-girma",
+    name: "Dawit Girma",
+    role: "Co-Founder",
+    sentence: "Leads engineering execution and keeps delivery reliable from development through deployment.",
+    avatar: null,
+  },
+  {
+    id: "niyat-debesay",
+    name: "Niyat Debesay",
+    role: "Co-Founder",
+    sentence: "Owns backend architecture and infrastructure across BellBit's products and custom solutions.",
+    avatar: null,
+  },
+] as const;
+
+export type Founder = (typeof founders)[number];
+
+export const teamGallery = {
+  heroImage: {
+    src: "/assets/bellbit/team/office.jpeg",
+    alt: "BellBit team collaborating at the office",
+  },
+  overlayTitle: "The BellBit team",
+  overlayDescription:
+    "Eight engineers, designers, and solution architects building reliable software across backend, mobile, frontend, DevOps, and architecture — with regular knowledge-sharing to stay sharp on modern tools.",
+} as const;
+
 export const team = {
   description:
     "BellBit is built by a team of skilled software engineers, designers, and solution architects with experience across multiple industries. Some specific talent present are Nest.js and Spring Boot backend developers, Flutter and React Native mobile developers, React and SvelteKit frontend developers, DevOps engineers, and architectural experts.",

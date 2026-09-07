@@ -192,6 +192,37 @@ h1, h2, h3, h4 {
   );
 }
 
+/* Industries grid — CSS border transitions instead of GSAP color tweens */
+.industries-grid [data-role="card"] {
+  transition:
+    border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s ease;
+}
+
+.industries-grid.is-powered [data-role="card"] {
+  border-color: color-mix(in srgb, var(--color-signal-soft) 35%, transparent);
+}
+
+.industries-grid.is-powered [data-role="card"]:nth-child(1) {
+  transition-delay: 0ms;
+}
+
+.industries-grid.is-powered [data-role="card"]:nth-child(2) {
+  transition-delay: 120ms;
+}
+
+.industries-grid.is-powered [data-role="card"]:nth-child(3) {
+  transition-delay: 240ms;
+}
+
+.industries-grid.is-powered [data-role="card"]:nth-child(4) {
+  transition-delay: 360ms;
+}
+
+.industries-grid.is-powered [data-role="card"]:nth-child(5) {
+  transition-delay: 480ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee-left,
   .animate-marquee-right {

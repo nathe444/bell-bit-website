@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { projects as projectsType } from "@/lib/content";
-import { cn } from "@/lib/utils";
 
 export type Project = (typeof projectsType)[number];
 
@@ -9,22 +8,15 @@ type ProjectDossierProps = {
   project: Project;
   index: number;
   className?: string;
-  /** Enables battle-pass frame styling when used inside scroll claim animation. */
-  claimed?: boolean;
 };
 
-export function ProjectDossier({ project, index, className, claimed }: ProjectDossierProps) {
+export function ProjectDossier({ project, index, className }: ProjectDossierProps) {
   return (
     <article
       className={`grid h-full min-w-0 items-center gap-5 max-md:content-start md:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] md:gap-10 lg:gap-14 ${className ?? ""}`}
     >
-      <div className="flex w-full min-w-0 items-center justify-center overflow-hidden">
-        <div
-          className={cn(
-            "relative w-full min-w-0 max-w-full",
-            claimed && "drop-shadow-[0_0_48px_color-mix(in_srgb,var(--color-signal)_35%,transparent)]",
-          )}
-        >
+      <div className="flex w-full min-w-0 items-center justify-center">
+        <div className="relative w-full min-w-0 max-w-full">
           <div className="relative mx-auto h-[min(42vh,300px)] w-full max-w-full sm:h-[min(50vh,380px)] md:h-[min(56vh,440px)] lg:h-[min(58vh,480px)]">
             <Image
               src={project.image}

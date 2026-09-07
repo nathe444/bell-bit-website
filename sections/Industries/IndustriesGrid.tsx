@@ -19,18 +19,6 @@ const cardSpanClass = [
   "lg:col-span-3",
 ] as const;
 
-function getBorderColors() {
-  const styles = getComputedStyle(document.documentElement);
-  const signalSoft = styles.getPropertyValue("--color-signal-soft").trim();
-  const lineStrong = styles.getPropertyValue("--color-line-strong").trim();
-
-  return {
-    dim: `color-mix(in srgb, ${lineStrong} 35%, transparent)`,
-    lit: `color-mix(in srgb, ${signalSoft} 35%, transparent)`,
-    signalSoft,
-  };
-}
-
 function queryGridParts(grid: HTMLElement) {
   const rail = grid.querySelector<HTMLElement>('[data-role="bus-rail"]');
   const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-role="card"]'));
@@ -38,16 +26,15 @@ function queryGridParts(grid: HTMLElement) {
   const glows = cards.map((card) => card.querySelector<HTMLElement>('[data-role="glow"]'));
   const texts = cards.map((card) => card.querySelector<HTMLElement>('[data-role="text"]'));
 
-  return { rail, cards, scans, glows, texts };
+  return { rail, scans, glows, texts };
 }
 
 function setPoweredState(grid: HTMLElement, hideScans = true) {
   ensureGsapRegistered();
-  const { rail, cards, scans, glows, texts } = queryGridParts(grid);
-  const { lit } = getBorderColors();
+  grid.classList.add("is-powered");
+  const { rail, scans, glows, texts } = queryGridParts(grid);
 
   gsap.set(rail, { scaleX: 1, transformOrigin: "left center" });
-  gsap.set(cards, { borderColor: lit });
   gsap.set(scans, hideScans ? { autoAlpha: 0 } : { xPercent: 220, autoAlpha: 0 });
   gsap.set(glows, { autoAlpha: 0.45 });
   gsap.set(texts, { autoAlpha: 1, y: 0 });
@@ -55,11 +42,10 @@ function setPoweredState(grid: HTMLElement, hideScans = true) {
 
 function setUnpoweredState(grid: HTMLElement) {
   ensureGsapRegistered();
-  const { rail, cards, scans, glows, texts } = queryGridParts(grid);
-  const { dim } = getBorderColors();
+  grid.classList.remove("is-powered");
+  const { rail, scans, glows, texts } = queryGridParts(grid);
 
   gsap.set(rail, { scaleX: 0, transformOrigin: "left center" });
-  gsap.set(cards, { borderColor: dim });
   gsap.set(scans, { xPercent: -120, autoAlpha: 1 });
   gsap.set(glows, { autoAlpha: 0 });
   gsap.set(texts, { autoAlpha: 0, y: 8 });
@@ -93,8 +79,7 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
         primedRef.current = true;
       }
 
-      const { rail, cards, scans, glows, texts } = queryGridParts(grid);
-      const { lit } = getBorderColors();
+      const { rail, scans, glows, texts } = queryGridParts(grid);
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -105,12 +90,8 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
       });
 
       tl.to(rail, { scaleX: 1, duration: 0.8, ease: "power2.inOut" })
-        .to(
-          cards,
-          { borderColor: lit, duration: 0.4, ease: "power2.out", stagger: 0.12 },
-          "-=0.3",
-        )
-        .to(scans, { xPercent: 220, duration: 0.6, ease: "power1.out", stagger: 0.12 }, "<")
+        .add(() => grid.classList.add("is-powered"), "-=0.3")
+        .to(scans, { xPercent: 220, duration: 0.6, ease: "power1.out", stagger: 0.12 }, "-=0.3")
         .to(texts, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.12 }, "<0.1")
         .to(glows, { autoAlpha: 0.45, duration: 0.6, ease: "power1.out", stagger: 0.12 }, "<")
         .set(scans, { autoAlpha: 0 });
@@ -123,7 +104,7 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
   }, [reducedMotion, industries.length]);
 
   return (
-    <div ref={gridRef} className="relative mt-10 md:mt-12">
+    <div ref={gridRef} className="industries-grid relative mt-10 md:mt-12">
       <div className="relative mb-5 h-px md:mb-6">
         <div
           data-role="bus-rail"
@@ -137,7 +118,7 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
           <div
             key={industry.id}
             data-role="card"
-            className={`group relative flex min-h-[12rem] flex-col overflow-hidden rounded-2xl border border-line/40 bg-surface/35 p-6 backdrop-blur-sm transition-[background-color] duration-500 md:min-h-[13rem] md:p-7 ${cardSpanClass[index] ?? "lg:col-span-2"}`}
+            className={`group relative flex min-h-[12rem] flex-col overflow-hidden rounded-2xl border border-line/40 bg-surface/60 p-6 md:min-h-[13rem] md:p-7 ${cardSpanClass[index] ?? "lg:col-span-2"}`}
           >
             <div
               data-role="scan"
@@ -147,7 +128,7 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
             <div
               data-role="glow"
               aria-hidden
-              className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-signal-soft/5 blur-xl"
+              className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[radial-gradient(circle_at_center,color-mix(in_srgb,var(--color-signal-soft)_18%,transparent)_0%,transparent_72%)]"
             />
 
             <div data-role="text" className="relative z-[2]">

@@ -71,7 +71,6 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
   const pinRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const shineRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const glowRefs = useRef<Array<HTMLDivElement | null>>([]);
   const progressFillRef = useRef<HTMLDivElement | null>(null);
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -85,7 +84,6 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
       const count = projects.length;
       const cards = cardRefs.current;
       const shines = shineRefs.current;
-      const glows = glowRefs.current;
       const {
         enterDuration,
         holdDuration,
@@ -103,11 +101,7 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
           force3D: true,
         });
         const shine = shines[i];
-        const glow = glows[i];
         if (shine) gsap.set(shine, { xPercent: -130, opacity: 0 });
-        if (glow) {
-          gsap.set(glow, i === 0 ? { scale: 1, opacity: 0.22 } : { scale: 0.55, opacity: 0 });
-        }
       });
 
       const tl = gsap.timeline();
@@ -116,7 +110,6 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
         const card = cards[i];
         if (!card) return;
         const shine = shines[i];
-        const glow = glows[i];
         const label = `project-${i}`;
         tl.addLabel(label);
 
@@ -145,20 +138,6 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
             tl.to(shine, { opacity: 0, duration: enterDuration * 0.15 }, `${label}+=${enterDuration * 0.7}`);
           }
 
-          if (glow) {
-            tl.fromTo(
-              glow,
-              { scale: 0.55, opacity: 0 },
-              { scale: 1.2, opacity: 0.55, duration: enterDuration * 0.55, ease: "power2.out" },
-              label
-            );
-            tl.to(
-              glow,
-              { scale: 1, opacity: 0.22, duration: enterDuration * 0.45, ease: "power1.out" },
-              `${label}+=${enterDuration * 0.55}`
-            );
-          }
-
           tl.to(card, { duration: holdDuration }, `${label}+=${enterDuration}`);
         }
 
@@ -168,9 +147,6 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
             { ...CLAIM_EXIT, duration: exitDuration, ease: claimExitEase },
             `${label}+=${i === 0 ? holdDuration : enterDuration + holdDuration}`
           );
-          if (glow) {
-            tl.to(glow, { opacity: 0, scale: 0.7, duration: exitDuration * 0.8 }, `<`);
-          }
         }
       });
 
@@ -227,15 +203,6 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
                 className="pointer-events-none absolute inset-0 flex items-center justify-center md:pointer-events-auto"
                 aria-hidden={index !== activeIndex}
               >
-                {/* Reward claim glow */}
-                <div
-                  ref={(el) => {
-                    glowRefs.current[index] = el;
-                  }}
-                  className="pointer-events-none absolute left-1/2 top-1/2 h-[min(420px,70%)] w-[min(640px,92%)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-signal/40 blur-3xl will-change-[transform,opacity]"
-                  aria-hidden="true"
-                />
-
                 <div
                   ref={(el) => {
                     cardRefs.current[index] = el;
@@ -252,7 +219,7 @@ function ProjectStageMotion({ projects }: ProjectStageProps) {
                     aria-hidden="true"
                   />
 
-                  <ProjectDossier project={project} index={index} className="w-full" claimed />
+                  <ProjectDossier project={project} index={index} className="w-full" />
                 </div>
               </div>
             ))}
