@@ -48,7 +48,14 @@ function setUnpoweredState(grid: HTMLElement) {
   gsap.set(rail, { scaleX: 0, transformOrigin: "left center" });
   gsap.set(scans, { xPercent: -120, autoAlpha: 1 });
   gsap.set(glows, { autoAlpha: 0 });
-  gsap.set(texts, { autoAlpha: 0, y: 8 });
+  // Keep copy readable — only nudge vertically until the reveal runs.
+  gsap.set(texts, { autoAlpha: 1, y: 8 });
+}
+
+function snapPowered(grid: HTMLElement, tl: gsap.core.Timeline) {
+  if (tl.progress() >= 1) return;
+  tl.progress(1);
+  setPoweredState(grid);
 }
 
 export function IndustriesGrid({ industries }: IndustriesGridProps) {
@@ -84,17 +91,30 @@ export function IndustriesGrid({ industries }: IndustriesGridProps) {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: grid,
-          start: "top 78%",
+          start: "top bottom",
+          end: "bottom top",
           once: true,
+          fastScrollEnd: true,
+          onLeave: () => snapPowered(grid, tl),
+          onLeaveBack: () => snapPowered(grid, tl),
         },
       });
 
-      tl.to(rail, { scaleX: 1, duration: 0.8, ease: "power2.inOut" })
-        .add(() => grid.classList.add("is-powered"), "-=0.3")
-        .to(scans, { xPercent: 220, duration: 0.6, ease: "power1.out", stagger: 0.12 }, "-=0.3")
-        .to(texts, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.12 }, "<0.1")
-        .to(glows, { autoAlpha: 0.45, duration: 0.6, ease: "power1.out", stagger: 0.12 }, "<")
+      tl.to(rail, { scaleX: 1, duration: 0.65, ease: "power2.inOut" })
+        .add(() => grid.classList.add("is-powered"), "-=0.25")
+        .to(scans, { xPercent: 220, duration: 0.5, ease: "power1.out", stagger: 0.08 }, "-=0.25")
+        .to(texts, { y: 0, duration: 0.45, ease: "power2.out", stagger: 0.08 }, "<0.08")
+        .to(glows, { autoAlpha: 0.45, duration: 0.5, ease: "power1.out", stagger: 0.08 }, "<")
         .set(scans, { autoAlpha: 0 });
+
+      requestAnimationFrame(() => {
+        const st = tl.scrollTrigger;
+        if (!st || st.progress >= 1) return;
+        const rect = grid.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
+          snapPowered(grid, tl);
+        }
+      });
 
       return () => {
         tl.scrollTrigger?.kill();
