@@ -274,6 +274,8 @@ export const technologyGroups = [
       "Node.js",
       "Payload CMS",
       "TypeScript",
+      "C",
+      "PHP",
     ],
     iconSlugs: [
       "nestjs",
@@ -282,6 +284,8 @@ export const technologyGroups = [
       "fastapi",
       "nodedotjs",
       "typescript",
+      "c",
+      "php",
     ],
   },
   {
@@ -329,7 +333,7 @@ export const technologyGroups = [
       "Claude",
       "OpenAI",
     ],
-    iconSlugs: ["langchain", "n8n", "langgraph", "make", "anthropic", "openai"],
+    iconSlugs: ["langchain", "n8n", "langgraph", "make", "claude", "openai"],
     customIcons: [
       { title: "Pinecone", src: "/assets/bellbit/tech/pinecone.svg" },
       { title: "pgvector", src: "/assets/bellbit/tech/pgvector.svg" },
@@ -350,6 +354,8 @@ export const technologies = {
 export const trustSection = {
   title: "Organizations Working With Us",
   description: "Trusted by big names across industries",
+  clientsMarqueeLabel: "Clients We Work With",
+  partnersMarqueeLabel: "Our Partners",
 } as const;
 
 /**
@@ -407,6 +413,12 @@ export const clients = [
     sector: "NGO / Development",
     projectId: "orda-rms",
   },
+  {
+    name: "Yesar Business Group",
+    logo: "/assets/bellbit/logos/yesar-business-group.jpeg",
+    sector: "Business",
+    projectId: null,
+  },
 ] as const;
 
 export const partners = [
@@ -429,11 +441,6 @@ export const partners = [
     name: "SkyKin Technologies",
     logo: null,
     focus: "Technology",
-  },
-  {
-    name: "Yesar Business Group",
-    logo: "/assets/bellbit/logos/yesar-business-group.jpeg",
-    focus: "Business",
   },
 ] as const;
 

@@ -21,7 +21,7 @@ export function Trust() {
 
       <div className="mt-14 md:mt-20">
         <MarqueeRow
-          label="Partners We Work With"
+          label={trustSection.clientsMarqueeLabel}
           directionLabel="←"
           entries={clients}
           direction="left"
@@ -36,7 +36,7 @@ export function Trust() {
         </div>
 
         <MarqueeRow
-          label="Partners"
+          label={trustSection.partnersMarqueeLabel}
           directionLabel="→"
           entries={partners}
           direction="right"

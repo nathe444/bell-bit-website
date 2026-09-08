@@ -9,6 +9,7 @@ import {
   renderSimpleIcon,
   type SimpleIcon,
 } from "react-icon-cloud";
+import { getThemedCustomIconSrc } from "@/lib/techIcons";
 
 export const cloudProps: Omit<ICloud, "children"> = {
   containerProps: {
@@ -36,10 +37,18 @@ export const cloudProps: Omit<ICloud, "children"> = {
   },
 };
 
+function getSimpleIconTheme(theme: "light" | "dark") {
+  return {
+    bgHex: theme === "light" ? "#e8ecf4" : "#1a1f2b",
+    fallbackHex: theme === "light" ? "#64748b" : "#e4e7ee",
+    minContrastRatio: theme === "dark" ? 2.1 : 1.2,
+  };
+}
+
 export const renderCustomIcon = (icon: SimpleIcon, theme: string) => {
-  const bgHex = theme === "light" ? "#e8ecf4" : "#1a1f2b";
-  const fallbackHex = theme === "light" ? "#64748b" : "#9aa3b5";
-  const minContrastRatio = theme === "dark" ? 2 : 1.2;
+  const { bgHex, fallbackHex, minContrastRatio } = getSimpleIconTheme(
+    theme === "dark" ? "dark" : "light",
+  );
 
   return renderSimpleIcon({
     icon,
@@ -74,9 +83,11 @@ function renderBrandIcon({
   size,
 }: {
   icon: CustomIcon;
-  theme: string;
+  theme: "light" | "dark";
   size: number;
 }) {
+  const themedSrc = getThemedCustomIconSrc(icon.src, theme, size);
+
   return (
     <a
       key={icon.title}
@@ -88,10 +99,7 @@ function renderBrandIcon({
         height={size}
         width={size}
         alt={icon.title}
-        src={icon.src}
-        style={{
-          filter: theme === "dark" ? "brightness(0) invert(1)" : undefined,
-        }}
+        src={themedSrc ?? icon.src}
       />
     </a>
   );
@@ -126,12 +134,11 @@ export function IconCloud({
     if (!data) return null;
 
     const size = compact ? 46 : 42;
+    const simpleIconTheme = getSimpleIconTheme(theme);
     const simpleIcons = Object.values(data.simpleIcons).map((icon) =>
       renderSimpleIcon({
         icon,
-        bgHex: theme === "light" ? "#e8ecf4" : "#1a1f2b",
-        fallbackHex: theme === "light" ? "#64748b" : "#9aa3b5",
-        minContrastRatio: theme === "dark" ? 2 : 1.2,
+        ...simpleIconTheme,
         size,
         aProps: {
           href: undefined,

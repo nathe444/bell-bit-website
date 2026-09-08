@@ -54,7 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${inter.variable} ${plusJakartaSans.variable} min-h-full dark`}
+      className={`${manrope.variable} ${inter.variable} ${plusJakartaSans.variable} min-h-full`}
       suppressHydrationWarning
     >
       <head>
