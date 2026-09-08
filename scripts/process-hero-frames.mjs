@@ -38,9 +38,9 @@ const OUTPUT_FORMAT = "avif";
 
 const ENCODER_EFFORT = 6;
 
-/** AVIF quality 55–65 ≈ WebP q78–82 for photographic content. */
-const DESKTOP_AVIF_QUALITY = 62;
-const MOBILE_AVIF_QUALITY = 58;
+/** AVIF quality 52–58 keeps motion scrub clean without per-frame size drift. */
+const DESKTOP_AVIF_QUALITY = 54;
+const MOBILE_AVIF_QUALITY = 52;
 
 /** Fallback if OUTPUT_FORMAT === "webp". */
 const DESKTOP_WEBP_QUALITY = 80;
@@ -68,10 +68,13 @@ function frameName(index, padWidth) {
   return `frame-${pad(index, padWidth)}.${OUTPUT_FORMAT}`;
 }
 
-function resizeDesktop(image) {
+function resizeExact(image, width, height) {
   return image.resize({
-    width: DESKTOP_MAX_WIDTH,
-    withoutEnlargement: true,
+    width,
+    height,
+    fit: "cover",
+    position: "centre",
+    withoutEnlargement: false,
   });
 }
 
@@ -105,8 +108,8 @@ function encodeMobile(image) {
   });
 }
 
-async function encodeDesktopFrame(sourcePath, destPath) {
-  await encode(resizeDesktop(sharp(sourcePath))).toFile(destPath);
+async function encodeDesktopFrame(sourcePath, destPath, width, height) {
+  await encode(resizeExact(sharp(sourcePath), width, height)).toFile(destPath);
 }
 
 async function main() {
@@ -152,6 +155,8 @@ async function main() {
     await encodeDesktopFrame(
       path.join(SOURCE_DIR, desktopFiles[i]),
       path.join(OUT_FRAMES, frameName(i + 1, desktopPadWidth)),
+      desktopWidth,
+      desktopHeight,
     );
     if ((i + 1) % 60 === 0 || i + 1 === desktopFrameCount) {
       console.log(`  desktop ${i + 1}/${desktopFrameCount}`);
@@ -174,7 +179,7 @@ async function main() {
     }
   }
 
-  await encode(resizeDesktop(sharp(firstPath))).toFile(
+  await encode(resizeExact(sharp(firstPath), desktopWidth, desktopHeight)).toFile(
     path.join(OUT_BASE, `poster.${OUTPUT_FORMAT}`),
   );
 

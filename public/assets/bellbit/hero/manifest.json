@@ -16,17 +16,17 @@
     "desktop": {
       "format": "avif",
       "maxWidth": 1440,
-      "quality": 62,
+      "quality": 54,
       "stride": 1,
       "effort": 6
     },
     "mobile": {
       "format": "avif",
       "width": 640,
-      "quality": 58,
+      "quality": 52,
       "stride": 3,
       "effort": 6
     }
   },
-  "generatedAt": "2026-09-07T09:27:01.571Z"
+  "generatedAt": "2026-09-08T10:36:47.760Z"
 }
