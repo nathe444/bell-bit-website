@@ -77,12 +77,14 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       event.preventDefault();
 
       if (lenis) {
-        lenis.scrollTo(element, {
+        lenis.scrollTo(hash, {
           offset: NAV_SCROLL_OFFSET,
           onComplete: () => history.replaceState(null, "", hash),
         });
         return;
       }
+
+      if (!(element instanceof HTMLElement)) return;
 
       element.scrollIntoView({ behavior: "auto", block: "start" });
       history.replaceState(null, "", hash);
