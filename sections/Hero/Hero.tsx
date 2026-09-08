@@ -219,7 +219,7 @@ function HeroStatic() {
             </p>
             <div className="mt-10">
               <a
-                href="#contact"
+                href="/contact"
                 className="inline-flex items-center gap-3 rounded-full bg-signal px-7 py-4 text-sm font-semibold uppercase tracking-wide text-on-signal"
               >
                 Let&rsquo;s work together

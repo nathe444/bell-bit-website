@@ -37,6 +37,27 @@ export const contact = {
   referencesNote: "Client references and case studies are available upon request.",
 } as const;
 
+export const contactPage = {
+  eyebrow: "Contact Us",
+  directLabel: "Direct line",
+  locationLabel: "Addis Ababa, Ethiopia",
+  form: {
+    nameLabel: "Your name",
+    namePlaceholder: "Your name",
+    emailLabel: "Email",
+    emailPlaceholder: "Email",
+    messageLabel: "Briefly describe your project idea",
+    messagePlaceholder: "Briefly describe your project idea...",
+    submitLabel: "Send a message",
+    submittingLabel: "Sending…",
+    successTitle: "Message received.",
+    successBody:
+      "Thanks for reaching out. We'll review your brief and get back to you within one business day.",
+    errorBody: "Something went wrong. Please email us directly — we want to hear from you.",
+    privacyNote: "Your details are only used to respond to this inquiry.",
+  },
+} as const;
+
 export const servicesSection = {
   title: "Our Services",
 } as const;
@@ -591,9 +612,9 @@ export const team = {
 } as const;
 
 export const nav = [
-  { label: "Work", href: "#work" },
-  { label: "Services", href: "#services" },
-  { label: "Contact", href: "#contact" },
+  { label: "Work", href: "/#work" },
+  { label: "Services", href: "/#services" },
+  { label: "Contact Us", href: "/contact" },
 ] as const;
 
 export const heroPrimary = {

@@ -6,7 +6,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export function CTA() {
   return (
-    <section id="contact" className="relative z-10 overflow-hidden bg-void py-32 md:py-44">
+    <section className="relative z-10 overflow-hidden bg-void py-32 md:py-44">
       <Image
         src={heroSequence.framePath(heroSequence.frameCount - 1)}
         alt=""
@@ -31,16 +31,22 @@ export function CTA() {
         <Reveal delay={0.1} className="mt-10 flex flex-wrap items-center justify-center gap-6">
           <MagneticButton
             as="a"
-            href={`mailto:${contact.email}`}
+            href="/contact"
             className="inline-flex items-center gap-3 rounded-full bg-signal px-8 py-4 text-sm font-semibold uppercase tracking-wide text-on-signal"
           >
-            {contact.email}
+            Contact Us
           </MagneticButton>
         </Reveal>
 
         <Reveal delay={0.15} className="mt-8 text-paper-dim">
           <a href={`tel:${contact.phonePrimary}`} className="hover:text-paper">
             {contact.phonePrimary}
+          </a>
+          <span className="mx-3 text-paper-faint" aria-hidden="true">
+            ·
+          </span>
+          <a href={`mailto:${contact.email}`} className="hover:text-paper">
+            {contact.email}
           </a>
         </Reveal>
       </div>
