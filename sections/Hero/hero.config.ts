@@ -50,7 +50,7 @@ export function heroInitialWindow(profile: "fast" | "slow" | "unknown") {
 }
 
 /** Frames required before the boot screen dismisses. */
-export const heroBootFrameTarget = 200;
+export const heroBootFrameTarget = 300;
 
 export function heroBootTargetCount(frameCount: number) {
   return Math.min(heroBootFrameTarget, frameCount);
