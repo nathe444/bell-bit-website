@@ -12,6 +12,13 @@ function refreshScrollTriggers() {
   ScrollTrigger.refresh();
 }
 
+const NAV_SCROLL_OFFSET = -88;
+
+function getHashAnchor(target: EventTarget | null): HTMLAnchorElement | null {
+  const anchor = (target as HTMLElement | null)?.closest("a[href^='#']");
+  return anchor instanceof HTMLAnchorElement ? anchor : null;
+}
+
 /**
  * Drives the whole page with one motion system: Lenis smooths the raw wheel/touch
  * input, and every scroll-linked animation (GSAP ScrollTrigger) reads its position
@@ -22,43 +29,84 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     ensureGsapRegistered();
-    if (reducedMotion) return;
 
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t: number) => 1 - Math.pow(1 - t, 3),
-      smoothWheel: true,
-    });
-
-    lenis.on("scroll", ScrollTrigger.update);
-
-    const tick = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
-
-    // Child sections create ScrollTriggers before this effect runs; refresh once
-    // Lenis is wired up and again after late layout shifts in production builds.
-    refreshScrollTriggers();
-    requestAnimationFrame(refreshScrollTriggers);
-
-    const onLoad = () => refreshScrollTriggers();
-    window.addEventListener("load", onLoad);
-
-    const lateRefresh = window.setTimeout(refreshScrollTriggers, 500);
-
+    let lenis: Lenis | null = null;
+    let tick: ((time: number) => void) | null = null;
+    let lateRefresh: number | undefined;
+    let onLoad: (() => void) | undefined;
     let fontsCancelled = false;
-    void document.fonts?.ready.then(() => {
-      if (!fontsCancelled) refreshScrollTriggers();
-    });
+
+    if (!reducedMotion) {
+      lenis = new Lenis({
+        duration: 1.15,
+        easing: (t: number) => 1 - Math.pow(1 - t, 3),
+        smoothWheel: true,
+      });
+
+      lenis.on("scroll", ScrollTrigger.update);
+
+      tick = (time: number) => {
+        lenis?.raf(time * 1000);
+      };
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
+
+      refreshScrollTriggers();
+      requestAnimationFrame(refreshScrollTriggers);
+
+      onLoad = () => refreshScrollTriggers();
+      window.addEventListener("load", onLoad);
+
+      lateRefresh = window.setTimeout(refreshScrollTriggers, 500);
+
+      void document.fonts?.ready.then(() => {
+        if (!fontsCancelled) refreshScrollTriggers();
+      });
+    }
+
+    const onAnchorClick = (event: MouseEvent) => {
+      const anchor = getHashAnchor(event.target);
+      if (!anchor) return;
+
+      const hash = anchor.getAttribute("href");
+      if (!hash || hash === "#") return;
+
+      const element = document.querySelector(hash);
+      if (!element) return;
+
+      event.preventDefault();
+
+      if (lenis) {
+        lenis.scrollTo(element, {
+          offset: NAV_SCROLL_OFFSET,
+          onComplete: () => history.replaceState(null, "", hash),
+        });
+        return;
+      }
+
+      element.scrollIntoView({ behavior: "auto", block: "start" });
+      history.replaceState(null, "", hash);
+    };
+
+    document.addEventListener("click", onAnchorClick);
 
     return () => {
       fontsCancelled = true;
-      window.clearTimeout(lateRefresh);
-      window.removeEventListener("load", onLoad);
-      gsap.ticker.remove(tick);
-      lenis.destroy();
+      document.removeEventListener("click", onAnchorClick);
+
+      if (onLoad) {
+        window.removeEventListener("load", onLoad);
+      }
+
+      if (lateRefresh !== undefined) {
+        window.clearTimeout(lateRefresh);
+      }
+
+      if (tick) {
+        gsap.ticker.remove(tick);
+      }
+
+      lenis?.destroy();
     };
   }, [reducedMotion]);
 

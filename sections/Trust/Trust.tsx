@@ -41,6 +41,7 @@ export function Trust() {
           entries={partners}
           direction="right"
           durationSeconds={74}
+          minItemsPerSegment={12}
         />
       </div>
     </section>

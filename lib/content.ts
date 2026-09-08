@@ -591,7 +591,7 @@ export const team = {
 } as const;
 
 export const nav = [
-  { label: "Work", href: "#projects" },
+  { label: "Work", href: "#work" },
   { label: "Services", href: "#services" },
   { label: "Contact", href: "#contact" },
 ] as const;

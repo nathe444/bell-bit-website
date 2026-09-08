@@ -111,6 +111,11 @@ html {
   overflow-x: clip;
 }
 
+section[id],
+#work {
+  scroll-margin-top: 5.5rem;
+}
+
 body {
   background: var(--color-void);
   color: var(--color-paper);

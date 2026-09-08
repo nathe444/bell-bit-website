@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { MarqueeItem, type MarqueeEntry } from "./MarqueeItem";
 
@@ -9,20 +10,40 @@ type MarqueeRowProps = {
   entries: readonly MarqueeEntry[];
   direction: "left" | "right";
   durationSeconds: number;
+  /** Repeat entries until each loop segment has at least this many items. */
+  minItemsPerSegment?: number;
 };
+
+function buildMarqueeSegment(
+  entries: readonly MarqueeEntry[],
+  minItemsPerSegment?: number,
+): MarqueeEntry[] {
+  if (entries.length === 0) return [];
+
+  const target = Math.max(entries.length, minItemsPerSegment ?? entries.length);
+  const segment: MarqueeEntry[] = [];
+
+  for (let i = 0; i < target; i += 1) {
+    segment.push(entries[i % entries.length]!);
+  }
+
+  return segment;
+}
 
 function ItemList({
   entries,
+  listKey,
   duplicate = false,
 }: {
   entries: readonly MarqueeEntry[];
+  listKey: string;
   duplicate?: boolean;
 }) {
   return (
     <ul className="flex items-start" aria-hidden={duplicate || undefined}>
-      {entries.map((entry) => (
+      {entries.map((entry, index) => (
         <li
-          key={`${entry.name}${duplicate ? "-dup" : ""}`}
+          key={`${listKey}-${entry.name}-${index}${duplicate ? "-dup" : ""}`}
           className="group/item px-2.5 sm:px-7 md:px-10 lg:px-12"
         >
           <MarqueeItem entry={entry} />
@@ -38,8 +59,13 @@ export function MarqueeRow({
   entries,
   direction,
   durationSeconds,
+  minItemsPerSegment,
 }: MarqueeRowProps) {
   const reducedMotion = useReducedMotion();
+  const segment = useMemo(
+    () => buildMarqueeSegment(entries, minItemsPerSegment),
+    [entries, minItemsPerSegment],
+  );
 
   if (reducedMotion) {
     return (
@@ -67,8 +93,8 @@ export function MarqueeRow({
           className={`marquee-track flex w-max will-change-transform ${animationClass}`}
           style={{ animationDuration: `${durationSeconds}s` }}
         >
-          <ItemList entries={entries} />
-          <ItemList entries={entries} duplicate />
+          <ItemList entries={segment} listKey="a" />
+          <ItemList entries={segment} listKey="b" duplicate />
         </div>
       </div>
     </div>
