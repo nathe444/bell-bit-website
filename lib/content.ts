@@ -39,6 +39,7 @@ export const contact = {
 
 export const contactPage = {
   eyebrow: "Contact Us",
+  headline: ["Contact us, let's", "Build what matters"],
   directLabel: "Direct line",
   locationLabel: "Addis Ababa, Ethiopia",
   form: {

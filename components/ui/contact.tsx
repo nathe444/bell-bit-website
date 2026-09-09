@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useId, useState, type FormEvent, type FocusEvent, type ReactNode } from "react";
-import { contact, contactPage, heroPrimary } from "@/lib/content";
+import { company, contact, contactPage } from "@/lib/content";
 import { heroSequence } from "@/sections/Hero/hero.config";
 import { Reveal } from "@/components/ui/Reveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -244,19 +244,18 @@ export function ContactSection() {
           {liveMessage}
         </div>
 
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:gap-16">
-          <Reveal className="flex flex-col justify-center gap-10">
+        <div className="mx-auto grid w-full max-w-7xl items-center gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(22rem,1fr)] lg:gap-14 xl:gap-20">
+          <Reveal className="flex min-w-0 flex-col justify-center gap-10">
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.3em] text-signal-soft">
                 {contactPage.eyebrow}
               </p>
-              <h1 className="mt-4 max-w-md text-balance font-display text-[clamp(2.5rem,6vw,4.25rem)] font-medium leading-[0.98] text-paper">
-                {heroPrimary.headline[0]}
-                <br />
-                <span className="text-signal">{heroPrimary.headline[1]}</span>
+              <h1 className="mt-4 font-display text-[clamp(2.25rem,5.4vw,4.25rem)] font-medium leading-[0.98] text-paper">
+                <span className="block sm:whitespace-nowrap">{contactPage.headline[0]}</span>
+                <span className="block text-signal sm:whitespace-nowrap">{contactPage.headline[1]}</span>
               </h1>
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-paper-dim">
-                {heroPrimary.eyebrow}
+                {company.shortName}
               </p>
             </div>
 
