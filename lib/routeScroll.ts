@@ -2,7 +2,7 @@ const PENDING_HASH_KEY = "bellbit-pending-route-hash";
 
 type LenisLike = {
   scrollTo: (
-    target: number | string,
+    target: number | string | HTMLElement,
     options?: { offset?: number; immediate?: boolean; force?: boolean },
   ) => void;
   resize: () => void;
