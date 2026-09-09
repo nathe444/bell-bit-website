@@ -5,7 +5,7 @@ export const testimonials = [
       "BellBit is reliable, responsive, and easy to work with. They always find practical solutions.",
     author: "Ashine",
     role: "Client Partner",
-    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Ashine&backgroundColor=1a1f2b&textColor=e8ecf4",
+    avatar: "/assets/bellbit/testimonials/Ashine.jpg",
   },
   {
     id: "dr-mersia",
@@ -20,7 +20,7 @@ export const testimonials = [
     quote: "Great team, great support, and easy to work with.",
     author: "Yonatan",
     role: "Client Partner",
-    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Yonatan&backgroundColor=1a1f2b&textColor=e8ecf4",
+    avatar: "/assets/bellbit/testimonials/Yonatan.jpg",
   },
   {
     id: "dr-woubetu",
@@ -28,7 +28,7 @@ export const testimonials = [
       "BellBit delivered our website on time, and we were really happy with the final result. They understood what we wanted and did a great job.",
     author: "Dr. Woubetu",
     role: "Guansa PLC",
-    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Dr%20Woubetu&backgroundColor=1a1f2b&textColor=e8ecf4",
+    avatar: "/assets/bellbit/testimonials/Dr%20Woubetu.jpg",
   },
   {
     id: "dr-michael",
@@ -36,7 +36,7 @@ export const testimonials = [
       "I taught them before and was proud to be their teacher. Now, I'm very happy to be working with them and seeing what they're building.",
     author: "Dr. Michael",
     role: "Academic Collaborator",
-    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Dr%20Michael&backgroundColor=1a1f2b&textColor=e8ecf4",
+    avatar: "/assets/bellbit/testimonials/Dr%20Michael.png",
   },
 ] as const;
 
