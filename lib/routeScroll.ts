@@ -1,7 +1,11 @@
 const PENDING_HASH_KEY = "bellbit-pending-route-hash";
 
 type LenisLike = {
-  scrollTo: (target: number | string, options?: { offset?: number; immediate?: boolean }) => void;
+  scrollTo: (
+    target: number | string,
+    options?: { offset?: number; immediate?: boolean; force?: boolean },
+  ) => void;
+  resize: () => void;
 };
 
 let lenisInstance: LenisLike | null = null;
@@ -45,31 +49,44 @@ export function isSectionHash(hash: string | null | undefined) {
 }
 
 const NAV_SCROLL_OFFSET = -88;
+const LANDING_TOP_MIN = 24;
+const LANDING_TOP_MAX = 200;
 
-/** Collapse the pinned hero and jump to a home section. Call from useLayoutEffect. */
-export function landOnHomeSection() {
+function pendingTarget(): HTMLElement | null {
   const hash = peekRouteHash();
-  if (!isSectionHash(hash) || !hash) return false;
-
-  const hero = document.getElementById("hero");
-  if (hero) {
-    hero.style.height = "0px";
-    hero.style.minHeight = "0px";
-    hero.style.overflow = "hidden";
-    hero.setAttribute("data-hero-collapsed", "true");
-  }
-
-  const sticky = document.querySelector<HTMLElement>("[data-hero-sticky]");
-  if (sticky) {
-    sticky.style.display = "none";
-  }
-
+  if (!isSectionHash(hash) || !hash) return null;
   const target = document.querySelector(hash);
-  if (!(target instanceof HTMLElement)) return false;
+  return target instanceof HTMLElement ? target : null;
+}
 
-  const top = target.getBoundingClientRect().top + window.scrollY + NAV_SCROLL_OFFSET;
-  window.scrollTo(0, Math.max(0, top));
-  lenisInstance?.scrollTo(window.scrollY, { immediate: true });
-  clearPendingRouteHash();
-  return true;
+/** True once Work/Services is sitting just below the nav. */
+export function hasLandedOnHomeSection() {
+  const target = pendingTarget();
+  if (!target) return false;
+  const top = target.getBoundingClientRect().top;
+  return top >= LANDING_TOP_MIN && top <= LANDING_TOP_MAX;
+}
+
+/**
+ * Jump to a home section without touching the URL hash.
+ * Returns true only when the section is actually in the landing band —
+ * a clamped Lenis jump into the hero pin counts as a miss.
+ */
+export function scrollToHomeSection() {
+  const target = pendingTarget();
+  if (!target) return false;
+
+  if (lenisInstance) {
+    lenisInstance.resize();
+    lenisInstance.scrollTo(target, {
+      offset: NAV_SCROLL_OFFSET,
+      immediate: true,
+      force: true,
+    });
+  } else {
+    const top = target.getBoundingClientRect().top + window.scrollY + NAV_SCROLL_OFFSET;
+    window.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+  }
+
+  return hasLandedOnHomeSection();
 }

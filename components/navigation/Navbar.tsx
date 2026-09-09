@@ -6,16 +6,13 @@ import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { nav } from "@/lib/content";
+import { clearPendingRouteHash, setPendingRouteHash } from "@/lib/routeScroll";
 import { cn } from "@/lib/utils";
 
-function resolveNavHref(href: string, isHome: boolean) {
-  if (href.startsWith("/#")) {
-    return isHome ? href.slice(1) : href;
-  }
-  if (href.startsWith("#")) {
-    return isHome ? href : `/${href}`;
-  }
-  return href;
+function sectionIdFromHref(href: string) {
+  if (href.startsWith("/#")) return href.slice(1);
+  if (href.startsWith("#") && href.length > 1) return href;
+  return null;
 }
 
 export function Navbar() {
@@ -56,8 +53,9 @@ export function Navbar() {
         aria-label="Primary"
       >
         <Link
-          href={isHome ? "#hero" : "/"}
+          href="/"
           aria-label="BellBit home"
+          onClick={() => clearPendingRouteHash()}
           className={cn(
             "relative flex shrink-0 items-center justify-self-start transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
             useSolidNav ? "h-6 w-6" : "h-7 w-[7.5rem] sm:h-8",
@@ -100,8 +98,7 @@ export function Navbar() {
 
         <ul className="hidden items-center gap-8 justify-self-center md:flex">
           {nav.map((item) => {
-            const href = resolveNavHref(item.href, isHome);
-            const isPageLink = href.startsWith("/") && !href.startsWith("/#");
+            const sectionId = sectionIdFromHref(item.href);
             const className = cn(
               "text-xs font-bold uppercase tracking-[0.2em] transition-colors",
               useSolidNav
@@ -111,14 +108,23 @@ export function Navbar() {
 
             return (
               <li key={item.href}>
-                {isPageLink ? (
-                  <Link href={href} className={className}>
+                {sectionId && isHome ? (
+                  <a href={sectionId} className={className}>
+                    {item.label}
+                  </a>
+                ) : sectionId ? (
+                  <Link
+                    href="/"
+                    scroll={false}
+                    className={className}
+                    onClick={() => setPendingRouteHash(sectionId)}
+                  >
                     {item.label}
                   </Link>
                 ) : (
-                  <a href={href} className={className}>
+                  <Link href={item.href} className={className}>
                     {item.label}
-                  </a>
+                  </Link>
                 )}
               </li>
             );

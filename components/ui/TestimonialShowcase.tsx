@@ -16,7 +16,6 @@ export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [displayedQuote, setDisplayedQuote] = useState(testimonials[0]?.quote ?? "");
-  const [displayedRole, setDisplayedRole] = useState(testimonials[0]?.role ?? "");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
 
@@ -32,7 +31,6 @@ export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) 
 
       if (reducedMotion) {
         setDisplayedQuote(testimonials[index].quote);
-        setDisplayedRole(testimonials[index].role);
         setActiveIndex(index);
         return;
       }
@@ -41,7 +39,6 @@ export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) 
 
       window.setTimeout(() => {
         setDisplayedQuote(testimonials[index].quote);
-        setDisplayedRole(testimonials[index].role);
         setActiveIndex(index);
         window.setTimeout(() => setIsAnimating(false), 400);
       }, 200);
@@ -106,17 +103,7 @@ export function TestimonialShowcase({ testimonials }: TestimonialShowcaseProps) 
         </span>
       </div>
 
-      <div className="flex flex-col items-center gap-8">
-        <p
-          className={cn(
-            "text-sm uppercase tracking-[0.2em] text-paper-faint md:text-base",
-            !reducedMotion && "transition-all duration-500 ease-out",
-            !reducedMotion && isAnimating ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
-          )}
-        >
-          {displayedRole}
-        </p>
-
+      <div className="flex flex-col items-center">
         <div className="flex flex-wrap items-center justify-center gap-3">
           {testimonials.map((testimonial, index) => {
             const isActive = activeIndex === index;

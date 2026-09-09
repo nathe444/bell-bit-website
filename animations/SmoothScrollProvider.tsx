@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useLayoutEffect, type ReactNode } from "react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import { MotionConfig } from "motion/react";
 import { gsap, ScrollTrigger, ensureGsapRegistered } from "./gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import {
+  clearPendingRouteHash,
+  isSectionHash,
+  peekRouteHash,
+  registerLenis,
+  scrollToHomeSection,
+} from "@/lib/routeScroll";
 
 /** Recalculate every ScrollTrigger after layout shifts (fonts, images, Lenis init). */
 function refreshScrollTriggers() {
@@ -13,6 +21,11 @@ function refreshScrollTriggers() {
 }
 
 const NAV_SCROLL_OFFSET = -88;
+
+function stripHashFromUrl() {
+  if (!window.location.hash) return;
+  history.replaceState(null, "", window.location.pathname + window.location.search);
+}
 
 function getHashAnchor(target: EventTarget | null): HTMLAnchorElement | null {
   const anchor = (target as HTMLElement | null)?.closest("a[href^='#']");
@@ -26,6 +39,7 @@ function getHashAnchor(target: EventTarget | null): HTMLAnchorElement | null {
  */
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const reducedMotion = useReducedMotion();
+  const pathname = usePathname();
 
   useEffect(() => {
     ensureGsapRegistered();
@@ -43,6 +57,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         smoothWheel: true,
       });
 
+      registerLenis(lenis);
       lenis.on("scroll", ScrollTrigger.update);
 
       tick = (time: number) => {
@@ -79,7 +94,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       if (lenis) {
         lenis.scrollTo(hash, {
           offset: NAV_SCROLL_OFFSET,
-          onComplete: () => history.replaceState(null, "", hash),
+          onComplete: () => {
+            history.replaceState(null, "", window.location.pathname + window.location.search);
+          },
         });
         return;
       }
@@ -87,7 +104,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       if (!(element instanceof HTMLElement)) return;
 
       element.scrollIntoView({ behavior: "auto", block: "start" });
-      history.replaceState(null, "", hash);
+      history.replaceState(null, "", window.location.pathname + window.location.search);
     };
 
     document.addEventListener("click", onAnchorClick);
@@ -108,9 +125,76 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         gsap.ticker.remove(tick);
       }
 
+      registerLenis(null);
       lenis?.destroy();
     };
   }, [reducedMotion]);
+
+  useLayoutEffect(() => {
+    stripHashFromUrl();
+
+    if (pathname !== "/" || !isSectionHash(peekRouteHash())) {
+      return;
+    }
+
+    let cancelled = false;
+    let tries = 0;
+    let landedAt: number | null = null;
+    const maxTries = 48;
+    const settleMs = 400;
+    const timers: number[] = [];
+
+    const jump = () => {
+      if (cancelled) return false;
+      return scrollToHomeSection();
+    };
+
+    const finish = () => {
+      jump();
+      clearPendingRouteHash();
+    };
+
+    const schedule = (delay: number) => {
+      timers.push(window.setTimeout(tick, delay));
+    };
+
+    const tick = () => {
+      if (cancelled) return;
+
+      const landed = jump();
+      const now = Date.now();
+
+      if (landed) {
+        if (landedAt === null) landedAt = now;
+        if (now - landedAt >= settleMs) {
+          clearPendingRouteHash();
+          return;
+        }
+        schedule(50);
+        return;
+      }
+
+      landedAt = null;
+      tries += 1;
+      if (tries >= maxTries) {
+        finish();
+        return;
+      }
+
+      schedule(tries < 10 ? 50 : 80);
+    };
+
+    jump();
+    const frame = requestAnimationFrame(tick);
+    ScrollTrigger.addEventListener("refresh", jump);
+
+    return () => {
+      cancelled = true;
+      ScrollTrigger.removeEventListener("refresh", jump);
+      cancelAnimationFrame(frame);
+      timers.forEach((id) => window.clearTimeout(id));
+    };
+  }, [pathname]);
 
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }

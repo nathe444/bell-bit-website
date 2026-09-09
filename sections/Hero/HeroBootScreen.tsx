@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
-import { heroPrimary } from "@/lib/content";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +16,7 @@ const bootWords = ["Complexity", "Structure", "System"] as const;
 export function HeroBootScreen({ visible, progress }: HeroBootScreenProps) {
   const reducedMotion = useReducedMotion();
   const clampedProgress = Math.min(1, Math.max(0, progress));
-  const bootTagline = `${heroPrimary.headline[0]} ${heroPrimary.headline[1]}`;
+  const bootTagline = "Build What Matters.";
 
   return (
     <AnimatePresence>

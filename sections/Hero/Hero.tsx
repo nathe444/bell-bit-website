@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { HeroBootScreen } from "./HeroBootScreen";
 import { HeroCanvas } from "./HeroCanvas";
@@ -10,6 +10,8 @@ import { heroPrimary } from "@/lib/content";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ScrollTrigger, runScrollTriggerSetup } from "@/animations/gsap";
+import { isSectionHash, peekRouteHash } from "@/lib/routeScroll";
+import { markHeroBootScreenDismissed, wasHeroBootScreenDismissed } from "./heroSession";
 
 const BOOT_MIN_MS = 750;
 const BOOT_MAX_MS = 180_000;
@@ -41,22 +43,38 @@ export function Hero() {
     setBootState(state);
   }, []);
 
+  const dismissBoot = useCallback(() => {
+    setBootVisible(false);
+    markHeroBootScreenDismissed();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (wasHeroBootScreenDismissed() || isSectionHash(peekRouteHash())) {
+      dismissBoot();
+    }
+  }, [dismissBoot]);
+
   useEffect(() => {
     if (reducedMotion) {
-      setBootVisible(false);
+      dismissBoot();
+      return;
+    }
+
+    if (wasHeroBootScreenDismissed() || isSectionHash(peekRouteHash())) {
+      dismissBoot();
       return;
     }
 
     if (!bootState.initialReady) {
-      const failSafe = window.setTimeout(() => setBootVisible(false), BOOT_MAX_MS);
+      const failSafe = window.setTimeout(dismissBoot, BOOT_MAX_MS);
       return () => window.clearTimeout(failSafe);
     }
 
     const elapsed = Date.now() - bootMountRef.current;
     const delay = Math.max(0, BOOT_MIN_MS - elapsed);
-    const dismiss = window.setTimeout(() => setBootVisible(false), delay);
+    const dismiss = window.setTimeout(dismissBoot, delay);
     return () => window.clearTimeout(dismiss);
-  }, [bootState.initialReady, reducedMotion]);
+  }, [bootState.initialReady, reducedMotion, dismissBoot]);
 
   useEffect(() => {
     if (reducedMotion || bootVisible) return;
@@ -65,6 +83,7 @@ export function Hero() {
 
   useEffect(() => {
     if (reducedMotion || !bootVisible) return;
+    if (wasHeroBootScreenDismissed() || isSectionHash(peekRouteHash())) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {

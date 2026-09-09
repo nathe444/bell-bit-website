@@ -395,6 +395,7 @@ export const clients = [
   {
     name: "Guansa PLC",
     logo: "/assets/bellbit/logos/guansa.svg",
+    logoDark: "/assets/bellbit/logos/guansa-white.svg",
     sector: "Enterprise",
     projectId: "guansa",
   },
@@ -460,7 +461,8 @@ export const partners = [
   },
   {
     name: "SkyKin Technologies",
-    logo: null,
+    logo: "/assets/bellbit/logos/Skykin.png",
+    logoDark: "/assets/bellbit/logos/Skykin-white.png",
     focus: "Technology",
   },
 ] as const;
